@@ -14,6 +14,9 @@ int test_fhcore_all()
     if (0 != test_fhcore_color())
         return -1;
 
+    if (0 != test_fhcore_board())
+        return -1;
+
     return 0;
 }
 
@@ -62,3 +65,12 @@ int test_fhcore_color()
     return 0;
 }
 
+#include <board.h>
+int test_fhcore_board()
+{
+    using namespace board;
+    
+    Board<12> b;
+
+    return 0;
+}
