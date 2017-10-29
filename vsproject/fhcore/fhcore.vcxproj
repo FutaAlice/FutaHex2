@@ -142,7 +142,12 @@
     <ClCompile Include="..\..\src\fhcore\logger.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\fhcore\board.h" />
+    <ClInclude Include="..\..\src\fhcore\color.h" />
     <ClInclude Include="..\..\src\fhcore\logger.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\fhcore\board.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
