@@ -69,8 +69,14 @@ int test_fhcore_color()
 int test_fhcore_board()
 {
     using namespace board;
-    
-    Board<12> b;
+
+    // Board<11> _b;
+    Board<11> b;
+
+    b(1, 2) = Color::Red;
+    b(10, 9) = Color::Blue;
+
+    debug() << b;
 
     return 0;
 }

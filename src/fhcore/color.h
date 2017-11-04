@@ -1,5 +1,6 @@
 #pragma once
 #include <cassert>
+#include <iomanip>
 
 namespace color
 {
@@ -34,10 +35,14 @@ constexpr color_t operator&(const Color color)
 
 std::ostream& operator<< (std::ostream& stream, Color color)
 {
+    // stream << std::setfill(' ') << std::setw(5);
+    stream << std::setfill(' ') << std::setw(1);
     if (Color::Red == color)
-        stream << "Red";
-    else // Color::Blue
-        stream << "Blue";
+        stream << "r";
+    else if (Color::Blue == color)
+        stream << "b";
+    else
+        stream << "_";
 
     return stream;
 }

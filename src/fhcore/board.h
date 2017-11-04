@@ -1,4 +1,5 @@
 #pragma once
+#include <ostream>
 #include <bitset>
 #include <set>
 #include <initializer_list>
@@ -9,12 +10,16 @@ namespace board
 using namespace color;
 using coord_t = unsigned short;
 
-template <typename Test, int size>
+template<typename Test, int size>
 class BoardT
 {
     friend Test;
 public:
     BoardT() noexcept;
+    BoardT<Test, size>& operator()(int row, int col);
+    void operator=(const Color color);
+    
+    operator Color();
 
 private:
     static void check_boardsize();
@@ -25,7 +30,7 @@ private:
     coord_t _colBuf { 0 };
 };
 
-template <int size>
+template<int size>
 using Board = BoardT<int, size>;
 
 }
