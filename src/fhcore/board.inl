@@ -1,7 +1,9 @@
+#include <cassert>
 #include <string>
 #include <ostream>
 #include <iomanip>
 #include "logger.h"
+#include "board.h"
 
 #define BUFFER_INDEX (_rowBuf * size + _colBuf)
 
@@ -15,8 +17,9 @@ inline BoardT<Test, size>::BoardT() noexcept
 
 template<typename Test, int size>
 inline BoardT<Test, size> &
-BoardT<Test, size>::operator()(int row, int col)
+BoardT<Test, size>::operator()(coord_t row, coord_t col)
 {
+    assert(row < size && col < size);
     _rowBuf = row;
     _colBuf = col;
     return *this;
@@ -27,12 +30,12 @@ inline void BoardT<Test, size>::operator=(const Color color)
 {
     if (Color::Empty == color)
     {
-        _bit[&Color::Red][BUFFER_INDEX] = 0;
-        _bit[&Color::Blue][BUFFER_INDEX] = 0;
+        _bit[&Color::Red].reset(BUFFER_INDEX);
+        _bit[&Color::Blue].reset(BUFFER_INDEX);
     }
     else // Not empty
     {
-        _bit[&color][BUFFER_INDEX] = 1;
+        _bit[&color].set(BUFFER_INDEX, 1);
     }
 }
 
@@ -45,6 +48,18 @@ inline BoardT<Test, size>::operator Color()
         return Color::Blue;
     else
         return Color::Empty;
+}
+
+template<typename Test, int size>
+inline size_t BoardT<Test, size>::terns() const
+{
+    return _bit[&Color::Red].count() + _bit[&Color::Blue].count();
+}
+
+template<typename Test, int size>
+inline Color BoardT<Test, size>::color() const
+{
+    return terns() % 2 ? Color::Blue : Color::Red;
 }
 
 template<typename Test, int size>
@@ -68,7 +83,9 @@ std::ostream& operator<< (std::ostream& stream, BoardT<Test, size> b)
 {
     using namespace std;
     stream << __func__ << endl;
-    Color c = b(1, 2);
+    stream << "current turns: " << b.terns() << endl;
+    stream << "current color: " << b.color() << endl;
+    Color c;
     for (int row = 0; row < size; ++row)
     {
         stream << setfill(' ') << setw(row) << "";

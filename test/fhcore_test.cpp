@@ -74,7 +74,7 @@ int test_fhcore_board()
     Board<11> b;
 
     b(1, 2) = Color::Red;
-    b(10, 9) = Color::Blue;
+    b(10, 9) = b.color();
 
     debug() << b;
 

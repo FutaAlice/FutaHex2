@@ -1,5 +1,5 @@
 #pragma once
-#include <ostream>
+#include <iostream>
 #include <bitset>
 #include <set>
 #include <initializer_list>
@@ -16,10 +16,13 @@ class BoardT
     friend Test;
 public:
     BoardT() noexcept;
-    BoardT<Test, size>& operator()(int row, int col);
+    BoardT<Test, size>& operator()(coord_t row, coord_t col);
     void operator=(const Color color);
     
     operator Color();
+    
+    size_t terns() const;
+    Color color() const;
 
 private:
     static void check_boardsize();
