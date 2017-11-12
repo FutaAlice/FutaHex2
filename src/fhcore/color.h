@@ -1,6 +1,6 @@
 #pragma once
 #include <cassert>
-#include <iomanip>
+#include <iostream>
 
 namespace color
 {
@@ -15,17 +15,13 @@ enum class Color :color_t
 
 // Get opposite color.
 #if defined(DEBUG) || defined(_DEBUG)
-Color
-#else if
-constexpr Color
-#endif
-operator!(const Color color)
+Color operator!(const Color color);
+#else
+constexpr Color operator!(const Color color)
 {
-#if defined(DEBUG) || defined(_DEBUG)
-    assert(color != Color::Empty);
-#endif
     return static_cast<Color>(!static_cast<color_t>(color));
 }
+#endif
 
 // Convert to color_t.
 constexpr color_t operator&(const Color color)
@@ -33,18 +29,6 @@ constexpr color_t operator&(const Color color)
     return static_cast<color_t>(color);
 }
 
-std::ostream& operator<< (std::ostream& stream, Color color)
-{
-    // stream << std::setfill(' ') << std::setw(5);
-    stream << std::setfill(' ') << std::setw(1);
-    if (Color::Red == color)
-        stream << "r";
-    else if (Color::Blue == color)
-        stream << "b";
-    else
-        stream << "_";
-
-    return stream;
-}
+std::ostream& operator<< (std::ostream& stream, Color color);
 
 }
