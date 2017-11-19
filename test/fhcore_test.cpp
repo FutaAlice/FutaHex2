@@ -14,6 +14,9 @@ int test_fhcore_all()
     if (0 != test_fhcore_color())
         return -1;
 
+    if (0 != test_fhcore_position())
+        return -1;
+
     if (0 != test_fhcore_board())
         return -1;
 
@@ -66,6 +69,40 @@ int test_fhcore_color()
 }
 
 #include <board.h>
+//class Test;
+//
+//template<int size>
+//using BoardTest = board::BoardT<Test, size>;
+//
+//class Test
+//{
+//public:
+//    template<int size>
+//    void printPos(BoardTest<11> &b)
+//    {
+//        debug() << b._pos.row << " " << b._pos.col;
+//    }
+//};
+#include <position.h>
+int test_fhcore_position()
+{
+    using namespace position;
+    using namespace logger;
+
+    auto& pt_11 = PositionT<11>::instance();
+    auto* p_11 = pt_11(4, 4);
+
+    debug() << *p_11;
+
+    auto& pt_5 = PositionT<5>::instance();
+    auto* p_5 = pt_5(4, 4);
+
+    debug() << *p_5;
+    
+
+    return 0;
+}
+
 int test_fhcore_board()
 {
     using namespace board;
