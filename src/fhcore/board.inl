@@ -9,13 +9,13 @@
 
 namespace board
 {
-template<typename Test, int size>
+template<typename Test, coord_t size>
 inline BoardT<Test, size>::BoardT() noexcept
 {
     check_boardsize();
 }
 
-template<typename Test, int size>
+template<typename Test, coord_t size>
 inline BoardT<Test, size> &
 BoardT<Test, size>::operator()(coord_t row, coord_t col)
 {
@@ -25,7 +25,7 @@ BoardT<Test, size>::operator()(coord_t row, coord_t col)
     return *this;
 }
 
-template<typename Test, int size>
+template<typename Test, coord_t size>
 inline void BoardT<Test, size>::operator=(const Color color)
 {
     if (Color::Empty == color)
@@ -39,7 +39,7 @@ inline void BoardT<Test, size>::operator=(const Color color)
     }
 }
 
-template<typename Test, int size>
+template<typename Test, coord_t size>
 inline BoardT<Test, size>::operator Color()
 {
     if (_bit[&Color::Red][BUFFER_INDEX])
@@ -50,19 +50,25 @@ inline BoardT<Test, size>::operator Color()
         return Color::Empty;
 }
 
-template<typename Test, int size>
+template<typename Test, coord_t size>
 inline size_t BoardT<Test, size>::terns() const
 {
     return _bit[&Color::Red].count() + _bit[&Color::Blue].count();
 }
 
-template<typename Test, int size>
+template<typename Test, coord_t size>
 inline Color BoardT<Test, size>::color() const
 {
     return terns() % 2 ? Color::Blue : Color::Red;
 }
 
-template<typename Test, int size>
+template<typename Test, coord_t size>
+inline Color BoardT<Test, size>::winner() const
+{
+    return Color();
+}
+
+template<typename Test, coord_t size>
 inline void board::BoardT<Test, size>::check_boardsize()
 {
     using namespace std;
@@ -78,7 +84,7 @@ inline void board::BoardT<Test, size>::check_boardsize()
     }
 }
 
-template<typename Test, int size>
+template<typename Test, coord_t size>
 std::ostream& operator<< (std::ostream& stream, BoardT<Test, size> b)
 {
     using namespace std;
