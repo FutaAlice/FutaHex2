@@ -5,8 +5,6 @@
 #include "logger.h"
 #include "board.h"
 
-#define BUFFER_INDEX (_rowBuf * size + _colBuf)
-
 namespace board
 {
 template<typename Test, coord_t size>
@@ -30,21 +28,21 @@ inline void BoardT<Test, size>::operator=(const Color color)
 {
     if (Color::Empty == color)
     {
-        _bit[&Color::Red].reset(BUFFER_INDEX);
-        _bit[&Color::Blue].reset(BUFFER_INDEX);
+        _bit[&Color::Red].reset(index());
+        _bit[&Color::Blue].reset(index());
     }
     else // Not empty
     {
-        _bit[&color].set(BUFFER_INDEX, 1);
+        _bit[&color].set(index());
     }
 }
 
 template<typename Test, coord_t size>
 inline BoardT<Test, size>::operator Color()
 {
-    if (_bit[&Color::Red][BUFFER_INDEX])
+    if (_bit[&Color::Red][index()])
         return Color::Red;
-    else if (_bit[&Color::Blue][BUFFER_INDEX])
+    else if (_bit[&Color::Blue][index()])
         return Color::Blue;
     else
         return Color::Empty;
@@ -66,6 +64,12 @@ template<typename Test, coord_t size>
 inline Color BoardT<Test, size>::winner() const
 {
     return Color();
+}
+
+template<typename Test, coord_t size>
+inline coord_t BoardT<Test, size>::index() const
+{
+    return _pos(_rowBuf, _colBuf)->index;
 }
 
 template<typename Test, coord_t size>

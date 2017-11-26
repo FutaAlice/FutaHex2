@@ -30,7 +30,7 @@ template<coord_t size>
 class PositionT
 {
 public:
-    static PositionT<size> & instance();
+    static const PositionT<size> & instance();
     pos_t *operator()(coord_t index) const;
     pos_t *operator()(coord_t row, coord_t col) const;
 private:

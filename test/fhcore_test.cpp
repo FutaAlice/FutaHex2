@@ -115,5 +115,12 @@ int test_fhcore_board()
 
     debug() << b;
 
+    Board<5> b_5;
+
+    b_5(1, 2) = b_5.color();
+    b_5(4, 3) = b_5.color();
+
+    debug() << b_5;
+
     return 0;
 }

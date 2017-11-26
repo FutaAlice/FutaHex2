@@ -34,6 +34,7 @@ template<typename Test, coord_t size>
 class BoardT
 {
     friend Test;
+    using Position = PositionT<size>;
 public:
     BoardT() noexcept;
     BoardT<Test, size>& operator()(coord_t row, coord_t col);
@@ -44,17 +45,18 @@ public:
     size_t terns() const;
     Color color() const;
     Color winner() const;
-
+    coord_t index() const;
+private:
+    static void check_boardsize();
 public:
     static const coord_t nBegin { size };
     static const coord_t nEnd { size + 1 };
 private:
-    static void check_boardsize();
-private:
-    std::bitset<size * size> _bit[2];
-    std::set<coord_t> _link[2][size * size];
     coord_t _rowBuf { 0 };
     coord_t _colBuf { 0 };
+    const Position & _pos { Position::instance() };
+    std::bitset<size * size> _bit[2];
+    std::set<coord_t> _link[2][size * size];
 };
 
 template<coord_t size>

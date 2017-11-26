@@ -6,7 +6,7 @@ static_assert(coord_t(-1) > coord_t(0),
               "type: coord_t, supposed to be unsigned.");
 
 template<coord_t size>
-inline PositionT<size>& PositionT<size>::instance()
+inline const PositionT<size>& PositionT<size>::instance()
 {
     static PositionT<size> pos;
     return pos;
