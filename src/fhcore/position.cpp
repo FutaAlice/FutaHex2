@@ -9,7 +9,7 @@ pos_t::pos_t(coord_t row, coord_t col, coord_t size)
 {
 }
 
-pos_t *position::pos_t::adj(int dir) const
+const pos_t *position::pos_t::adj(int dir) const
 {
     return _adjacent[dir];
 }

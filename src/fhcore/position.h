@@ -14,7 +14,7 @@ class pos_t
 {
 public:
     pos_t(coord_t row, coord_t col, coord_t size);
-    pos_t *adj(int dir) const;
+    const pos_t *adj(int dir) const;
     void setAdj(int dir, pos_t *adj);
     friend std::ostream& operator<< (std::ostream& stream, const pos_t pt);
 public:
@@ -31,8 +31,8 @@ class PositionT
 {
 public:
     static const PositionT<size> & instance();
-    pos_t *operator()(coord_t index) const;
-    pos_t *operator()(coord_t row, coord_t col) const;
+    const pos_t *operator()(coord_t index) const;
+    const pos_t *operator()(coord_t row, coord_t col) const;
 private:
     PositionT();
     ~PositionT();

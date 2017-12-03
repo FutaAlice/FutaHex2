@@ -13,13 +13,13 @@ inline const PositionT<size>& PositionT<size>::instance()
 }
 
 template<coord_t size>
-inline pos_t * PositionT<size>::operator()(coord_t index) const
+inline const pos_t * PositionT<size>::operator()(coord_t index) const
 {
     return _container[index];
 }
 
 template<coord_t size>
-inline pos_t * PositionT<size>::operator()(coord_t row, coord_t col) const
+inline const pos_t * PositionT<size>::operator()(coord_t row, coord_t col) const
 {
     return _container[row * size + col];
 }
