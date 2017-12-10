@@ -9,6 +9,11 @@ pos_t::pos_t(coord_t row, coord_t col, coord_t size)
 {
 }
 
+const std::array<pos_t*, 6>& pos_t::adj() const
+{
+    return _adjacent;
+}
+
 const pos_t *position::pos_t::adj(int dir) const
 {
     return _adjacent[dir];

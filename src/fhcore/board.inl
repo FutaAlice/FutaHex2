@@ -2,6 +2,7 @@
 #include <string>
 #include <ostream>
 #include <iomanip>
+#include <algorithm>
 #include "logger.h"
 #include "board.h"
 
@@ -11,6 +12,37 @@ template<typename Test, coord_t size>
 inline BoardT<Test, size>::BoardT() noexcept
 {
     check_boardsize();
+
+    for (auto link_array : _link)
+    {
+        int index = 0;
+        for (auto link : link_array)
+        {
+            if (size * size == index)
+                break;
+            auto pt_center = _pos(index);
+            for (auto pt_adjacent : pt_center->adj())
+            {
+                auto pt = pt_adjacent;
+                if (!pt)
+                    continue;
+                link.insert(pt->index);
+            }
+            ++index;
+        }
+    }
+
+    for (int i = 0; i < 121; ++i)
+    {
+        auto link = _link[1][i];
+        debug() << "Red " << i << " linked with: ";
+        for (auto index : link)
+        {
+            debug() << index;
+        }
+    }
+
+
 }
 
 template<typename Test, coord_t size>
@@ -70,6 +102,12 @@ template<typename Test, coord_t size>
 inline coord_t BoardT<Test, size>::index() const
 {
     return _pos(_rowBuf, _colBuf)->index;
+}
+
+template<typename Test, coord_t size>
+inline coord_t BoardT<Test, size>::index(coord_t row, coord_t col) const
+{
+    return row * size + col;
 }
 
 template<typename Test, coord_t size>

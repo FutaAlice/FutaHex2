@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <bitset>
+#include <array>
 #include <set>
 #include <initializer_list>
 #include "color.h"
@@ -46,6 +47,7 @@ public:
     Color color() const;
     Color winner() const;
     coord_t index() const;
+    coord_t index(coord_t row, coord_t col) const;
 private:
     static void check_boardsize();
 public:
@@ -56,7 +58,9 @@ private:
     coord_t _colBuf { 0 };
     const Position & _pos { Position::instance() };
     std::bitset<size * size> _bit[2];
-    std::set<coord_t> _link[2][size * size];
+    // std::set<coord_t> _link[2][size * size];
+    std::array<std::set<coord_t>, size * size + 2> _link[2];
+    std::array<std::set<coord_t>, 123> _test[2];
 };
 
 template<coord_t size>

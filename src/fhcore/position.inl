@@ -36,10 +36,10 @@ inline PositionT<size>::PositionT()
     }
     coord_t s = size;
     auto &container = _container;
-    auto get_index = [&container, s](coord_t row, coord_t col) {
+    auto get_index = [&container, s](coord_t row, coord_t col)->pos_t * {
         if (row < s && col < s)
             return container[row * s + col];
-        return (pos_t *)NULL;
+        return nullptr;
     };
     for (auto pos : _container)
     {
@@ -62,7 +62,10 @@ template<coord_t size>
 inline PositionT<size>::~PositionT()
 {
     for (auto pos : _container)
+    {
         delete pos;
+        pos = nullptr;
+    }
 }
 
 }
