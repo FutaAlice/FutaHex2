@@ -13,10 +13,10 @@ inline BoardT<Test, size>::BoardT() noexcept
 {
     check_boardsize();
 
-    for (auto link_array : _link)
+    for (auto & link_array : _link)
     {
         int index = 0;
-        for (auto link : link_array)
+        for (auto & link : link_array)
         {
             if (size * size == index)
                 break;
@@ -32,14 +32,16 @@ inline BoardT<Test, size>::BoardT() noexcept
         }
     }
 
-    for (int i = 0; i < 121; ++i)
+    for (int i = 0; i < size * size; ++i)
     {
         auto link = _link[1][i];
-        debug() << "Red " << i << " linked with: ";
+        ostringstream os;
+        os << "Red " << i << " linked with: ";
         for (auto index : link)
         {
-            debug() << index;
+            os << index << " ";
         }
+        debug() << os.str();
     }
 
 
