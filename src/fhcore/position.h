@@ -23,6 +23,8 @@ public:
     coord_t col;
     coord_t size;
     coord_t index;
+    bool bAdjBegin[2];
+    bool bAdjEnd[2];
 private:
     std::array<pos_t *, 6> _adjacent;
 };

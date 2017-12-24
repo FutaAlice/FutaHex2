@@ -3,8 +3,6 @@
 #include <thread>
 #include <logger.h>
 #include "fhcore_test.h"
-using namespace std;
-using namespace logger;
 
 int test_fhcore_all()
 {
@@ -25,6 +23,7 @@ int test_fhcore_all()
 
 int test_fhcore_logger()
 {
+    using namespace logger;
     debug(Level::Info) << __func__;
     record(Level::Info) << __func__;
 
@@ -35,6 +34,7 @@ int test_fhcore_logger()
 int test_fhcore_color()
 {
     using namespace color;
+    using namespace logger;
 
     Color r = Color::Red, b = Color::Blue;
     auto not_r = !r;
@@ -106,6 +106,7 @@ int test_fhcore_position()
 int test_fhcore_board()
 {
     using namespace board;
+    using namespace logger;
 
     // Board<11> _b;
     Board<11> b;

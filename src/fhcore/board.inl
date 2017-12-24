@@ -12,7 +12,7 @@ template<typename Test, coord_t size>
 inline BoardT<Test, size>::BoardT() noexcept
 {
     check_boardsize();
-
+    
     for (auto & link_array : _link)
     {
         int index = 0;
@@ -31,7 +31,8 @@ inline BoardT<Test, size>::BoardT() noexcept
             ++index;
         }
     }
-
+    using namespace std;
+    using namespace logger;
     for (int i = 0; i < size * size; ++i)
     {
         auto link = _link[1][i];
