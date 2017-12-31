@@ -220,7 +220,7 @@ template<typename Test, coord_t size>
 std::ostream& operator<< (std::ostream& stream, BoardT<Test, size> b)
 {
     using namespace std;
-    stream << __func__ << endl;
+    stream << typeid(b).name() << __func__ << endl;
     stream << b.debug_state_info();
     stream << b.debug_link_info();
     stream << b.debug_bit_info();
