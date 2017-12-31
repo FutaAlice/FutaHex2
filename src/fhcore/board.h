@@ -1,13 +1,3 @@
-#pragma once
-#include <iostream>
-#include <bitset>
-#include <array>
-#include <set>
-#include <string>
-#include <initializer_list>
-#include "color.h"
-#include "position.h"
-
 /*
 Sample for 5x5 board:
 
@@ -27,6 +17,16 @@ Sample for 5x5 board:
                      
 */
 
+#pragma once
+#include <iostream>
+#include <bitset>
+#include <array>
+#include <set>
+#include <string>
+#include <initializer_list>
+#include "color.h"
+#include "position.h"
+
 namespace board
 {
 using namespace color;
@@ -41,6 +41,8 @@ public:
     BoardT() noexcept;
     BoardT<Test, size>& operator()(coord_t row, coord_t col);
     BoardT<Test, size>& operator()(coord_t index);
+    const std::array<std::set<coord_t>, size * size + 2> &
+        operator[](Color color) const;
     void operator=(const Color color);
     
     operator Color();

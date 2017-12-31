@@ -69,6 +69,13 @@ inline BoardT<Test, size>& BoardT<Test, size>::operator()(coord_t index)
 }
 
 template<typename Test, coord_t size>
+inline const std::array<std::set<coord_t>, size*size + 2> &
+BoardT<Test, size>::operator[](Color color) const
+{
+    return _link[&color];
+}
+
+template<typename Test, coord_t size>
 inline void BoardT<Test, size>::operator=(const Color color)
 {
     if (Color::Empty == color)
@@ -138,19 +145,32 @@ inline std::string BoardT<Test, size>::debug_bit_info() const
 {
     using namespace std;
     ostringstream oss;
-    Color c = Color::Empty;
-    for (int row = 0; row < size; ++row)
+    Color color = Color::Empty;
+    oss << "©°©¤";
+    for (auto i = 0; i < size * 2; ++i) oss << "©¤";
+    oss << endl << "©¦" << "  ";
+    for (coord_t i = 0; i < size; ++i)
     {
+        char c = (i <= 9) ? (char)('0' + i) : (char)('A' + i - 10);
+        oss << c << " ";
+    }
+    oss << " ---> col" << endl;
+    for (coord_t row = 0; row < size; ++row)
+    {
+        char c = (row <= 9) ? (char)('0' + row) : (char)('A' + row - 10);
+        oss << "©¦" << c << "  ";
         oss << setfill(' ') << setw(row) << "";
         for (int col = 0; col < size; ++col)
         {
             // undefined behaviour, maybe not safe?
             auto p_this = const_cast<BoardT<Test, size> *>(this);
-            c = (*p_this)(row, col);
-            oss << c << " ";
+            color = (*p_this)(row, col);
+            oss << color << " ";
         }
         oss << endl;
     }
+    oss << "©¸©¤";
+    for (auto i = 0; i < size * 2; ++i) oss << "©¤";
     return oss.str();
 }
 
@@ -202,8 +222,8 @@ std::ostream& operator<< (std::ostream& stream, BoardT<Test, size> b)
     using namespace std;
     stream << __func__ << endl;
     stream << b.debug_state_info();
-    stream << b.debug_bit_info();
     stream << b.debug_link_info();
+    stream << b.debug_bit_info();
     return stream;
 }
 
