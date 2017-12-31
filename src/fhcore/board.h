@@ -3,6 +3,7 @@
 #include <bitset>
 #include <array>
 #include <set>
+#include <string>
 #include <initializer_list>
 #include "color.h"
 #include "position.h"
@@ -39,6 +40,7 @@ class BoardT
 public:
     BoardT() noexcept;
     BoardT<Test, size>& operator()(coord_t row, coord_t col);
+    BoardT<Test, size>& operator()(coord_t index);
     void operator=(const Color color);
     
     operator Color();
@@ -48,11 +50,22 @@ public:
     Color winner() const;
     coord_t index() const;
     coord_t index(coord_t row, coord_t col) const;
-private:
-    static void check_boardsize();
+    std::set<coord_t>::iterator begin(Color color, coord_t index) const
+    {
+        return _link[&color][index].begin();
+    }
+    std::set<coord_t>::iterator end(Color color, coord_t index) const
+    {
+        return _link[&color][index].end();
+    }
+
+    std::string debug_state_info() const;
+    std::string debug_bit_info() const;
+    std::string debug_link_info() const;
+
 public:
-    static const coord_t nBegin { size };
-    static const coord_t nEnd { size + 1 };
+    static const coord_t nBegin { size * size };
+    static const coord_t nEnd { size * size + 1 };
 private:
     coord_t _rowBuf { 0 };
     coord_t _colBuf { 0 };

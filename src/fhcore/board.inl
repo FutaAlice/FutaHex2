@@ -2,59 +2,69 @@
 #include <string>
 #include <ostream>
 #include <iomanip>
+#include <cmath>
 #include <algorithm>
 #include "logger.h"
 #include "board.h"
 
 namespace board
 {
+
 template<typename Test, coord_t size>
 inline BoardT<Test, size>::BoardT() noexcept
 {
-    check_boardsize();
+    static_assert((0 != size % 2) && (5 <= size),
+                  "board size supposed to an odd number greater than five.");
+    using namespace std;
+    using namespace color;
     
-    for (auto & link_array : _link)
-    {
+    auto func = [this](auto & link_rb, const Position & pos, Color color) {
+        auto & link_array = link_rb[&color];
         int index = 0;
-        for (auto & link : link_array)
+        for (set<coord_t> & link : link_array)
         {
             if (size * size == index)
                 break;
-            auto pt_center = _pos(index);
+            auto pt_center = pos(index);
             for (auto pt_adjacent : pt_center->adj())
             {
-                auto pt = pt_adjacent;
-                if (!pt)
+                if (!pt_adjacent)
                     continue;
-                link.insert(pt->index);
+                link.insert(pt_adjacent->index);
+            }
+            if (pt_center->bAdjBegin[&color])
+            {
+                link.insert(nBegin);
+                link_array[nBegin].insert(index);
+            }
+            if (pt_center->bAdjEnd[&color])
+            {
+                link.insert(nEnd);
+                link_array[nEnd].insert(index);
             }
             ++index;
         }
-    }
-    using namespace std;
-    using namespace logger;
-    for (int i = 0; i < size * size; ++i)
-    {
-        auto link = _link[1][i];
-        ostringstream os;
-        os << "Red " << i << " linked with: ";
-        for (auto index : link)
-        {
-            os << index << " ";
-        }
-        debug() << os.str();
-    }
-
-
+    };
+    func(_link, _pos, Color::Red);
+    func(_link, _pos, Color::Blue);
 }
 
 template<typename Test, coord_t size>
 inline BoardT<Test, size> &
 BoardT<Test, size>::operator()(coord_t row, coord_t col)
 {
-    assert(row < size && col < size);
+    assert(size > row && size > col);
     _rowBuf = row;
     _colBuf = col;
+    return *this;
+}
+
+template<typename Test, coord_t size>
+inline BoardT<Test, size>& BoardT<Test, size>::operator()(coord_t index)
+{
+    assert(size * size > index);
+    _rowBuf = _pos(index)->row;
+    _colBuf = _pos(index)->col;
     return *this;
 }
 
@@ -114,19 +124,76 @@ inline coord_t BoardT<Test, size>::index(coord_t row, coord_t col) const
 }
 
 template<typename Test, coord_t size>
-inline void board::BoardT<Test, size>::check_boardsize()
+inline std::string BoardT<Test, size>::debug_state_info() const
 {
     using namespace std;
-    using namespace logger;
-    if (0 == size % 2)
-    {
-        ostringstream oss;
-        oss << __func__ << "(" << size << ")" << " illegal!" << endl;
-        oss << "board size supposed to an odd number greater than five.";
+    ostringstream oss;
+    oss << "current turns: " << terns() << endl;
+    oss << "current color: " << color() << endl;
+    return oss.str();
+}
 
-        debug(Level::Fatal) << oss.str();
-        throw;
+template<typename Test, coord_t size>
+inline std::string BoardT<Test, size>::debug_bit_info() const
+{
+    using namespace std;
+    ostringstream oss;
+    Color c = Color::Empty;
+    for (int row = 0; row < size; ++row)
+    {
+        oss << setfill(' ') << setw(row) << "";
+        for (int col = 0; col < size; ++col)
+        {
+            // undefined behaviour, maybe not safe?
+            auto p_this = const_cast<BoardT<Test, size> *>(this);
+            c = (*p_this)(row, col);
+            oss << c << " ";
+        }
+        oss << endl;
     }
+    return oss.str();
+}
+
+template<typename Test, coord_t size>
+inline std::string BoardT<Test, size>::debug_link_info() const
+{
+    using namespace std;
+    ostringstream oss;
+    oss << __func__ << endl;
+    const char c = '0';
+    streamsize s = (streamsize)log10(size - 1) + 1;
+    streamsize sp = 15;
+    for (coord_t i = 0; i < size * size + 2; ++i)
+    {
+        auto link = _link[&Color::Red][i];
+        oss << setw((streamsize)log10(size * size + 1) + 1) << i;
+        switch (i)
+        {
+        case nBegin:
+            oss << " (" << setw(sp) << "begin): ";
+            break;
+        case nEnd:
+            oss << " (" << setw(sp) << "end): ";
+            break;
+        default:
+            oss << " (row_" << setfill(c) << setw(s) << _pos(i)->row
+                << ", col_" << setfill(c) << setw(s) << _pos(i)->col
+                << "): ";
+            break;
+        }
+        auto func = [&, this](Color color) {
+            oss << color << "[";
+            for_each(begin(color, i), end(color, i), [&](auto index) {
+                oss << " " << index;
+            });
+            oss << "]";
+        };
+        func(Color::Red);
+        oss << ", ";
+        func(Color::Blue);
+        oss << endl;
+    }
+    return oss.str();
 }
 
 template<typename Test, coord_t size>
@@ -134,20 +201,9 @@ std::ostream& operator<< (std::ostream& stream, BoardT<Test, size> b)
 {
     using namespace std;
     stream << __func__ << endl;
-    stream << "current turns: " << b.terns() << endl;
-    stream << "current color: " << b.color() << endl;
-    Color c;
-    for (int row = 0; row < size; ++row)
-    {
-        stream << setfill(' ') << setw(row) << "";
-        for (int col = 0; col < size; ++col)
-        {
-            c = b(row, col);
-            stream << c << " ";
-        }
-        stream << endl;
-    }
-
+    stream << b.debug_state_info();
+    stream << b.debug_bit_info();
+    stream << b.debug_link_info();
     return stream;
 }
 
