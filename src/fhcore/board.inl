@@ -250,8 +250,27 @@ inline void BoardT<Test, size>::set_piece(const Color color)
 template<typename Test, coord_t size>
 inline void BoardT<Test, size>::reset_piece()
 {
-    _bit[&Color::Red].reset(index());
-    _bit[&Color::Blue].reset(index());
+    // previous color
+    Color previous = *this;
+    if (Color::Empty == previous)
+        return;
+    const auto center = index();
+    // reset bitmap
+    _bit[&Color::Red].reset(center);
+    _bit[&Color::Blue].reset(center);
+    // link to adj(empty)
+    for (auto adj : _pos(index())->adj())
+    {
+        if (_bit[&Color::Red][adj->index] == 0 &&
+            _bit[&Color::Blue][adj->index] == 0)
+        {
+            _link[&Color::Red][index()].insert(adj->index);
+            _link[&Color::Red][adj->index].insert(index());
+            _link[&Color::Blue][index()].insert(adj->index);
+            _link[&Color::Blue][adj->index].insert(index());
+        }
+    }
+    // TODO: fix it!
 }
 
 template<typename Test, coord_t size>
