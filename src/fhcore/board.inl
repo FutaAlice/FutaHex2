@@ -34,13 +34,13 @@ inline BoardT<Test, size>::BoardT() noexcept
             }
             if (pt_center->bAdjBegin[&color])
             {
-                link.insert(nBegin);
-                link_array[nBegin].insert(index);
+                link.insert(Position::nBegin);
+                link_array[Position::nBegin].insert(index);
             }
             if (pt_center->bAdjEnd[&color])
             {
-                link.insert(nEnd);
-                link_array[nEnd].insert(index);
+                link.insert(Position::nEnd);
+                link_array[Position::nEnd].insert(index);
             }
             ++index;
         }
@@ -80,12 +80,11 @@ inline void BoardT<Test, size>::operator=(const Color color)
 {
     if (Color::Empty == color)
     {
-        _bit[&Color::Red].reset(index());
-        _bit[&Color::Blue].reset(index());
+        reset_piece();
     }
     else // Not empty
     {
-        _bit[&color].set(index());
+        set_piece(color);
     }
 }
 
@@ -189,10 +188,10 @@ inline std::string BoardT<Test, size>::debug_link_info() const
         oss << setw((streamsize)log10(size * size + 1) + 1) << i;
         switch (i)
         {
-        case nBegin:
+        case Position::nBegin:
             oss << " (" << setw(sp) << "begin): ";
             break;
-        case nEnd:
+        case Position::nEnd:
             oss << " (" << setw(sp) << "end): ";
             break;
         default:
@@ -214,6 +213,45 @@ inline std::string BoardT<Test, size>::debug_link_info() const
         oss << endl;
     }
     return oss.str();
+}
+
+template<typename Test, coord_t size>
+inline void BoardT<Test, size>::set_piece(const Color color)
+{
+    const auto center = index();
+    // make sure position empty
+    assert(0 == _bit[&!color][center]);
+    // current-color, set bitmap
+    _bit[&color].set(center);
+    // opposite-color, clear link
+    for (auto adj_index : _link[&!color][center])
+    {
+        _link[&!color][adj_index].erase(center);
+    }
+    _link[&!color][center].clear();
+    // current-color, link
+    for (auto iter = _link[&color][center].begin();
+         iter != _link[&color][center].end();
+         ++iter)
+    {
+        // disconnect with center-point
+        _link[&color][*iter].erase(center);
+        // connect with point around center
+        auto it_adj = iter;
+        for (++it_adj; it_adj != _link[&color][center].end(); ++it_adj)
+        {
+            _link[&color][*iter].insert(*it_adj);
+            _link[&color][*it_adj].insert(*iter);
+        } ;
+    }
+    _link[&color][center].clear();
+}
+
+template<typename Test, coord_t size>
+inline void BoardT<Test, size>::reset_piece()
+{
+    _bit[&Color::Red].reset(index());
+    _bit[&Color::Blue].reset(index());
 }
 
 template<typename Test, coord_t size>

@@ -65,9 +65,10 @@ public:
     std::string debug_bit_info() const;
     std::string debug_link_info() const;
 
-public:
-    static const coord_t nBegin { size * size };
-    static const coord_t nEnd { size * size + 1 };
+private:
+    void set_piece(const Color color);
+    void reset_piece();
+
 private:
     coord_t _rowBuf { 0 };
     coord_t _colBuf { 0 };
