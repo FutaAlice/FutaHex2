@@ -36,6 +36,9 @@ public:
     static const PositionT<size> & instance();
     const pos_t *operator()(coord_t index) const;
     const pos_t *operator()(coord_t row, coord_t col) const;
+public:
+    static const coord_t nBegin { size * size };
+    static const coord_t nEnd { size * size + 1 };
 private:
     PositionT();
     ~PositionT();
