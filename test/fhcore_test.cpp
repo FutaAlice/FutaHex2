@@ -105,11 +105,13 @@ int test_fhcore_position()
 
 int test_fhcore_board()
 {
+    using namespace std;
     using namespace board;
     using namespace logger;
 
     // Board<11> _b;
-    Board<11> b;
+    shared_ptr<Board<11>> pb = make_shared<Board<11>>();
+    auto & b = *pb;
 
     b(1, 2) = Color::Red;
     b(10, 9) = b.color();
