@@ -270,7 +270,35 @@ inline void BoardT<Test, size>::reset_piece()
             _link[&Color::Blue][adj->index].insert(index());
         }
     }
-    // TODO: fix it!
+    // low speed, for test
+    std::set<coord_t> tmp;
+    for (auto adj : _pos(index())->adj())
+    {
+        if (!adj) continue;
+        tmp.insert(adj->index);
+    }
+    for (auto adj : _pos(index())->adj())
+    {
+        if (!adj) continue;
+        std::set<coord_t> cp(tmp);
+        for (auto adjadj : adj->adj())
+        {
+            //static int i = 0;
+            //std::cout << ++i << std::endl;
+            //if (i == 15)
+            //    for (auto j : cp)
+            //    {
+            //        std::cout << j << " ";
+            //    }
+            if (!adjadj) continue;
+            cp.erase(adjadj->index);
+        }
+        for (auto i : cp)
+        {
+            _link[&previous][adj->index].erase(i);
+        }
+    }
+
 }
 
 template<typename Test, coord_t size>
