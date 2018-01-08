@@ -122,6 +122,8 @@ int test_fhcore_board()
 
     b_5(1, 2) = b_5.color();
     b_5(4, 3) = b_5.color();
+    b_5 = Color::Empty;
+    b_5(1, 2) = Color::Empty;
 
     debug() << b_5;
 
