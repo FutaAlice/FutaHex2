@@ -261,6 +261,7 @@ inline void BoardT<Test, size>::reset_piece()
     // link to adj(empty)
     for (auto adj : _pos(index())->adj())
     {
+        if (!adj) continue;
         if (_bit[&Color::Red][adj->index] == 0 &&
             _bit[&Color::Blue][adj->index] == 0)
         {
@@ -298,7 +299,15 @@ inline void BoardT<Test, size>::reset_piece()
             _link[&previous][adj->index].erase(i);
         }
     }
-
+    // link with begin or end point.
+    if (_pos(index())->bAdjBegin[&Color::Red])
+        _link[&Color::Red][index()].insert(Position::nBegin);
+    if (_pos(index())->bAdjBegin[&Color::Blue])
+        _link[&Color::Blue][index()].insert(Position::nBegin);
+    if (_pos(index())->bAdjEnd[&Color::Red])
+        _link[&Color::Red][index()].insert(Position::nEnd);
+    if (_pos(index())->bAdjEnd[&Color::Blue])
+        _link[&Color::Blue][index()].insert(Position::nEnd);
 }
 
 template<typename Test, coord_t size>
