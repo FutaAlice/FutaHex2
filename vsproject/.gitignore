@@ -4,5 +4,7 @@
 *.user
 *.sdf
 *.opensdf
+*.VC.db
+*.VC.opendb
 
 *.log

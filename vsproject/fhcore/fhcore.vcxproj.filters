@@ -3,7 +3,7 @@
   <ItemGroup>
     <Filter Include="source">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;inl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="header">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
@@ -14,10 +14,33 @@
     <ClCompile Include="..\..\src\fhcore\logger.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\fhcore\color.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\fhcore\position.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\fhcore\logger.h">
       <Filter>header</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\fhcore\board.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\fhcore\color.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\fhcore\position.h">
+      <Filter>header</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\fhcore\board.inl">
+      <Filter>source</Filter>
+    </None>
+    <None Include="..\..\src\fhcore\position.inl">
+      <Filter>source</Filter>
+    </None>
   </ItemGroup>
 </Project>
