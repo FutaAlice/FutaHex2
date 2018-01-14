@@ -114,7 +114,17 @@ inline Color BoardT<Test, size>::color() const
 template<typename Test, coord_t size>
 inline Color BoardT<Test, size>::winner() const
 {
-    return Color();
+    bool r_win = (_link[&Color::Red][Position::nBegin].end !=
+                    _link[&Color::Red][Position::nBegin].find(Position::nEnd));
+    bool b_win = (_link[&Color::Blue][Position::nBegin].end !=
+                    _link[&Color::Blue][Position::nBegin].find(Position::nEnd));
+    assert(!(r_win && b_win));
+    if (r_win)
+        return Color::Red;
+    else if (b_win)
+        return Color::Blue;
+    else
+        return Color::Empty;
 }
 
 template<typename Test, coord_t size>
