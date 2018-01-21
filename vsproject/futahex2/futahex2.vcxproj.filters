@@ -40,10 +40,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="..\..\src\futahex2\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="app.cpp">
+    <ClCompile Include="..\..\src\futahex2\app.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_app.cpp">
@@ -57,13 +57,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="app.h">
+    <CustomBuild Include="..\..\src\futahex2\app.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="app.ui">
+    <CustomBuild Include="..\..\src\futahex2\app.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="app.qrc">
+    <CustomBuild Include="..\..\src\futahex2\app.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
   </ItemGroup>
