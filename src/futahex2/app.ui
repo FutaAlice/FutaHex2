@@ -27,11 +27,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_l">
        <item>
-        <widget class="QWidget" name="canvas" native="true">
-         <property name="styleSheet">
-          <string notr="true">background-color:black;</string>
-         </property>
-        </widget>
+        <widget class="Canvas" name="canvas" native="true"/>
        </item>
       </layout>
      </item>
@@ -106,6 +102,14 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>Canvas</class>
+   <extends>QWidget</extends>
+   <header>canvas.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="app.qrc"/>
  </resources>
