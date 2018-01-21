@@ -10,6 +10,9 @@ class app : public QMainWindow
 public:
     app(QWidget *parent = Q_NULLPTR);
 
+protected:
+    void paintEvent(QPaintEvent *event);
+
 private:
     Ui::appClass ui;
 };
