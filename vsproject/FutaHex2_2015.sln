@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcxproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fhcore", "fhcore\fhcore.vcxproj", "{985413A6-D855-41E1-88F3-73FF5AD1CC3A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "futahex2", "futahex2\futahex2.vcxproj", "{C620AB3D-624B-4429-9511-A2E9B3C1CB62}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "futahex2", "..\src\futahex2\futahex2.vcxproj", "{B12702AD-ABFB-343A-A199-8E24837244A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,14 +33,12 @@ Global
 		{985413A6-D855-41E1-88F3-73FF5AD1CC3A}.Release|x64.Build.0 = Release|x64
 		{985413A6-D855-41E1-88F3-73FF5AD1CC3A}.Release|x86.ActiveCfg = Release|Win32
 		{985413A6-D855-41E1-88F3-73FF5AD1CC3A}.Release|x86.Build.0 = Release|Win32
-		{C620AB3D-624B-4429-9511-A2E9B3C1CB62}.Debug|x64.ActiveCfg = Debug|x64
-		{C620AB3D-624B-4429-9511-A2E9B3C1CB62}.Debug|x64.Build.0 = Debug|x64
-		{C620AB3D-624B-4429-9511-A2E9B3C1CB62}.Debug|x86.ActiveCfg = Debug|Win32
-		{C620AB3D-624B-4429-9511-A2E9B3C1CB62}.Debug|x86.Build.0 = Debug|Win32
-		{C620AB3D-624B-4429-9511-A2E9B3C1CB62}.Release|x64.ActiveCfg = Release|x64
-		{C620AB3D-624B-4429-9511-A2E9B3C1CB62}.Release|x64.Build.0 = Release|x64
-		{C620AB3D-624B-4429-9511-A2E9B3C1CB62}.Release|x86.ActiveCfg = Release|Win32
-		{C620AB3D-624B-4429-9511-A2E9B3C1CB62}.Release|x86.Build.0 = Release|Win32
+		{B12702AD-ABFB-343A-A199-8E24837244A3}.Debug|x64.ActiveCfg = Debug|x64
+		{B12702AD-ABFB-343A-A199-8E24837244A3}.Debug|x64.Build.0 = Debug|x64
+		{B12702AD-ABFB-343A-A199-8E24837244A3}.Debug|x86.ActiveCfg = Debug|x64
+		{B12702AD-ABFB-343A-A199-8E24837244A3}.Release|x64.ActiveCfg = Release|x64
+		{B12702AD-ABFB-343A-A199-8E24837244A3}.Release|x64.Build.0 = Release|x64
+		{B12702AD-ABFB-343A-A199-8E24837244A3}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
