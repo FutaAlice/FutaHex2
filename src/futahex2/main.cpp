@@ -1,5 +1,5 @@
 #include "app.h"
-#include <memory>
+#include <cassert>
 #include <QtWidgets/QApplication>
 #include <QDesktopWidget>
 
@@ -9,11 +9,9 @@ int main(int argc, char *argv[])
 
     auto desktop = a.desktop();
     auto rect = desktop->screenGeometry();
-    int height = rect.height() * 0.5f;
+    assert(app::w < rect.height());
 
     app w;
-
-    w.setFixedSize(height * 16 / 9, height);
     w.show();
 
     return a.exec();

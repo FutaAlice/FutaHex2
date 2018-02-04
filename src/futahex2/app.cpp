@@ -7,6 +7,7 @@ app::app(QWidget *parent)
 {
     ui.setupUi(this);
     ui.centralWidget->setLayout(ui.mainLayout);
+    setFixedSize(w * 16 / 9, w);
 }
 
 void app::paintEvent(QPaintEvent * event)
