@@ -7,6 +7,17 @@
 using namespace std;
 using namespace board;
 
+template<typename T>
+static void get_hex_vertex(T points[], T pt, double w, double h)
+{
+    points[0] = T(pt.x(), pt.y() - h / 2);
+    points[1] = T(pt.x() + w / 2, pt.y() - h / 4);
+    points[2] = T(pt.x() + w / 2, pt.y() + h / 4);
+    points[3] = T(pt.x(), pt.y() + h / 2);
+    points[4] = T(pt.x() - w / 2, pt.y() + h / 4);
+    points[5] = T(pt.x() - w / 2, pt.y() - h / 4);
+}
+
 //static const map<Color, QColor> cm =
 //{
 //    { Color::Red, _cr },
@@ -83,18 +94,11 @@ void Canvas::paintEvent(QPaintEvent * event)
 void Canvas::renderEmptyBoard()
 {
     QPainter painter(this);
-
+    painter.setPen(QPen(Qt::black, 1));
+    painter.setBrush(QBrush(_bk, Qt::SolidPattern));
     auto drawHex = [&](auto pt, auto w, auto h, auto ratio) {
-        painter.setPen(QPen(Qt::black, 1));
-        painter.setBrush(QBrush(_bk, Qt::SolidPattern));
-        const QPointF points[6] = {
-            QPointF(pt.x(), pt.y() - h / 2),
-            QPointF(pt.x() + w / 2, pt.y() - h / 4),
-            QPointF(pt.x() + w / 2, pt.y() + h / 4),
-            QPointF(pt.x(), pt.y() + h / 2),
-            QPointF(pt.x() - w / 2, pt.y() + h / 4),
-            QPointF(pt.x() - w / 2, pt.y() - h / 4),
-        };
+        QPointF points[6];
+        get_hex_vertex(points, pt, w, h);
         painter.drawConvexPolygon(points, 6);
     };
 
@@ -109,12 +113,54 @@ void Canvas::renderEmptyBoard()
 
 void Canvas::renderBorder()
 {
+    QPainter painter(this);
+    QPointF points[6];
+    painter.setPen(QPen(Qt::transparent, 0));
+    int mid = _size / 2;
+    QPainterPath *path = nullptr;
+    const double ratio = 1.25;
+    auto w = _hex_w * ratio;
+    auto h = _hex_h * ratio;
+    auto lineTo = [&](int i1, int i2, int i3, bool half) {
+        path->moveTo(_ct[mid][mid]);
+        path->lineTo(points[i1]);
+        path->lineTo(points[i2]);
+        if (!half)
+            path->lineTo(points[i3]);
+        else
+            path->lineTo((points[i2].x() + points[i3].x()) / 2,
+                         (points[i2].y() + points[i3].y()) / 2);
+    };
+
+    path = new QPainterPath;
+    path->setFillRule(Qt::WindingFill);
+    for (int col = 0; col < _size; ++col)
+    {
+        get_hex_vertex(points, _ct[0][col], w, h);
+        lineTo(5, 0, 1, col == _size - 1);
+        get_hex_vertex(points, _ct[_size - 1][col], w, h);
+        lineTo(2, 3, 4, col == 0);
+    }
+    painter.setBrush(QBrush(_cr, Qt::SolidPattern));
+    painter.drawPath(*path);
+    delete path;
+    path = new QPainterPath;
+    path->setFillRule(Qt::WindingFill);
+    for (int row = 0; row < _size; ++row)
+    {
+        get_hex_vertex(points, _ct[row][0], w, h);
+        lineTo(5, 4, 3, row == _size - 1);
+        get_hex_vertex(points, _ct[row][_size - 1], w, h);
+        lineTo(2, 1, 0, row == 0);
+    }
+    painter.setBrush(QBrush(_cb, Qt::SolidPattern));
+    painter.drawPath(*path);
+    delete path;
 }
 
 void Canvas::renderPieces()
 {
     QPainter painter(this);
-
     auto drawEllipse = [&](auto pt, auto color, auto radius, auto ratio) {
         assert(Color::Empty != color);
         QColor c = (Color::Red == color) ? _cr : _cb;
