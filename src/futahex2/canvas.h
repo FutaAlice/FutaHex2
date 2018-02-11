@@ -29,7 +29,7 @@ private:
     double _hex_w;
     int _h;
     int _w;
-    const QColor cr { QColor(234, 67, 53) };
-    const QColor cb { QColor(66, 133, 244) };
-    const QColor bk { QColor(191, 191, 191) };
+    const QColor _cr { QColor(234, 67, 53) };
+    const QColor _cb { QColor(66, 133, 244) };
+    const QColor _bk { QColor(191, 191, 191) };
 };
