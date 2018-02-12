@@ -54,11 +54,11 @@ public:
     coord_t index(coord_t row, coord_t col) const;
     std::set<coord_t>::iterator begin(Color color, coord_t index) const
     {
-        return _link[&color][index].begin();
+        return _link[*color][index].begin();
     }
     std::set<coord_t>::iterator end(Color color, coord_t index) const
     {
-        return _link[&color][index].end();
+        return _link[*color][index].end();
     }
 
     std::string debug_state_info() const;

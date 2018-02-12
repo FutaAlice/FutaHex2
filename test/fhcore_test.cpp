@@ -63,7 +63,7 @@ int test_fhcore_color()
     }
 
     const char *arr[2] = { "Red", "Blue" };
-    auto a_r = arr[&r];
+    auto a_r = arr[*r];
 
     return 0;
 }
