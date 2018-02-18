@@ -121,8 +121,9 @@ int test_fhcore_board()
     Board<5> b_5;
     IBoard *pib = &b_5;
 
-    b_5(1, 2) = b_5.color();
-    b_5(4, 3) = b_5.color();
+    IBoard &refb = *pib;
+    refb(1, 2) = refb.color();
+    refb(4, 3) = refb.color();
     //(*pib) = Color::Empty;
     //b_5(1, 2) = Color::Empty;
 
