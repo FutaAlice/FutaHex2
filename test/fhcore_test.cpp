@@ -63,7 +63,7 @@ int test_fhcore_color()
     }
 
     const char *arr[2] = { "Red", "Blue" };
-    auto a_r = arr[&r];
+    auto a_r = arr[*r];
 
     return 0;
 }
@@ -119,13 +119,29 @@ int test_fhcore_board()
     debug() << b;
 
     Board<5> b_5;
+    IBoard *pib = &b_5;
 
-    b_5(1, 2) = b_5.color();
-    b_5(4, 3) = b_5.color();
-    b_5 = Color::Empty;
-    b_5(1, 2) = Color::Empty;
+    IBoard &refb = *pib;
+    refb(1, 2) = refb.color();
+    refb(4, 3) = refb.color();
+    //(*pib) = Color::Empty;
+    //b_5(1, 2) = Color::Empty;
 
     debug() << b_5;
 
+    auto tp = pib->operator[](Color::Red);
+    auto ps = get<0>(tp);
+    auto len = get<1>(tp);
+
+    for_each(ps, ps + len, [](auto v) {
+        ostringstream oss;
+        for (auto i : v)
+        {
+            oss << i << " ";
+        }
+        debug() << oss.str();
+    });
+
+    debug() << pib->debug_bit_str();
     return 0;
 }

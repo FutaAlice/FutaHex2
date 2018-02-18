@@ -24,7 +24,7 @@ constexpr Color operator!(const Color color)
 #endif
 
 // Convert to color_t.
-constexpr color_t operator&(const Color color)
+constexpr color_t operator*(const Color color)
 {
     return static_cast<color_t>(color);
 }
