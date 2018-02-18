@@ -19,10 +19,11 @@ Sample for 5x5 board:
 
 #pragma once
 #include <iostream>
-#include <bitset>
 #include <array>
+#include <bitset>
 #include <set>
 #include <string>
+#include <tuple>
 #include <initializer_list>
 #include "color.h"
 #include "position.h"
@@ -35,6 +36,8 @@ using namespace position;
 class IBoard
 {
 public:
+    virtual std::tuple<const std::set<coord_t> *, size_t>
+        operator[](const Color color) const = 0;
     virtual void operator=(const Color color) = 0;
     virtual operator Color() const = 0;
 
@@ -42,12 +45,15 @@ public:
     virtual size_t terns() const = 0;
     virtual Color color() const = 0;
     virtual Color winner() const = 0;
-    virtual coord_t index() const = 0;
-    virtual coord_t index(coord_t row, coord_t col) const = 0;
 
-    virtual std::string debug_state_info() const = 0;
-    virtual std::string debug_bit_info() const = 0;
-    virtual std::string debug_link_info() const = 0;
+    virtual std::set<coord_t>::iterator
+        begin(const Color color, coord_t index) const = 0;
+    virtual std::set<coord_t>::iterator
+        end(const Color color, coord_t index) const = 0;
+
+    virtual std::string debug_state_str() const = 0;
+    virtual std::string debug_bit_str() const = 0;
+    virtual std::string debug_link_str() const = 0;
 };
 
 template<typename Test, coord_t size>
@@ -59,13 +65,10 @@ public:
     BoardT() noexcept;
     BoardT<Test, size>& operator()(coord_t row, coord_t col);
     BoardT<Test, size>& operator()(coord_t index);
-    const std::array<std::set<coord_t>, size * size + 2> &
-        operator[](Color color) const;
-
-    std::set<coord_t>::iterator begin(Color color, coord_t index) const;
-    std::set<coord_t>::iterator end(Color color, coord_t index) const;
 
 public: // Interface
+    virtual std::tuple<const std::set<coord_t> *, size_t>
+        operator[](const Color color) const;
     virtual void operator=(const Color color);
     virtual operator Color() const;
 
@@ -73,14 +76,18 @@ public: // Interface
     virtual size_t terns() const;
     virtual Color color() const;
     virtual Color winner() const;
-    virtual coord_t index() const;
-    virtual coord_t index(coord_t row, coord_t col) const;
 
-    virtual std::string debug_state_info() const;
-    virtual std::string debug_bit_info() const;
-    virtual std::string debug_link_info() const;
+    virtual std::set<coord_t>::iterator
+        begin(const Color color, coord_t index) const;
+    virtual std::set<coord_t>::iterator
+        end(const Color color, coord_t index) const;
+
+    virtual std::string debug_state_str() const;
+    virtual std::string debug_bit_str() const;
+    virtual std::string debug_link_str() const;
 
 private:
+    coord_t buf_index() const;
     void set_piece(const Color color);
     void reset_piece();
 
@@ -89,9 +96,7 @@ private:
     coord_t _colBuf { 0 };
     const Position & _pos { Position::instance() };
     std::bitset<size * size> _bit[2];
-    // std::set<coord_t> _link[2][size * size];
     std::array<std::set<coord_t>, size * size + 2> _link[2];
-    std::array<std::set<coord_t>, 123> _test[2];
 };
 
 template<coord_t size>

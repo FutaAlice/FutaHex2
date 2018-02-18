@@ -69,22 +69,11 @@ inline BoardT<Test, size>& BoardT<Test, size>::operator()(coord_t index)
 }
 
 template<typename Test, coord_t size>
-inline const std::array<std::set<coord_t>, size*size + 2> &
-BoardT<Test, size>::operator[](Color color) const
+inline std::tuple<const std::set<coord_t>*, size_t>
+BoardT<Test, size>::operator[](const Color color) const
 {
-    return _link[&color];
-}
-
-template<typename Test, coord_t size>
-inline std::set<coord_t>::iterator BoardT<Test, size>::begin(Color color, coord_t index) const
-{
-    return _link[*color][index].begin();
-}
-
-template<typename Test, coord_t size>
-inline std::set<coord_t>::iterator BoardT<Test, size>::end(Color color, coord_t index) const
-{
-    return _link[*color][index].end();
+    using namespace std;
+    return make_tuple(_link[*color].data(), _link[*color].size());
 }
 
 template<typename Test, coord_t size>
@@ -103,9 +92,9 @@ inline void BoardT<Test, size>::operator=(const Color color)
 template<typename Test, coord_t size>
 inline BoardT<Test, size>::operator Color() const
 {
-    if (_bit[*Color::Red][index()])
+    if (_bit[*Color::Red][buf_index()])
         return Color::Red;
-    else if (_bit[*Color::Blue][index()])
+    else if (_bit[*Color::Blue][buf_index()])
         return Color::Blue;
     else
         return Color::Empty;
@@ -146,33 +135,37 @@ inline Color BoardT<Test, size>::winner() const
 }
 
 template<typename Test, coord_t size>
-inline coord_t BoardT<Test, size>::index() const
+inline std::set<coord_t>::iterator
+BoardT<Test, size>::begin(const Color color, coord_t index) const
 {
-    return _pos(_rowBuf, _colBuf)->index;
+    return _link[*color][index].begin();
 }
 
 template<typename Test, coord_t size>
-inline coord_t BoardT<Test, size>::index(coord_t row, coord_t col) const
+inline std::set<coord_t>::iterator
+BoardT<Test, size>::end(const Color color, coord_t index) const
 {
-    return row * size + col;
+    return _link[*color][index].end();
 }
 
 template<typename Test, coord_t size>
-inline std::string BoardT<Test, size>::debug_state_info() const
+inline std::string BoardT<Test, size>::debug_state_str() const
 {
     using namespace std;
     ostringstream oss;
+    oss << endl;
     oss << "current turns: " << terns() << endl;
     oss << "current color: " << color() << endl;
     return oss.str();
 }
 
 template<typename Test, coord_t size>
-inline std::string BoardT<Test, size>::debug_bit_info() const
+inline std::string BoardT<Test, size>::debug_bit_str() const
 {
     using namespace std;
     ostringstream oss;
     Color color = Color::Empty;
+    oss << endl;
     oss << "©°©¤";
     for (auto i = 0; i < size * 2; ++i) oss << "©¤";
     oss << endl << "©¦" << "  ";
@@ -202,10 +195,11 @@ inline std::string BoardT<Test, size>::debug_bit_info() const
 }
 
 template<typename Test, coord_t size>
-inline std::string BoardT<Test, size>::debug_link_info() const
+inline std::string BoardT<Test, size>::debug_link_str() const
 {
     using namespace std;
     ostringstream oss;
+    oss << endl;
     oss << __func__ << endl;
     const char c = '0';
     streamsize s = (streamsize)log10(size - 1) + 1;
@@ -244,9 +238,15 @@ inline std::string BoardT<Test, size>::debug_link_info() const
 }
 
 template<typename Test, coord_t size>
+inline coord_t BoardT<Test, size>::buf_index() const
+{
+    return _pos(_rowBuf, _colBuf)->index;
+}
+
+template<typename Test, coord_t size>
 inline void BoardT<Test, size>::set_piece(const Color color)
 {
-    const auto center = index();
+    const auto center = buf_index();
     // make sure position empty
     assert(0 == _bit[*!color][center]);
     // current-color, set bitmap
@@ -282,31 +282,31 @@ inline void BoardT<Test, size>::reset_piece()
     Color previous = *this;
     if (Color::Empty == previous)
         return;
-    const auto center = index();
+    const auto center = buf_index();
     // reset bitmap
     _bit[*Color::Red].reset(center);
     _bit[*Color::Blue].reset(center);
     // link to adj(empty)
-    for (auto adj : _pos(index())->adj())
+    for (auto adj : _pos(center)->adj())
     {
         if (!adj) continue;
         if (_bit[*Color::Red][adj->index] == 0 &&
             _bit[*Color::Blue][adj->index] == 0)
         {
-            _link[*Color::Red][index()].insert(adj->index);
-            _link[*Color::Red][adj->index].insert(index());
-            _link[*Color::Blue][index()].insert(adj->index);
-            _link[*Color::Blue][adj->index].insert(index());
+            _link[*Color::Red][center].insert(adj->index);
+            _link[*Color::Red][adj->index].insert(center);
+            _link[*Color::Blue][center].insert(adj->index);
+            _link[*Color::Blue][adj->index].insert(center);
         }
     }
     // low speed, for test
     std::set<coord_t> tmp;
-    for (auto adj : _pos(index())->adj())
+    for (auto adj : _pos(center)->adj())
     {
         if (!adj) continue;
         tmp.insert(adj->index);
     }
-    for (auto adj : _pos(index())->adj())
+    for (auto adj : _pos(center)->adj())
     {
         if (!adj) continue;
         std::set<coord_t> cp(tmp);
@@ -328,14 +328,14 @@ inline void BoardT<Test, size>::reset_piece()
         }
     }
     // link with begin or end point.
-    if (_pos(index())->bAdjBegin[*Color::Red])
-        _link[*Color::Red][index()].insert(Position::nBegin);
-    if (_pos(index())->bAdjBegin[*Color::Blue])
-        _link[*Color::Blue][index()].insert(Position::nBegin);
-    if (_pos(index())->bAdjEnd[*Color::Red])
-        _link[*Color::Red][index()].insert(Position::nEnd);
-    if (_pos(index())->bAdjEnd[*Color::Blue])
-        _link[*Color::Blue][index()].insert(Position::nEnd);
+    if (_pos(center)->bAdjBegin[*Color::Red])
+        _link[*Color::Red][center].insert(Position::nBegin);
+    if (_pos(center)->bAdjBegin[*Color::Blue])
+        _link[*Color::Blue][center].insert(Position::nBegin);
+    if (_pos(center)->bAdjEnd[*Color::Red])
+        _link[*Color::Red][center].insert(Position::nEnd);
+    if (_pos(center)->bAdjEnd[*Color::Blue])
+        _link[*Color::Blue][center].insert(Position::nEnd);
 }
 
 template<typename Test, coord_t size>
@@ -343,9 +343,9 @@ std::ostream& operator<< (std::ostream& stream, BoardT<Test, size> b)
 {
     using namespace std;
     stream << typeid(b).name() << __func__ << endl;
-    stream << b.debug_state_info();
-    stream << b.debug_link_info();
-    stream << b.debug_bit_info();
+    stream << b.debug_state_str();
+    stream << b.debug_link_str();
+    stream << b.debug_bit_str();
     return stream;
 }
 
