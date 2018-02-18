@@ -32,8 +32,26 @@ namespace board
 using namespace color;
 using namespace position;
 
+class IBoard
+{
+public:
+    virtual void operator=(const Color color) = 0;
+    virtual operator Color() const = 0;
+
+    virtual size_t boardsize() const = 0;
+    virtual size_t terns() const = 0;
+    virtual Color color() const = 0;
+    virtual Color winner() const = 0;
+    virtual coord_t index() const = 0;
+    virtual coord_t index(coord_t row, coord_t col) const = 0;
+
+    virtual std::string debug_state_info() const = 0;
+    virtual std::string debug_bit_info() const = 0;
+    virtual std::string debug_link_info() const = 0;
+};
+
 template<typename Test, coord_t size>
-class BoardT
+class BoardT : public IBoard
 {
     friend Test;
     using Position = PositionT<size>;
@@ -43,27 +61,24 @@ public:
     BoardT<Test, size>& operator()(coord_t index);
     const std::array<std::set<coord_t>, size * size + 2> &
         operator[](Color color) const;
-    void operator=(const Color color);
-    
-    operator Color();
-    
-    size_t terns() const;
-    Color color() const;
-    Color winner() const;
-    coord_t index() const;
-    coord_t index(coord_t row, coord_t col) const;
-    std::set<coord_t>::iterator begin(Color color, coord_t index) const
-    {
-        return _link[*color][index].begin();
-    }
-    std::set<coord_t>::iterator end(Color color, coord_t index) const
-    {
-        return _link[*color][index].end();
-    }
 
-    std::string debug_state_info() const;
-    std::string debug_bit_info() const;
-    std::string debug_link_info() const;
+    std::set<coord_t>::iterator begin(Color color, coord_t index) const;
+    std::set<coord_t>::iterator end(Color color, coord_t index) const;
+
+public: // Interface
+    virtual void operator=(const Color color);
+    virtual operator Color() const;
+
+    virtual size_t boardsize() const;
+    virtual size_t terns() const;
+    virtual Color color() const;
+    virtual Color winner() const;
+    virtual coord_t index() const;
+    virtual coord_t index(coord_t row, coord_t col) const;
+
+    virtual std::string debug_state_info() const;
+    virtual std::string debug_bit_info() const;
+    virtual std::string debug_link_info() const;
 
 private:
     void set_piece(const Color color);

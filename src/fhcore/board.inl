@@ -76,6 +76,18 @@ BoardT<Test, size>::operator[](Color color) const
 }
 
 template<typename Test, coord_t size>
+inline std::set<coord_t>::iterator BoardT<Test, size>::begin(Color color, coord_t index) const
+{
+    return _link[*color][index].begin();
+}
+
+template<typename Test, coord_t size>
+inline std::set<coord_t>::iterator BoardT<Test, size>::end(Color color, coord_t index) const
+{
+    return _link[*color][index].end();
+}
+
+template<typename Test, coord_t size>
 inline void BoardT<Test, size>::operator=(const Color color)
 {
     if (Color::Empty == color)
@@ -89,7 +101,7 @@ inline void BoardT<Test, size>::operator=(const Color color)
 }
 
 template<typename Test, coord_t size>
-inline BoardT<Test, size>::operator Color()
+inline BoardT<Test, size>::operator Color() const
 {
     if (_bit[*Color::Red][index()])
         return Color::Red;
@@ -97,6 +109,12 @@ inline BoardT<Test, size>::operator Color()
         return Color::Blue;
     else
         return Color::Empty;
+}
+
+template<typename Test, coord_t size>
+inline size_t BoardT<Test, size>::boardsize() const
+{
+    return size;
 }
 
 template<typename Test, coord_t size>
@@ -114,10 +132,10 @@ inline Color BoardT<Test, size>::color() const
 template<typename Test, coord_t size>
 inline Color BoardT<Test, size>::winner() const
 {
-    bool r_win = (_link[&Color::Red][Position::nBegin].end !=
-                    _link[&Color::Red][Position::nBegin].find(Position::nEnd));
-    bool b_win = (_link[&Color::Blue][Position::nBegin].end !=
-                    _link[&Color::Blue][Position::nBegin].find(Position::nEnd));
+    bool r_win = (_link[*Color::Red][Position::nBegin].end() !=
+                    _link[*Color::Red][Position::nBegin].find(Position::nEnd));
+    bool b_win = (_link[*Color::Blue][Position::nBegin].end() !=
+                    _link[*Color::Blue][Position::nBegin].find(Position::nEnd));
     assert(!(r_win && b_win));
     if (r_win)
         return Color::Red;

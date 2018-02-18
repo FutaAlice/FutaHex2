@@ -119,13 +119,14 @@ int test_fhcore_board()
     debug() << b;
 
     Board<5> b_5;
+    IBoard *pib = &b_5;
 
     b_5(1, 2) = b_5.color();
     b_5(4, 3) = b_5.color();
-    b_5 = Color::Empty;
+    (*pib) = Color::Empty;
     b_5(1, 2) = Color::Empty;
 
     debug() << b_5;
-
+    debug() << pib->debug_bit_info();
     return 0;
 }
