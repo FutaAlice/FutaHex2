@@ -36,6 +36,9 @@ using namespace position;
 class IBoard
 {
 public:
+    virtual IBoard & operator()(coord_t row, coord_t col) = 0;
+    virtual IBoard & operator()(coord_t index) = 0;
+
     virtual std::tuple<const std::set<coord_t> *, size_t>
         operator[](const Color color) const = 0;
     virtual void operator=(const Color color) = 0;
@@ -63,10 +66,11 @@ class BoardT : public IBoard
     using Position = PositionT<size>;
 public:
     BoardT() noexcept;
-    BoardT<Test, size>& operator()(coord_t row, coord_t col);
-    BoardT<Test, size>& operator()(coord_t index);
 
 public: // Interface
+    virtual IBoard & operator()(coord_t row, coord_t col);
+    virtual IBoard & operator()(coord_t index);
+
     virtual std::tuple<const std::set<coord_t> *, size_t>
         operator[](const Color color) const;
     virtual void operator=(const Color color);

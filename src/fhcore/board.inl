@@ -50,8 +50,7 @@ inline BoardT<Test, size>::BoardT() noexcept
 }
 
 template<typename Test, coord_t size>
-inline BoardT<Test, size> &
-BoardT<Test, size>::operator()(coord_t row, coord_t col)
+inline IBoard & BoardT<Test, size>::operator()(coord_t row, coord_t col)
 {
     assert(size > row && size > col);
     _rowBuf = row;
@@ -60,7 +59,7 @@ BoardT<Test, size>::operator()(coord_t row, coord_t col)
 }
 
 template<typename Test, coord_t size>
-inline BoardT<Test, size>& BoardT<Test, size>::operator()(coord_t index)
+inline IBoard & BoardT<Test, size>::operator()(coord_t index)
 {
     assert(size * size > index);
     _rowBuf = _pos(index)->row;
