@@ -123,10 +123,24 @@ int test_fhcore_board()
 
     b_5(1, 2) = b_5.color();
     b_5(4, 3) = b_5.color();
-    (*pib) = Color::Empty;
-    b_5(1, 2) = Color::Empty;
+    //(*pib) = Color::Empty;
+    //b_5(1, 2) = Color::Empty;
 
     debug() << b_5;
-    debug() << pib->debug_bit_info();
+
+    auto tp = pib->operator[](Color::Red);
+    auto ps = get<0>(tp);
+    auto len = get<1>(tp);
+
+    for_each(ps, ps + len, [](auto v) {
+        ostringstream oss;
+        for (auto i : v)
+        {
+            oss << i << " ";
+        }
+        debug() << oss.str();
+    });
+
+    debug() << pib->debug_bit_str();
     return 0;
 }
