@@ -44,6 +44,7 @@ void Canvas::resize(IBoard *pb)
     _pBoard = pb->copy();
 
     this->resizeEvent(nullptr);
+    this->update();
 }
 
 void Canvas::resizeEvent(QResizeEvent * event)
@@ -52,7 +53,7 @@ void Canvas::resizeEvent(QResizeEvent * event)
         return;
 
     auto size = _pBoard->boardsize();
-    assert(5 < size && size < 19);
+    assert(5 <= size && size <= 19);
 
     if (_ratio * width() > height())
     {
