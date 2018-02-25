@@ -54,6 +54,8 @@ public:
     virtual std::set<coord_t>::iterator
         end(const Color color, coord_t index) const = 0;
 
+    virtual IBoard * copy() const = 0;
+
     virtual std::string debug_state_str() const = 0;
     virtual std::string debug_bit_str() const = 0;
     virtual std::string debug_link_str() const = 0;
@@ -87,6 +89,8 @@ public: // Interface
         begin(const Color color, coord_t index) const;
     virtual std::set<coord_t>::iterator
         end(const Color color, coord_t index) const;
+
+    virtual IBoard * copy() const;
 
     virtual std::string debug_state_str() const;
     virtual std::string debug_bit_str() const;

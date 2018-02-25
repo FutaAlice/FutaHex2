@@ -170,6 +170,12 @@ BoardT<Test, size>::end(const Color color, coord_t index) const
 }
 
 template<typename Test, coord_t size>
+inline IBoard * BoardT<Test, size>::copy() const
+{
+    return new BoardT(*this);
+}
+
+template<typename Test, coord_t size>
 inline std::string BoardT<Test, size>::debug_state_str() const
 {
     using namespace std;
@@ -291,7 +297,7 @@ inline void BoardT<Test, size>::set_piece(const Color color)
         {
             _link[*color][*iter].insert(*it_adj);
             _link[*color][*it_adj].insert(*iter);
-        } ;
+        }
     }
     _link[*color][center].clear();
 }
