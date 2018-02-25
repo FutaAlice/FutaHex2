@@ -16,6 +16,12 @@ int test_fhcore_all()
     if (0 != test_fhcore_position())
         return -1;
 
+    if (0 != test_fhcore_boardt())
+        return -1;
+
+    if (0 != test_fhcore_iboard())
+        return -1;
+
     if (0 != test_fhcore_board())
         return -1;
 
@@ -87,37 +93,52 @@ int test_fhcore_position()
     return 0;
 }
 
-int test_fhcore_board()
+int test_fhcore_boardt()
 {
     using namespace std;
     using namespace board;
     using namespace logger;
 
-    // Board<11>
     shared_ptr<Board<11>> pb = make_shared<Board<11>>();
     auto & b = *pb;
 
     b(1, 2) = Color::Red;
     b(10, 9) = b.color();
 
-    IBoard::create(11);
+    debug() << b.debug_bit_str();
 
-    debug() << b;
+    return 0;
+}
 
-    // Board<5>
+int test_fhcore_iboard()
+{
+    using namespace std;
+    using namespace board;
+    using namespace logger;
+
+    IBoard &b_5 = *IBoard::create(5);
+    b_5(2, 2) = Color::Red;
+
+    IBoard &copy_b_5 = *b_5.copy();
+    debug() << copy_b_5.debug_bit_str();
+
+    delete &b_5;
+    delete &copy_b_5;
+
+    return 0;
+}
+
+int test_fhcore_board()
+{
+    using namespace std;
+    using namespace board;
+    using namespace logger;
+
     Board<5> b_5;
     IBoard &refb = b_5;
 
     refb(1, 2) = refb.color();
     refb(4, 3) = refb.color();
-    //refb = Color::Empty;
-    //refb(1, 2) = Color::Empty;
-
-    debug() << b_5;
-
-    // copy
-    IBoard *p_temp_5 = b_5.copy();
-    debug() << p_temp_5->debug_link_str();
 
     // get link state
     auto tp = b_5.operator[](Color::Red);
