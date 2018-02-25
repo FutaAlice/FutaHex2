@@ -66,6 +66,8 @@ class BoardT : public IBoard
     using Position = PositionT<size>;
 public:
     BoardT() noexcept;
+    BoardT(const BoardT &) noexcept;
+    BoardT(BoardT &&) noexcept;
 
 public: // Interface
     virtual IBoard & operator()(coord_t row, coord_t col);

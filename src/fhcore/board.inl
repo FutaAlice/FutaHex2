@@ -50,6 +50,28 @@ inline BoardT<Test, size>::BoardT() noexcept
 }
 
 template<typename Test, coord_t size>
+inline BoardT<Test, size>::BoardT(const BoardT & b) noexcept
+    : _bit{ b._bit[0], b._bit[1] }
+    , _link{ b._link[0], b._link[1] }
+{
+    using namespace logger;
+    debug(Level::Debug) << __func__ 
+        << "<" << typeid(Test).name() << "," << size << ">" << " "
+        <<"copy constructor...";
+}
+
+template<typename Test, coord_t size>
+inline BoardT<Test, size>::BoardT(BoardT &&) noexcept
+{
+    using namespace logger;
+    debug(Level::Debug) << __func__
+        << "<" << typeid(Test).name() << "," << size << ">" << " "
+        << "move constructor...";
+    // TODO!!!
+    assert(false);
+}
+
+template<typename Test, coord_t size>
 inline IBoard & BoardT<Test, size>::operator()(coord_t row, coord_t col)
 {
     assert(size > row && size > col);
