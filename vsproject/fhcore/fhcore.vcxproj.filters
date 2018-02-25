@@ -20,6 +20,9 @@
     <ClCompile Include="..\..\src\fhcore\position.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\fhcore\board.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\fhcore\logger.h">
