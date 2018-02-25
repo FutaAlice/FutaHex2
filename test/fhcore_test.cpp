@@ -100,6 +100,8 @@ int test_fhcore_board()
     b(1, 2) = Color::Red;
     b(10, 9) = b.color();
 
+    IBoard::create(11);
+
     debug() << b;
 
     // Board<5>
