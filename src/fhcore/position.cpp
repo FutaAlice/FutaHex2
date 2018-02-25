@@ -1,4 +1,5 @@
 #include <iomanip>
+#include <typeinfo>
 #include "position.h"
 #include "color.h"
 using namespace std;

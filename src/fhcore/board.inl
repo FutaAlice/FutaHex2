@@ -1,9 +1,8 @@
-#include <cassert>
-#include <string>
-#include <ostream>
-#include <iomanip>
-#include <cmath>
 #include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <iomanip>
+#include <typeinfo>
 #include "logger.h"
 #include "board.h"
 
@@ -16,7 +15,12 @@ inline BoardT<Test, size>::BoardT() noexcept
     static_assert((0 != size % 2) && (5 <= size),
                   "board size supposed to an odd number greater than five.");
     using namespace std;
+    using namespace logger;
     using namespace color;
+
+    debug(Level::Debug) << __func__
+        << "<" << typeid(Test).name() << "," << size << ">" << " "
+        << "constructor...";
     
     auto func = [this](auto & link_rb, const Position & pos, Color color) {
         auto & link_array = link_rb[*color];
@@ -47,6 +51,34 @@ inline BoardT<Test, size>::BoardT() noexcept
     };
     func(_link, _pos, Color::Red);
     func(_link, _pos, Color::Blue);
+}
+
+template<typename Test, coord_t size>
+inline BoardT<Test, size>::BoardT(const BoardT & b) noexcept
+    : _bit{ b._bit[0], b._bit[1] }
+    , _link{ b._link[0], b._link[1] }
+{
+    using namespace logger;
+    debug(Level::Debug) << __func__ 
+        << "<" << typeid(Test).name() << "," << size << ">" << " "
+        <<"copy constructor...";
+}
+
+template<typename Test, coord_t size>
+inline BoardT<Test, size>::BoardT(BoardT &&) noexcept
+{
+    using namespace logger;
+    debug(Level::Debug) << __func__
+        << "<" << typeid(Test).name() << "," << size << ">" << " "
+        << "move constructor...";
+    // TODO!!!
+    assert(false);
+}
+
+template<typename Test, coord_t size>
+inline IBoard * BoardT<Test, size>::create()
+{
+    return new BoardT();
 }
 
 template<typename Test, coord_t size>
@@ -145,6 +177,12 @@ inline std::set<coord_t>::iterator
 BoardT<Test, size>::end(const Color color, coord_t index) const
 {
     return _link[*color][index].end();
+}
+
+template<typename Test, coord_t size>
+inline IBoard * BoardT<Test, size>::copy() const
+{
+    return new BoardT(*this);
 }
 
 template<typename Test, coord_t size>
@@ -269,7 +307,7 @@ inline void BoardT<Test, size>::set_piece(const Color color)
         {
             _link[*color][*iter].insert(*it_adj);
             _link[*color][*it_adj].insert(*iter);
-        } ;
+        }
     }
     _link[*color][center].clear();
 }
@@ -311,13 +349,6 @@ inline void BoardT<Test, size>::reset_piece()
         std::set<coord_t> cp(tmp);
         for (auto adjadj : adj->adj())
         {
-            //static int i = 0;
-            //std::cout << ++i << std::endl;
-            //if (i == 15)
-            //    for (auto j : cp)
-            //    {
-            //        std::cout << j << " ";
-            //    }
             if (!adjadj) continue;
             cp.erase(adjadj->index);
         }

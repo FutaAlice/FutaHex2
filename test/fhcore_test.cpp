@@ -2,6 +2,7 @@
 #include <list>
 #include <thread>
 #include <logger.h>
+#include <board.h>
 #include "fhcore_test.h"
 
 int test_fhcore_all()
@@ -68,22 +69,6 @@ int test_fhcore_color()
     return 0;
 }
 
-#include <board.h>
-//class Test;
-//
-//template<int size>
-//using BoardTest = board::BoardT<Test, size>;
-//
-//class Test
-//{
-//public:
-//    template<int size>
-//    void printPos(BoardTest<11> &b)
-//    {
-//        debug() << b._pos.row << " " << b._pos.col;
-//    }
-//};
-#include <position.h>
 int test_fhcore_position()
 {
     using namespace position;
@@ -99,7 +84,6 @@ int test_fhcore_position()
 
     debug() << *p_5;
     
-
     return 0;
 }
 
@@ -109,27 +93,34 @@ int test_fhcore_board()
     using namespace board;
     using namespace logger;
 
-    // Board<11> _b;
+    // Board<11>
     shared_ptr<Board<11>> pb = make_shared<Board<11>>();
     auto & b = *pb;
 
     b(1, 2) = Color::Red;
     b(10, 9) = b.color();
 
+    IBoard::create(11);
+
     debug() << b;
 
+    // Board<5>
     Board<5> b_5;
-    IBoard *pib = &b_5;
+    IBoard &refb = b_5;
 
-    IBoard &refb = *pib;
     refb(1, 2) = refb.color();
     refb(4, 3) = refb.color();
-    //(*pib) = Color::Empty;
-    //b_5(1, 2) = Color::Empty;
+    //refb = Color::Empty;
+    //refb(1, 2) = Color::Empty;
 
     debug() << b_5;
 
-    auto tp = pib->operator[](Color::Red);
+    // copy
+    IBoard *p_temp_5 = b_5.copy();
+    debug() << p_temp_5->debug_link_str();
+
+    // get link state
+    auto tp = b_5.operator[](Color::Red);
     auto ps = get<0>(tp);
     auto len = get<1>(tp);
 
@@ -142,6 +133,6 @@ int test_fhcore_board()
         debug() << oss.str();
     });
 
-    debug() << pib->debug_bit_str();
+    debug() << b_5.debug_bit_str();
     return 0;
 }

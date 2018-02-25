@@ -18,9 +18,9 @@ Sample for 5x5 board:
 */
 
 #pragma once
-#include <iostream>
 #include <array>
 #include <bitset>
+#include <ostream>
 #include <set>
 #include <string>
 #include <tuple>
@@ -35,6 +35,10 @@ using namespace position;
 
 class IBoard
 {
+public:
+    static IBoard * create(const coord_t size);
+    static IBoard * create(const std::string & name);
+
 public:
     virtual IBoard & operator()(coord_t row, coord_t col) = 0;
     virtual IBoard & operator()(coord_t index) = 0;
@@ -54,6 +58,8 @@ public:
     virtual std::set<coord_t>::iterator
         end(const Color color, coord_t index) const = 0;
 
+    virtual IBoard * copy() const = 0;
+
     virtual std::string debug_state_str() const = 0;
     virtual std::string debug_bit_str() const = 0;
     virtual std::string debug_link_str() const = 0;
@@ -66,6 +72,11 @@ class BoardT : public IBoard
     using Position = PositionT<size>;
 public:
     BoardT() noexcept;
+    BoardT(const BoardT &) noexcept;
+    BoardT(BoardT &&) noexcept;
+
+public:
+    static IBoard * create();
 
 public: // Interface
     virtual IBoard & operator()(coord_t row, coord_t col);
@@ -85,6 +96,8 @@ public: // Interface
         begin(const Color color, coord_t index) const;
     virtual std::set<coord_t>::iterator
         end(const Color color, coord_t index) const;
+
+    virtual IBoard * copy() const;
 
     virtual std::string debug_state_str() const;
     virtual std::string debug_bit_str() const;

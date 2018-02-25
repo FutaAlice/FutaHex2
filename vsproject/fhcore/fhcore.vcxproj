@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\fhcore\board.cpp" />
     <ClCompile Include="..\..\src\fhcore\color.cpp" />
     <ClCompile Include="..\..\src\fhcore\logger.cpp" />
     <ClCompile Include="..\..\src\fhcore\position.cpp" />
