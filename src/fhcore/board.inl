@@ -15,7 +15,12 @@ inline BoardT<Test, size>::BoardT() noexcept
     static_assert((0 != size % 2) && (5 <= size),
                   "board size supposed to an odd number greater than five.");
     using namespace std;
+    using namespace logger;
     using namespace color;
+
+    debug(Level::Debug) << __func__
+        << "<" << typeid(Test).name() << "," << size << ">" << " "
+        << "constructor...";
     
     auto func = [this](auto & link_rb, const Position & pos, Color color) {
         auto & link_array = link_rb[*color];
@@ -68,6 +73,12 @@ inline BoardT<Test, size>::BoardT(BoardT &&) noexcept
         << "move constructor...";
     // TODO!!!
     assert(false);
+}
+
+template<typename Test, coord_t size>
+inline IBoard * BoardT<Test, size>::create()
+{
+    return new BoardT();
 }
 
 template<typename Test, coord_t size>

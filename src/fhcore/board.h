@@ -36,6 +36,10 @@ using namespace position;
 class IBoard
 {
 public:
+    static IBoard * create(const coord_t size);
+    static IBoard * create(const std::string & name);
+
+public:
     virtual IBoard & operator()(coord_t row, coord_t col) = 0;
     virtual IBoard & operator()(coord_t index) = 0;
 
@@ -70,6 +74,9 @@ public:
     BoardT() noexcept;
     BoardT(const BoardT &) noexcept;
     BoardT(BoardT &&) noexcept;
+
+public:
+    static IBoard * create();
 
 public: // Interface
     virtual IBoard & operator()(coord_t row, coord_t col);
