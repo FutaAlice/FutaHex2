@@ -1,9 +1,8 @@
-#include <cassert>
-#include <string>
-#include <ostream>
-#include <iomanip>
-#include <cmath>
 #include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <iomanip>
+#include <typeinfo>
 #include "logger.h"
 #include "board.h"
 
@@ -339,13 +338,6 @@ inline void BoardT<Test, size>::reset_piece()
         std::set<coord_t> cp(tmp);
         for (auto adjadj : adj->adj())
         {
-            //static int i = 0;
-            //std::cout << ++i << std::endl;
-            //if (i == 15)
-            //    for (auto j : cp)
-            //    {
-            //        std::cout << j << " ";
-            //    }
             if (!adjadj) continue;
             cp.erase(adjadj->index);
         }

@@ -18,9 +18,9 @@ Sample for 5x5 board:
 */
 
 #pragma once
-#include <iostream>
 #include <array>
 #include <bitset>
+#include <ostream>
 #include <set>
 #include <string>
 #include <tuple>
