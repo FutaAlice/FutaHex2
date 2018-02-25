@@ -2,6 +2,7 @@
 
 #include <QWidget>
 
+namespace board { class IBoard; }
 class Canvas : public QWidget
 {
     Q_OBJECT
@@ -10,7 +11,7 @@ public:
     Canvas(QWidget *parent);
     ~Canvas();
 
-    void resizeBoard(int);
+    void resize(board::IBoard *);
 protected:
     void resizeEvent(QResizeEvent *);
     void paintEvent(QPaintEvent *);
@@ -21,10 +22,10 @@ private:
     void renderInfo();
 
 private:
+    board::IBoard *_pBoard{ nullptr };
+
     QPointF _ct[19][19];
     const double _ratio { 2.0 / 3.0 };
-    void *_pBoard { nullptr };
-    int _size { 11 };
     double _hex_h;
     double _hex_w;
     int _h;
