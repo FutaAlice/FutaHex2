@@ -116,7 +116,7 @@ void Canvas::mouseReleaseEvent(QMouseEvent *event)
                 hex << pt;
 
             if (hex.containsPoint(event->pos(), Qt::WindingFill))
-            cout << row << ", " << col << endl;
+                emit clickEmptyPoint(row, col);
         }
     }
 }

@@ -12,6 +12,7 @@ app::app(QWidget *parent)
     ui.centralWidget->setLayout(ui.mainLayout);
     setFixedSize(w * 16 / 9, w);
 
+    QObject::connect(ui.canvas, SIGNAL(clickEmptyPoint(int, int)), this, SLOT(setPiece(int, int)));
     QObject::connect(ui.action5, SIGNAL(triggered()), this, SLOT(onAction5()));
     QObject::connect(ui.action7, SIGNAL(triggered()), this, SLOT(onAction7()));
     QObject::connect(ui.action9, SIGNAL(triggered()), this, SLOT(onAction9()));
@@ -26,7 +27,17 @@ void app::paintEvent(QPaintEvent * event)
 {
 }
 
-void app::onAction(int boardsize)
+void app::setPiece(int row, int col)
+{
+    if (!_pBoard)
+        return;
+
+    (*_pBoard)(row, col) = _pBoard->color();
+
+    ui.canvas->resize(_pBoard);
+}
+
+void app::changeBoardsize(int boardsize)
 {
     if (boardsize <= 0)
     {
@@ -48,12 +59,12 @@ void app::onAction(int boardsize)
     ui.canvas->resize(_pBoard);
 }
 
-void app::onAction5() { onAction(5); }
-void app::onAction7() { onAction(7); }
-void app::onAction9() { onAction(9); }
-void app::onAction11() { onAction(11); }
-void app::onAction13() { onAction(13); }
-void app::onAction15() { onAction(15); }
-void app::onAction17() { onAction(17); }
-void app::onAction19() { onAction(19); }
+void app::onAction5() { changeBoardsize(5); }
+void app::onAction7() { changeBoardsize(7); }
+void app::onAction9() { changeBoardsize(9); }
+void app::onAction11() { changeBoardsize(11); }
+void app::onAction13() { changeBoardsize(13); }
+void app::onAction15() { changeBoardsize(15); }
+void app::onAction17() { changeBoardsize(17); }
+void app::onAction19() { changeBoardsize(19); }
 

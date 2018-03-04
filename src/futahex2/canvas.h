@@ -12,6 +12,10 @@ public:
     ~Canvas();
 
     void resize(board::IBoard *);
+
+signals:
+    void clickEmptyPoint(int row, int col);
+
 protected:
     void resizeEvent(QResizeEvent *);
     void paintEvent(QPaintEvent *);
