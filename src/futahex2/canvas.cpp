@@ -115,7 +115,8 @@ void Canvas::mouseReleaseEvent(QMouseEvent *event)
             for (auto & pt : vertex)
                 hex << pt;
 
-            if (hex.containsPoint(event->pos(), Qt::WindingFill))
+            if (hex.containsPoint(event->pos(), Qt::WindingFill) &&
+                Color::Empty == (*_pBoard)(row, col))
                 emit clickEmptyPoint(row, col);
         }
     }
