@@ -1,7 +1,9 @@
 #include "canvas.h"
 #include <cmath>
+#include <iostream>
 #include <map>
 #include <QPainter>
+#include <QMouseEvent>
 #include <board.h>
 
 using namespace std;
@@ -94,6 +96,29 @@ void Canvas::paintEvent(QPaintEvent * event)
     renderPieces();
     renderInfo();
 
+}
+
+void Canvas::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (!_pBoard)
+        return;
+    auto size = _pBoard->boardsize();
+
+    QPointF vertex[6];
+    QPolygonF hex;
+    for (int row = 0; row < size; ++row)
+    {
+        for (int col = 0; col < size; ++col)
+        {
+            get_hex_vertex(vertex, _ct[row][col], _hex_w, _hex_h);
+            hex.clear();
+            for (auto & pt : vertex)
+                hex << pt;
+
+            if (hex.containsPoint(event->pos(), Qt::WindingFill))
+            cout << row << ", " << col << endl;
+        }
+    }
 }
 
 void Canvas::renderEmptyBoard()

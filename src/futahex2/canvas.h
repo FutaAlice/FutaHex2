@@ -15,6 +15,7 @@ public:
 protected:
     void resizeEvent(QResizeEvent *);
     void paintEvent(QPaintEvent *);
+    void mouseReleaseEvent(QMouseEvent *);
 private:
     void renderEmptyBoard();
     void renderBorder();
