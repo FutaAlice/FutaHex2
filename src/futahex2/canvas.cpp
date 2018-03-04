@@ -3,6 +3,7 @@
 #include <iostream>
 #include <map>
 #include <QPainter>
+#include <QPalette>
 #include <QMouseEvent>
 #include <board.h>
 
@@ -54,6 +55,17 @@ void Canvas::updateBoard(IBoard *pb)
 void Canvas::setDisplayMethod(DisplayMethod dm)
 {
     _dm = dm;
+
+    QPalette pal(palette());
+    if (dm != DisplayMethod::Normal)
+    {
+        pal.setColor(QPalette::Background, QColor(10, 10, 10));
+    }
+    else
+    {
+    }
+    setAutoFillBackground(true);
+    setPalette(pal);
 }
 
 void Canvas::resizeEvent(QResizeEvent * event)
@@ -98,10 +110,10 @@ void Canvas::paintEvent(QPaintEvent * event)
 {
     if (_h < 200 || _w < 200 || !_pBoard)
         return;
-    renderBorder();
-    renderEmptyBoard();
     if (DisplayMethod::Normal == _dm)
     {
+        renderBorder();
+        renderEmptyBoard();
         renderPieces();
         renderInfo();
     }
@@ -208,8 +220,34 @@ void Canvas::renderBorder()
 void Canvas::renderLink()
 {
     QPainter painter(this);
-    Color color = static_cast<Color>(_dm);
+    Color color = (_dm == DisplayMethod::LinkR) ? Color::Red : Color::Blue;
+    auto & pen_color = (color == Color::Red) ? _cr : _cb;
+    painter.setPen(QPen(pen_color, 1));
 
+    auto size = _pBoard->boardsize();
+    for (int row = 0; row < size; ++row)
+    {
+        for (int col = 0; col < size; ++col)
+        {
+            for (auto iter = _pBoard->begin(color, row * size + col);
+                 iter != _pBoard->end(color, row * size + col);
+                 ++iter)
+            {
+                auto index = *iter;
+                if (index < size * size)
+                {
+                    int r = index / size;
+                    int c = index % size;
+                    painter.drawLine(_ct[row][col], _ct[r][c]);
+                    painter.drawEllipse(_ct[row][col], 1, 1);
+                }
+                else
+                {
+                    painter.drawEllipse(_ct[row][col], 3, 3);
+                }
+            }
+        }
+    }
 }
 
 void Canvas::renderPieces()
