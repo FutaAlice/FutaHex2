@@ -220,9 +220,27 @@ void Canvas::renderBorder()
 void Canvas::renderLink()
 {
     QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    auto drawArrowLine = [&painter](auto start, auto end, auto length, auto degree) {
+        QPointF ptArrow[2];
+        auto calcVertexes = [=, &ptArrow]{
+            auto pi = asin(1) * 2;
+            double angle = atan2(end.y() - start.y(), end.x() - start.x()) + pi;
+            ptArrow[0].setX(end.x() + length * cos(angle - degree));
+            ptArrow[0].setY(end.y() + length * sin(angle - degree));
+            ptArrow[1].setX(end.x() + length * cos(angle + degree));
+            ptArrow[1].setY(end.y() + length * sin(angle + degree));
+        };
+        calcVertexes();
+        painter.drawLine(start, end);
+        painter.drawLine(end, ptArrow[0]);
+        painter.drawLine(end, ptArrow[1]);
+    };
+
     Color color = (_dm == DisplayMethod::LinkR) ? Color::Red : Color::Blue;
     auto & pen_color = (color == Color::Red) ? _cr : _cb;
-    painter.setPen(QPen(pen_color, 1));
+    painter.setPen(QPen(pen_color, 1, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
 
     auto size = _pBoard->boardsize();
     for (int row = 0; row < size; ++row)
@@ -238,7 +256,8 @@ void Canvas::renderLink()
                 {
                     int r = index / size;
                     int c = index % size;
-                    painter.drawLine(_ct[row][col], _ct[r][c]);
+                    // painter.drawLine(_ct[row][col], _ct[r][c]);
+                    drawArrowLine(_ct[row][col], _ct[r][c], _hex_w * 0.4, 0.15);
                     painter.drawEllipse(_ct[row][col], 1, 1);
                 }
                 else
