@@ -32,7 +32,13 @@
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_r">
+      <layout class="QVBoxLayout" name="verticalLayout_r" stretch="2,2,1">
+       <item>
+        <widget class="Canvas" name="link_red" native="true"/>
+       </item>
+       <item>
+        <widget class="Canvas" name="link_blue" native="true"/>
+       </item>
        <item>
         <widget class="QTextBrowser" name="textBrowser"/>
        </item>

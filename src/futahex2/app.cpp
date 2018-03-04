@@ -10,6 +10,8 @@ app::app(QWidget *parent)
 {
     ui.setupUi(this);
     ui.centralWidget->setLayout(ui.mainLayout);
+    ui.link_red->setDisplayMethod(Canvas::DisplayMethod::LinkR);
+    ui.link_blue->setDisplayMethod(Canvas::DisplayMethod::LinkB);
     setFixedSize(w * 16 / 9, w);
 
     QObject::connect(ui.canvas, SIGNAL(clickEmptyPoint(int, int)), this, SLOT(setPiece(int, int)));
@@ -34,7 +36,7 @@ void app::setPiece(int row, int col)
 
     (*_pBoard)(row, col) = _pBoard->color();
 
-    ui.canvas->resize(_pBoard);
+    updateBoard();
 }
 
 void app::changeBoardsize(int boardsize)
@@ -56,7 +58,14 @@ void app::changeBoardsize(int boardsize)
     delete _pBoard;
     _pBoard = IBoard::create(boardsize);
 
-    ui.canvas->resize(_pBoard);
+    updateBoard();
+}
+
+void app::updateBoard()
+{
+    ui.canvas->updateBoard(_pBoard);
+    ui.link_red->updateBoard();
+    ui.link_blue->updateBoard();
 }
 
 void app::onAction5() { changeBoardsize(5); }

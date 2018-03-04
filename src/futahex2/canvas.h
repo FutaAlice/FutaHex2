@@ -11,8 +11,10 @@ public:
     Canvas(QWidget *parent);
     ~Canvas();
 
-    void resize(board::IBoard *);
+    enum class DisplayMethod { LinkR, LinkB, Normal };
 
+    void updateBoard(board::IBoard *pb = nullptr);
+    void setDisplayMethod(DisplayMethod dm);
 signals:
     void clickEmptyPoint(int row, int col);
 
@@ -23,12 +25,14 @@ protected:
 private:
     void renderEmptyBoard();
     void renderBorder();
+    void renderLink();
     void renderPieces();
     void renderInfo();
 
 private:
-    board::IBoard *_pBoard{ nullptr };
+    static board::IBoard *_pBoard;
 
+    DisplayMethod _dm { DisplayMethod::Normal };
     QPointF _ct[19][19];
     const double _ratio { 2.0 / 3.0 };
     double _hex_h;

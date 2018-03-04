@@ -28,6 +28,7 @@ protected:
 
 private:
     void changeBoardsize(int boardsize = 0);
+    void updateBoard();
 
 private:
     board::IBoard *_pBoard { nullptr };

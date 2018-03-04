@@ -9,6 +9,8 @@
 using namespace std;
 using namespace board;
 
+IBoard *Canvas::_pBoard = nullptr;
+
 template<typename T>
 static void get_hex_vertex(T points[], T pt, double w, double h)
 {
@@ -37,16 +39,21 @@ Canvas::~Canvas()
 {
 }
 
-void Canvas::resize(IBoard *pb)
+void Canvas::updateBoard(IBoard *pb)
 {
-    if (!pb)
-        return;
-
-    delete _pBoard;
-    _pBoard = pb->copy();
+    if (pb)
+    {
+        delete _pBoard;
+        _pBoard = pb->copy();
+    }
 
     this->resizeEvent(nullptr);
     this->update();
+}
+
+void Canvas::setDisplayMethod(DisplayMethod dm)
+{
+    _dm = dm;
 }
 
 void Canvas::resizeEvent(QResizeEvent * event)
@@ -67,7 +74,7 @@ void Canvas::resizeEvent(QResizeEvent * event)
         _w = width();
         _h = _w * _ratio;
     }
-    if (_h < 200 || _w < 200)
+    if (_h < 20 || _w < 20)
         return;
     int mid = size / 2;
     int row_block_cnt = (1 + size) + (size + 1) / 2;
@@ -93,9 +100,15 @@ void Canvas::paintEvent(QPaintEvent * event)
         return;
     renderBorder();
     renderEmptyBoard();
-    renderPieces();
-    renderInfo();
-
+    if (DisplayMethod::Normal == _dm)
+    {
+        renderPieces();
+        renderInfo();
+    }
+    else
+    {
+        renderLink();
+    }
 }
 
 void Canvas::mouseReleaseEvent(QMouseEvent *event)
@@ -190,6 +203,13 @@ void Canvas::renderBorder()
     painter.setBrush(QBrush(_cb, Qt::SolidPattern));
     painter.drawPath(*path);
     delete path;
+}
+
+void Canvas::renderLink()
+{
+    QPainter painter(this);
+    Color color = static_cast<Color>(_dm);
+
 }
 
 void Canvas::renderPieces()
