@@ -12,14 +12,21 @@ app::app(QWidget *parent)
     ui.centralWidget->setLayout(ui.mainLayout);
     setFixedSize(w * 16 / 9, w);
 
-    QObject::connect(ui.action5, SIGNAL(triggered()), this, SLOT(changeBoardsize5()));
+    QObject::connect(ui.action5, SIGNAL(triggered()), this, SLOT(onAction5()));
+    QObject::connect(ui.action7, SIGNAL(triggered()), this, SLOT(onAction7()));
+    QObject::connect(ui.action9, SIGNAL(triggered()), this, SLOT(onAction9()));
+    QObject::connect(ui.action11, SIGNAL(triggered()), this, SLOT(onAction11()));
+    QObject::connect(ui.action13, SIGNAL(triggered()), this, SLOT(onAction13()));
+    QObject::connect(ui.action15, SIGNAL(triggered()), this, SLOT(onAction15()));
+    QObject::connect(ui.action17, SIGNAL(triggered()), this, SLOT(onAction17()));
+    QObject::connect(ui.action19, SIGNAL(triggered()), this, SLOT(onAction19()));
 }
 
 void app::paintEvent(QPaintEvent * event)
 {
 }
 
-void app::changeBoardsize(int boardsize)
+void app::onAction(int boardsize)
 {
     if (boardsize <= 0)
     {
@@ -27,18 +34,26 @@ void app::changeBoardsize(int boardsize)
             return;
         boardsize = _pBoard->boardsize();
     }
+
+    auto & actions = ui.menuBoardsize->actions();
+    for (auto action : actions)
+    {
+        auto text = action->text().toInt();
+        action->setChecked(boardsize == text);
+    }
+
     delete _pBoard;
     _pBoard = IBoard::create(boardsize);
 
     ui.canvas->resize(_pBoard);
 }
 
-void app::changeBoardsize5() { changeBoardsize(5); }
-void app::changeBoardsize7() { changeBoardsize(7); }
-void app::changeBoardsize9() { changeBoardsize(9); }
-void app::changeBoardsize11() { changeBoardsize(11); }
-void app::changeBoardsize13() { changeBoardsize(13); }
-void app::changeBoardsize15() { changeBoardsize(15); }
-void app::changeBoardsize17() { changeBoardsize(17); }
-void app::changeBoardsize19() { changeBoardsize(19); }
+void app::onAction5() { onAction(5); }
+void app::onAction7() { onAction(7); }
+void app::onAction9() { onAction(9); }
+void app::onAction11() { onAction(11); }
+void app::onAction13() { onAction(13); }
+void app::onAction15() { onAction(15); }
+void app::onAction17() { onAction(17); }
+void app::onAction19() { onAction(19); }
 

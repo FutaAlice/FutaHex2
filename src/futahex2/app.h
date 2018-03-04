@@ -13,18 +13,20 @@ public:
     static const int w { 720 };
 
 public slots:
-    void changeBoardsize(int boardsize = 0);
-    void changeBoardsize5();
-    void changeBoardsize7();
-    void changeBoardsize9();
-    void changeBoardsize11();
-    void changeBoardsize13();
-    void changeBoardsize15();
-    void changeBoardsize17();
-    void changeBoardsize19();
+    void onAction5();
+    void onAction7();
+    void onAction9();
+    void onAction11();
+    void onAction13();
+    void onAction15();
+    void onAction17();
+    void onAction19();
     
 protected:
     void paintEvent(QPaintEvent *event);
+
+private:
+    void onAction(int boardsize = 0);
 
 private:
     board::IBoard *_pBoard { nullptr };
