@@ -182,7 +182,10 @@ void Canvas::renderPieces()
     {
         for (int col = 0; col < size; ++col)
         {
-            drawEllipse(_ct[row][col], Color::Red, _hex_w / 2, 0.85f);
+            Color color = (*_pBoard)(row, col);
+            if (Color::Empty == color)
+                continue;
+            drawEllipse(_ct[row][col], color, _hex_w / 2, 0.85f);
         }
     }
 }
