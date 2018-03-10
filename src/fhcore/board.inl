@@ -164,6 +164,25 @@ inline Color BoardT<Test, size>::winner() const
 }
 
 template<typename Test, coord_t size>
+inline bool BoardT<Test, size>::empty() const
+{
+    return _bit[*Color::Red].none() && _bit[*Color::Blue].none();
+}
+
+template<typename Test, coord_t size>
+inline bool BoardT<Test, size>::empty(coord_t index) const
+{
+    return _bit[*Color::Red][index] == 0 && _bit[*Color::Blue][index] == 0;
+}
+
+template<typename Test, coord_t size>
+inline bool BoardT<Test, size>::empty(coord_t row, coord_t col) const
+{
+    coord_t index = _pos(row, col)->index;
+    return empty(index);
+}
+
+template<typename Test, coord_t size>
 inline std::set<coord_t>::iterator
 BoardT<Test, size>::begin(const Color color, coord_t index) const
 {
@@ -321,11 +340,10 @@ inline void BoardT<Test, size>::reset_piece()
     // reset bitmap
     _bit[*Color::Red].reset(center);
     _bit[*Color::Blue].reset(center);
-    // link to adj(empty)
+    // both color link to adjacent empty block
     for (auto adj : _pos(center)->adj())
     {
-        if (_bit[*Color::Red][adj->index] == 0 &&
-            _bit[*Color::Blue][adj->index] == 0)
+        if (empty(adj->index))
         {
             _link[*Color::Red][center].insert(adj->index);
             _link[*Color::Red][adj->index].insert(center);

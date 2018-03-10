@@ -52,6 +52,9 @@ public:
     virtual size_t terns() const = 0;
     virtual Color color() const = 0;
     virtual Color winner() const = 0;
+    virtual bool empty() const = 0;
+    virtual bool empty(coord_t index) const = 0;
+    virtual bool empty(coord_t row, coord_t col) const = 0;
 
     virtual std::set<coord_t>::iterator
         begin(const Color color, coord_t index) const = 0;
@@ -91,6 +94,9 @@ public: // Interface
     virtual size_t terns() const;
     virtual Color color() const;
     virtual Color winner() const;
+    virtual bool empty() const;
+    virtual bool empty(coord_t index) const;
+    virtual bool empty(coord_t row, coord_t col) const;
 
     virtual std::set<coord_t>::iterator
         begin(const Color color, coord_t index) const;
