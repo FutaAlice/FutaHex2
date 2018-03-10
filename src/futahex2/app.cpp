@@ -228,9 +228,7 @@ void app::onSaveAs()
 void app::onRestart()
 {
     auto size = _pBoard ? _pBoard->boardsize() : 11;
-    delete _pBoard;
-    _pBoard = IBoard::create(11);
-    updateBoard();
+    changeBoardsize(size);
 }
 
 void app::onAIMove()
