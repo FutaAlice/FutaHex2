@@ -88,9 +88,27 @@
     <addaction name="action17"/>
     <addaction name="action19"/>
    </widget>
+   <widget class="QMenu" name="menuColorAI">
+    <property name="title">
+     <string>Color(AI)</string>
+    </property>
+    <addaction name="actionAIRed"/>
+    <addaction name="actionAIBlue"/>
+    <addaction name="actionAINone"/>
+   </widget>
+   <widget class="QMenu" name="menuColorPlayer">
+    <property name="title">
+     <string>Color(Player)</string>
+    </property>
+    <addaction name="actionPlayerRed"/>
+    <addaction name="actionPlayerBlue"/>
+    <addaction name="actionPlayerAuto"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTools"/>
    <addaction name="menuBoardsize"/>
+   <addaction name="menuColorAI"/>
+   <addaction name="menuColorPlayer"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -182,6 +200,63 @@
    </property>
    <property name="text">
     <string>19</string>
+   </property>
+  </action>
+  <action name="actionAIRed">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Red</string>
+   </property>
+  </action>
+  <action name="actionPlayerRed">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Red</string>
+   </property>
+  </action>
+  <action name="actionAIBlue">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Blue</string>
+   </property>
+  </action>
+  <action name="actionAINone">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+  </action>
+  <action name="actionPlayerBlue">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Blue</string>
+   </property>
+  </action>
+  <action name="actionPlayerAuto">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Auto</string>
    </property>
   </action>
  </widget>

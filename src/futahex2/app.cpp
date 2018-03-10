@@ -25,6 +25,14 @@ app::app(QWidget *parent)
     QObject::connect(ui.action17, SIGNAL(triggered()), this, SLOT(onAction17()));
     QObject::connect(ui.action19, SIGNAL(triggered()), this, SLOT(onAction19()));
 
+    QObject::connect(ui.actionAIRed, SIGNAL(triggered()), this, SLOT(onActionAIRed()));
+    QObject::connect(ui.actionAIBlue, SIGNAL(triggered()), this, SLOT(onActionAIBlue()));
+    QObject::connect(ui.actionAINone, SIGNAL(triggered()), this, SLOT(onActionAINone()));
+
+    QObject::connect(ui.actionPlayerRed, SIGNAL(triggered()), this, SLOT(onActionPlayerRed()));
+    QObject::connect(ui.actionPlayerBlue, SIGNAL(triggered()), this, SLOT(onActionPlayerBlue()));
+    QObject::connect(ui.actionPlayerAuto, SIGNAL(triggered()), this, SLOT(onActionPlayerAuto()));
+
     auto add_default_icon = [&, this](auto style, auto text) {
         auto icon = QApplication::style()->standardIcon(style);
         auto action = new QAction(icon, text, this);
@@ -59,7 +67,7 @@ void app::setPiece(int row, int col)
     if (!_pBoard)
         return;
 
-    Color color = _pBoard->color();
+    Color color = getPlayerColor();
     (*_pBoard)(row, col) = color;
 
     _rec.push_back(pos_t(row, col, _pBoard->boardsize()));
@@ -79,6 +87,57 @@ void app::resetPiece(int row, int col)
     (*_pBoard)(row, col) = Color::Empty;
     
     updateBoard();
+}
+
+Color app::getAIColor()
+{
+    switch (_acs)
+    {
+    case AIColorSetting::Red:
+        return Color::Red;
+    case AIColorSetting::Blue:
+        return Color::Blue;
+    default:
+        return Color::Empty;
+    }
+}
+
+Color app::getPlayerColor()
+{
+    switch (_pcs)
+    {
+    case PlayerColorSetting::Red:
+        return Color::Red;
+    case PlayerColorSetting::Blue:
+        return Color::Blue;
+    default:
+        if (_pBoard)
+            return _pBoard->color();
+        else
+            return Color::Empty;
+    }
+}
+
+void app::setAIColor(AIColorSetting acs)
+{
+    auto & actions = ui.menuColorAI->actions();
+    int index = 0;
+    for (auto action : actions)
+    {
+        action->setChecked(index++ == static_cast<int>(acs));
+    }
+    _acs = acs;
+}
+
+void app::setPlayerColor(PlayerColorSetting pcs)
+{
+    auto & actions = ui.menuColorPlayer->actions();
+    int index = 0;
+    for (auto action : actions)
+    {
+        action->setChecked(index++ == static_cast<int>(pcs));
+    }
+    _pcs = pcs;
 }
 
 void app::changeBoardsize(int boardsize)
@@ -146,6 +205,13 @@ void app::onAction13() { changeBoardsize(13); }
 void app::onAction15() { changeBoardsize(15); }
 void app::onAction17() { changeBoardsize(17); }
 void app::onAction19() { changeBoardsize(19); }
+
+void app::onActionAIRed() { setAIColor(AIColorSetting::Red); }
+void app::onActionAIBlue() { setAIColor(AIColorSetting::Blue); }
+void app::onActionAINone() { setAIColor(AIColorSetting::None); }
+void app::onActionPlayerRed() { setPlayerColor(PlayerColorSetting::Red); }
+void app::onActionPlayerBlue() { setPlayerColor(PlayerColorSetting::Blue); }
+void app::onActionPlayerAuto() { setPlayerColor(PlayerColorSetting::Auto); }
 
 void app::onOpen()
 {

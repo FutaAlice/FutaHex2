@@ -13,6 +13,9 @@ class app : public QMainWindow
 {
     Q_OBJECT
 public:
+    enum class AIColorSetting { Red, Blue, None };
+    enum class PlayerColorSetting { Red, Blue, Auto };
+public:
     app(QWidget *parent = Q_NULLPTR);
     static const int w { 720 };
 
@@ -34,11 +37,21 @@ public slots:
     void onAction15();
     void onAction17();
     void onAction19();
+    void onActionAIRed();
+    void onActionAIBlue();
+    void onActionAINone();
+    void onActionPlayerRed();
+    void onActionPlayerBlue();
+    void onActionPlayerAuto();
     
 protected:
     void paintEvent(QPaintEvent *event);
 
 private:
+    color::Color getAIColor();
+    color::Color getPlayerColor();
+    void setAIColor(AIColorSetting);
+    void setPlayerColor(PlayerColorSetting);
     void changeBoardsize(int boardsize = 0);
     void updateBoard();
     void appendText(const char *text, QColor color = Qt::black);
@@ -49,6 +62,9 @@ private:
 private:
     board::IBoard *_pBoard { nullptr };
     std::list<position::pos_t> _rec;
+
+    AIColorSetting _acs { AIColorSetting::None };
+    PlayerColorSetting _pcs { PlayerColorSetting::Auto };
 
     Ui::appClass ui;
 };
