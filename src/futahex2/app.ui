@@ -32,7 +32,13 @@
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_r">
+      <layout class="QVBoxLayout" name="verticalLayout_r" stretch="2,2,1">
+       <item>
+        <widget class="Canvas" name="link_red" native="true"/>
+       </item>
+       <item>
+        <widget class="Canvas" name="link_blue" native="true"/>
+       </item>
        <item>
         <widget class="QTextBrowser" name="textBrowser"/>
        </item>
@@ -47,7 +53,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>23</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -69,8 +75,40 @@
      <string>Help</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuBoardsize">
+    <property name="title">
+     <string>Boardsize</string>
+    </property>
+    <addaction name="action5"/>
+    <addaction name="action7"/>
+    <addaction name="action9"/>
+    <addaction name="action11"/>
+    <addaction name="action13"/>
+    <addaction name="action15"/>
+    <addaction name="action17"/>
+    <addaction name="action19"/>
+   </widget>
+   <widget class="QMenu" name="menuColorAI">
+    <property name="title">
+     <string>Color(AI)</string>
+    </property>
+    <addaction name="actionAIRed"/>
+    <addaction name="actionAIBlue"/>
+    <addaction name="actionAINone"/>
+   </widget>
+   <widget class="QMenu" name="menuColorPlayer">
+    <property name="title">
+     <string>Color(Player)</string>
+    </property>
+    <addaction name="actionPlayerRed"/>
+    <addaction name="actionPlayerBlue"/>
+    <addaction name="actionPlayerAuto"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTools"/>
+   <addaction name="menuBoardsize"/>
+   <addaction name="menuColorAI"/>
+   <addaction name="menuColorPlayer"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -98,6 +136,127 @@
   <action name="actionSave_as">
    <property name="text">
     <string>Save as...</string>
+   </property>
+  </action>
+  <action name="action5">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>5</string>
+   </property>
+  </action>
+  <action name="action7">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>7</string>
+   </property>
+  </action>
+  <action name="action9">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>9</string>
+   </property>
+  </action>
+  <action name="action11">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>11</string>
+   </property>
+  </action>
+  <action name="action13">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>13</string>
+   </property>
+  </action>
+  <action name="action15">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>15</string>
+   </property>
+  </action>
+  <action name="action17">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>17</string>
+   </property>
+  </action>
+  <action name="action19">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>19</string>
+   </property>
+  </action>
+  <action name="actionAIRed">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Red</string>
+   </property>
+  </action>
+  <action name="actionPlayerRed">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Red</string>
+   </property>
+  </action>
+  <action name="actionAIBlue">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Blue</string>
+   </property>
+  </action>
+  <action name="actionAINone">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+  </action>
+  <action name="actionPlayerBlue">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Blue</string>
+   </property>
+  </action>
+  <action name="actionPlayerAuto">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Auto</string>
    </property>
   </action>
  </widget>
