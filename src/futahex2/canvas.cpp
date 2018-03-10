@@ -68,6 +68,21 @@ void Canvas::setDisplayMethod(DisplayMethod dm)
     setPalette(pal);
 }
 
+Canvas::DisplayMethod Canvas::getDisplayMethod()
+{
+    return _dm;
+}
+
+void Canvas::setLineWithArrow(bool arrow)
+{
+    _arrow = arrow;
+}
+
+bool Canvas::getLineWithArrow()
+{
+    return _arrow;
+}
+
 void Canvas::resizeEvent(QResizeEvent * event)
 {
     if (!_pBoard)
@@ -256,8 +271,10 @@ void Canvas::renderLink()
                 {
                     int r = index / size;
                     int c = index % size;
-                    // painter.drawLine(_ct[row][col], _ct[r][c]);
-                    drawArrowLine(_ct[row][col], _ct[r][c], _hex_w * 0.4, 0.15);
+                    if (_arrow)
+                        drawArrowLine(_ct[row][col], _ct[r][c], _hex_w * 0.4, 0.15);
+                    else
+                        painter.drawLine(_ct[row][col], _ct[r][c]);
                     painter.drawEllipse(_ct[row][col], 1, 1);
                 }
                 else

@@ -227,6 +227,10 @@ void app::onSaveAs()
 
 void app::onRestart()
 {
+    auto size = _pBoard ? _pBoard->boardsize() : 11;
+    delete _pBoard;
+    _pBoard = IBoard::create(11);
+    updateBoard();
 }
 
 void app::onAIMove()
@@ -244,4 +248,9 @@ void app::onTakeBack()
 
 void app::onView()
 {
+    bool arrow = ui.canvas->getLineWithArrow();
+    ui.canvas->setLineWithArrow(!arrow);
+    ui.link_red->setLineWithArrow(!arrow);
+    ui.link_blue->setLineWithArrow(!arrow);
+    updateBoard();
 }

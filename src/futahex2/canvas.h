@@ -15,6 +15,9 @@ public:
 
     void updateBoard(board::IBoard *pb = nullptr);
     void setDisplayMethod(DisplayMethod dm);
+    DisplayMethod getDisplayMethod();
+    void setLineWithArrow(bool line_with_arrow);
+    bool getLineWithArrow();
 signals:
     void clickEmptyPoint(int row, int col);
 
@@ -33,6 +36,8 @@ private:
     static board::IBoard *_pBoard;
 
     DisplayMethod _dm { DisplayMethod::Normal };
+    bool _arrow { true };
+
     QPointF _ct[19][19];
     const double _ratio { 2.0 / 3.0 };
     double _hex_h;
