@@ -80,6 +80,31 @@ inline IBoard * BoardT<Test, size>::create()
 }
 
 template<typename Test, coord_t size>
+inline bool BoardT<Test, size>::operator==(const IBoard & rhs) const
+{
+    assert(size == rhs.boardsize());
+
+    const BoardT & ref = *dynamic_cast<const BoardT *>(&rhs);
+
+    if (_bit[*Color::Red] != ref._bit[*Color::Red] ||
+        _bit[*Color::Blue] != ref._bit[*Color::Blue])
+        return false;
+
+#if defined(DEBUG) || defined(_DEBUG)
+    bool flag_r = _link[*Color::Red] != ref._link[*Color::Red];
+    bool flag_b = _link[*Color::Blue] != ref._link[*Color::Blue];
+    if (flag_r || flag_b)
+    {
+        // do something
+        assert(false);
+        return false;
+    }
+#endif // DEBUG
+
+    return true;
+}
+
+template<typename Test, coord_t size>
 inline IBoard & BoardT<Test, size>::operator()(coord_t row, coord_t col)
 {
     assert(size > row && size > col);

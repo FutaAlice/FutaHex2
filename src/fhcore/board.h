@@ -40,6 +40,8 @@ public:
     static IBoard * create(const std::string & name);
 
 public:
+    virtual bool operator ==(const IBoard & rhs) const = 0;
+
     virtual IBoard & operator()(coord_t row, coord_t col) = 0;
     virtual IBoard & operator()(coord_t index) = 0;
 
@@ -84,6 +86,8 @@ public:
     static IBoard * create();
 
 public: // Interface
+    virtual bool operator ==(const IBoard & rhs) const;
+
     virtual IBoard & operator()(coord_t row, coord_t col);
     virtual IBoard & operator()(coord_t index);
 
@@ -114,10 +118,10 @@ public: // Interface
     virtual std::string debug_link_str() const;
 
 private:
+    bool operator ==(const BoardT & rhs) = delete;
     coord_t buf_index() const;
-    std::set<coord_t>
-        infer_direct_link(coord_t index, Color color,
-                          std::set<coord_t> *except = nullptr);
+    std::set<coord_t> infer_direct_link(coord_t index, Color color,
+                                        std::set<coord_t> *except = nullptr);
     void set_piece(const Color color);
     void reset_piece();
 
