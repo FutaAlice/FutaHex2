@@ -1,4 +1,5 @@
 #include "app.h"
+#include <ostream>
 #include <QPainterPath>
 #include <QPainter>
 #include <board.h>
@@ -58,7 +59,12 @@ void app::setPiece(int row, int col)
     if (!_pBoard)
         return;
 
-    (*_pBoard)(row, col) = _pBoard->color();
+    Color color = _pBoard->color();
+    (*_pBoard)(row, col) = color;
+
+    ostringstream oss;
+    oss << "move: " << "(row " << row << ", col " << col << ")";
+    appendText(oss.str(), color);
 
     updateBoard();
 }
@@ -90,6 +96,34 @@ void app::updateBoard()
     ui.canvas->updateBoard(_pBoard);
     ui.link_red->updateBoard();
     ui.link_blue->updateBoard();
+}
+
+void app::appendText(const char * text, QColor color)
+{
+    ui.textBrowser->setTextColor(color);
+    ui.textBrowser->append(text);
+}
+
+void app::appendText(const char * text, Color color)
+{
+    static const map<Color, const QColor> color_map =
+    {
+        { Color::Red, QColor(Qt::red) },
+        { Color::Blue, QColor(Qt::blue) },
+        { Color::Empty, QColor(Qt::black) }
+    };
+    QColor qc = color_map.find(color)->second;
+    appendText(text, qc);
+}
+
+void app::appendText(string & str, QColor color)
+{
+    appendText(str.c_str(), color);
+}
+
+void app::appendText(string & str, color::Color color)
+{
+    appendText(str.c_str(), color);
 }
 
 void app::onAction5() { changeBoardsize(5); }

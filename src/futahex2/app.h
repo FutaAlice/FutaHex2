@@ -1,6 +1,10 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
+#include <list>
+#include <string>
+#include <position.h>
+#include <color.h>
 #include "ui_app.h"
 
 namespace board { class IBoard; }
@@ -36,9 +40,14 @@ protected:
 private:
     void changeBoardsize(int boardsize = 0);
     void updateBoard();
+    void appendText(const char *text, QColor color = Qt::black);
+    void appendText(const char *text, color::Color color);
+    void appendText(std::string &str, QColor color = Qt::black);
+    void appendText(std::string &str, color::Color color);
 
 private:
     board::IBoard *_pBoard { nullptr };
+    std::list<position::pos_t> _rec;
 
     Ui::appClass ui;
 };
