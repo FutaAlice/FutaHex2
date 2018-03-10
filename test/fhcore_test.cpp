@@ -22,6 +22,9 @@ int test_fhcore_all()
     if (0 != test_fhcore_iboard())
         return -1;
 
+    if (test_fhcore_iboard_equal_to())
+        return -1;
+
     if (0 != test_fhcore_board())
         return -1;
 
@@ -126,6 +129,24 @@ int test_fhcore_iboard()
     delete &copy_b_5;
 
     return 0;
+}
+
+int test_fhcore_iboard_equal_to()
+{
+    using namespace std;
+    using namespace board;
+    IBoard & b1 = *IBoard::create(5);
+    IBoard & b2 = *IBoard::create(5);
+
+    b1(0, 2) = Color::Red;
+    //b1(1, 2) = Color::Red;
+    //b1(1, 2) = Color::Empty;
+    b1(0, 2) = Color::Empty;
+
+    if (b1 == b2)
+        return 0;
+
+    return -1;
 }
 
 int test_fhcore_board()
