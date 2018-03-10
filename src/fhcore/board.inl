@@ -183,6 +183,18 @@ inline bool BoardT<Test, size>::empty(coord_t row, coord_t col) const
 }
 
 template<typename Test, coord_t size>
+inline coord_t BoardT<Test, size>::nBegin() const
+{
+    return Position::nBegin;
+}
+
+template<typename Test, coord_t size>
+inline coord_t BoardT<Test, size>::nEnd() const
+{
+    return Position::nEnd;
+}
+
+template<typename Test, coord_t size>
 inline std::set<coord_t>::iterator
 BoardT<Test, size>::begin(const Color color, coord_t index) const
 {
@@ -351,7 +363,7 @@ inline void BoardT<Test, size>::reset_piece()
             _link[*Color::Blue][adj->index].insert(center);
         }
     }
-    // low speed, for test
+    // in link of previous color, handle each adjacent position of buf_index.
     std::set<coord_t> tmp;
     for (auto adj : _pos(center)->adj())
     {
@@ -371,13 +383,13 @@ inline void BoardT<Test, size>::reset_piece()
     }
     // link with begin or end point.
     if (_pos(center)->bAdjBegin[*Color::Red])
-        _link[*Color::Red][center].insert(Position::nBegin);
+        _link[*Color::Red][center].insert(nBegin());
     if (_pos(center)->bAdjBegin[*Color::Blue])
-        _link[*Color::Blue][center].insert(Position::nBegin);
+        _link[*Color::Blue][center].insert(nBegin());
     if (_pos(center)->bAdjEnd[*Color::Red])
-        _link[*Color::Red][center].insert(Position::nEnd);
+        _link[*Color::Red][center].insert(nEnd());
     if (_pos(center)->bAdjEnd[*Color::Blue])
-        _link[*Color::Blue][center].insert(Position::nEnd);
+        _link[*Color::Blue][center].insert(nEnd());
 }
 
 template<typename Test, coord_t size>
