@@ -18,6 +18,7 @@ public:
 
 public slots:
     void setPiece(int row, int col);
+    void resetPiece(int row, int col);
     void onOpen();
     void onSave();
     void onSaveAs();

@@ -62,10 +62,22 @@ void app::setPiece(int row, int col)
     Color color = _pBoard->color();
     (*_pBoard)(row, col) = color;
 
+    _rec.push_back(pos_t(row, col, _pBoard->boardsize()));
+
     ostringstream oss;
     oss << "move: " << "(row " << row << ", col " << col << ")";
     appendText(oss.str(), color);
 
+    updateBoard();
+}
+
+void app::resetPiece(int row, int col)
+{
+    if (!_pBoard)
+        return;
+
+    (*_pBoard)(row, col) = Color::Empty;
+    
     updateBoard();
 }
 
@@ -157,6 +169,11 @@ void app::onAIMove()
 
 void app::onTakeBack()
 {
+    if (_rec.empty())
+        return;
+    pos_t pos = _rec.back();
+    resetPiece(pos.row, pos.col);
+    _rec.pop_back();
 }
 
 void app::onView()
