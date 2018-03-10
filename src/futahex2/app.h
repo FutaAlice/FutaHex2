@@ -14,6 +14,13 @@ public:
 
 public slots:
     void setPiece(int row, int col);
+    void onOpen();
+    void onSave();
+    void onSaveAs();
+    void onRestart();
+    void onAIMove();
+    void onTakeBack();
+    void onView();
     void onAction5();
     void onAction7();
     void onAction9();

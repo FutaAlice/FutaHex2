@@ -12,7 +12,7 @@ app::app(QWidget *parent)
     ui.centralWidget->setLayout(ui.mainLayout);
     ui.link_red->setDisplayMethod(Canvas::DisplayMethod::LinkR);
     ui.link_blue->setDisplayMethod(Canvas::DisplayMethod::LinkB);
-    setFixedSize(w * 16 / 9, w);
+    resize(w * 16 / 9, w);
 
     QObject::connect(ui.canvas, SIGNAL(clickEmptyPoint(int, int)), this, SLOT(setPiece(int, int)));
     QObject::connect(ui.action5, SIGNAL(triggered()), this, SLOT(onAction5()));
@@ -23,6 +23,30 @@ app::app(QWidget *parent)
     QObject::connect(ui.action15, SIGNAL(triggered()), this, SLOT(onAction15()));
     QObject::connect(ui.action17, SIGNAL(triggered()), this, SLOT(onAction17()));
     QObject::connect(ui.action19, SIGNAL(triggered()), this, SLOT(onAction19()));
+
+    auto add_default_icon = [&, this](auto style, auto text) {
+        auto icon = QApplication::style()->standardIcon(style);
+        auto action = new QAction(icon, text, this);
+        ui.mainToolBar->addAction(action);
+        return action;
+    };
+
+    QObject::connect(add_default_icon(QStyle::SP_DirIcon, "open"),
+                     SIGNAL(triggered()), this, SLOT(onOpen()));
+    QObject::connect(add_default_icon(QStyle::SP_DialogSaveButton, "save"),
+                     SIGNAL(triggered()), this, SLOT(onSave()));
+    QObject::connect(add_default_icon(QStyle::SP_BrowserReload, "restart"),
+                     SIGNAL(triggered()), this, SLOT(onRestart()));
+    ui.mainToolBar->addSeparator();
+
+    QObject::connect(add_default_icon(QStyle::SP_MediaPlay, "AI move"),
+                     SIGNAL(triggered()), this, SLOT(onAIMove()));
+    QObject::connect(add_default_icon(QStyle::SP_MediaSeekBackward, "take back"),
+                     SIGNAL(triggered()), this, SLOT(onTakeBack()));
+    ui.mainToolBar->addSeparator();
+
+    QObject::connect(add_default_icon(QStyle::SP_FileDialogInfoView, "view"),
+                     SIGNAL(triggered()), this, SLOT(onView()));
 }
 
 void app::paintEvent(QPaintEvent * event)
@@ -77,3 +101,30 @@ void app::onAction15() { changeBoardsize(15); }
 void app::onAction17() { changeBoardsize(17); }
 void app::onAction19() { changeBoardsize(19); }
 
+void app::onOpen()
+{
+}
+
+void app::onSave()
+{
+}
+
+void app::onSaveAs()
+{
+}
+
+void app::onRestart()
+{
+}
+
+void app::onAIMove()
+{
+}
+
+void app::onTakeBack()
+{
+}
+
+void app::onView()
+{
+}
