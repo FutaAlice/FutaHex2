@@ -32,8 +32,6 @@ inline BoardT<Test, size>::BoardT() noexcept
             auto pt_center = pos(index);
             for (auto pt_adjacent : pt_center->adj())
             {
-                if (!pt_adjacent)
-                    continue;
                 link.insert(pt_adjacent->index);
             }
             if (pt_center->bAdjBegin[*color])
@@ -326,7 +324,6 @@ inline void BoardT<Test, size>::reset_piece()
     // link to adj(empty)
     for (auto adj : _pos(center)->adj())
     {
-        if (!adj) continue;
         if (_bit[*Color::Red][adj->index] == 0 &&
             _bit[*Color::Blue][adj->index] == 0)
         {
@@ -340,16 +337,13 @@ inline void BoardT<Test, size>::reset_piece()
     std::set<coord_t> tmp;
     for (auto adj : _pos(center)->adj())
     {
-        if (!adj) continue;
         tmp.insert(adj->index);
     }
     for (auto adj : _pos(center)->adj())
     {
-        if (!adj) continue;
         std::set<coord_t> cp(tmp);
         for (auto adjadj : adj->adj())
         {
-            if (!adjadj) continue;
             cp.erase(adjadj->index);
         }
         for (auto i : cp)

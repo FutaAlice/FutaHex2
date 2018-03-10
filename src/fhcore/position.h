@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <ostream>
+#include <set>
 
 namespace position
 {
@@ -14,7 +15,7 @@ class pos_t
 {
 public:
     pos_t(coord_t row, coord_t col, coord_t size);
-    const std::array<pos_t *, 6> & adj() const;
+    const std::set<pos_t *> & adj() const;
     const pos_t *adj(int dir) const;
     void setAdj(int dir, pos_t *adj);
     friend std::ostream& operator<< (std::ostream& stream, const pos_t pt);
@@ -27,6 +28,7 @@ public:
     bool bAdjEnd[2];
 private:
     std::array<pos_t *, 6> _adjacent;
+    std::set<pos_t *> _adjacent_exist;
 };
 
 template<coord_t size>
