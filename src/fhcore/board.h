@@ -115,6 +115,9 @@ public: // Interface
 
 private:
     coord_t buf_index() const;
+    std::set<coord_t>
+        infer_direct_link(coord_t index, Color color,
+                          std::set<coord_t> *except = nullptr);
     void set_piece(const Color color);
     void reset_piece();
 

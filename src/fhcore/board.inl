@@ -310,6 +310,42 @@ inline coord_t BoardT<Test, size>::buf_index() const
 }
 
 template<typename Test, coord_t size>
+inline std::set<coord_t>
+BoardT<Test, size>::infer_direct_link(coord_t index, Color color,
+                                      std::set<coord_t> *except)
+{
+    using namespace std;
+    set<coord_t> link;
+    Color opposite = !color;
+    bool need_to_delete = except ? 0 : 1;
+    if (!except)
+        except = new set<coord_t>;
+    except->insert(index);
+
+    for (auto adj : _pos(index)->adj())
+    {
+        coord_t iAdj = adj->index;
+        if (except->end() != except->find(iAdj)) // already in except
+            continue;
+
+        if (_bit[*opposite][iAdj])
+            continue;
+        else if (_bit[*color][iAdj])
+        {
+            set<coord_t> adj_link = infer_direct_link(iAdj, color, except);
+            link.insert(adj_link.begin(), adj_link.end());
+        }
+        else // empty
+            link.insert(iAdj);
+    }
+
+    if (need_to_delete)
+        delete except;
+
+    return link;
+}
+
+template<typename Test, coord_t size>
 inline void BoardT<Test, size>::set_piece(const Color color)
 {
     const auto center = buf_index();
@@ -363,7 +399,28 @@ inline void BoardT<Test, size>::reset_piece()
             _link[*Color::Blue][adj->index].insert(center);
         }
     }
+    //
+    for (auto adj : _pos(center)->adj())
+    {
+        for (auto adj_adj_index : _link[*previous][adj->index])
+        {
+            _link[*previous][adj_adj_index].erase(adj->index);
+        }
+        _link[*previous][adj->index].clear();
+    }
+    //
+    for (auto adj : _pos(center)->adj())
+    {
+        std::set<coord_t> link = infer_direct_link(adj->index, previous);
+        for (auto i : link)
+        {
+            _link[*previous][adj->index].insert(i);
+            _link[*previous][i].insert(adj->index);
+        }
+    }
+
     // in link of previous color, handle each adjacent position of buf_index.
+    /*
     std::set<coord_t> tmp;
     for (auto adj : _pos(center)->adj())
     {
@@ -381,6 +438,7 @@ inline void BoardT<Test, size>::reset_piece()
             _link[*previous][adj->index].erase(i);
         }
     }
+    */
     // link with begin or end point.
     if (_pos(center)->bAdjBegin[*Color::Red])
         _link[*Color::Red][center].insert(nBegin());
