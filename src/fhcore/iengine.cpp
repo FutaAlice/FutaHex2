@@ -9,7 +9,7 @@ namespace engine
 
 IEngine::~IEngine()
 {
-    _future.wait();
+    wait();
 }
 
 void IEngine::configure(EngineCfg cfg) noexcept
@@ -40,6 +40,11 @@ void IEngine::compute_sync(position::pos_t & result) noexcept
     lock();
     result = calc_ai_move_sync();
     unlock();
+}
+
+void IEngine::wait()
+{
+    _future.wait();
 }
 
 void IEngine::lock()

@@ -43,7 +43,9 @@ ostream & operator<<(ostream & stream, const pos_t pt)
     };
     stream << typeid(pt).name() << ", ";
     func(pt);
-    stream << "adjacent pos: " << endl;
+    
+    if (!pt.adj().empty())
+        stream << "adjacent pos: " << endl;
     for (int i = 0; i < 6; ++i)
     {
         auto adj = pt.adj(i);

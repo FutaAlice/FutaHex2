@@ -24,6 +24,7 @@ public:
 
 protected:
     virtual position::pos_t calc_ai_move_sync() = 0;
+    void wait();
 
 private:
     void lock();
