@@ -74,6 +74,11 @@ inline BoardT<Test, size>::BoardT(BoardT &&) noexcept
 }
 
 template<typename Test, coord_t size>
+inline BoardT<Test, size>::~BoardT() noexcept
+{
+}
+
+template<typename Test, coord_t size>
 inline IBoard * BoardT<Test, size>::create()
 {
     return new BoardT();

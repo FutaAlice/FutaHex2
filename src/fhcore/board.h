@@ -40,6 +40,7 @@ public:
     static IBoard * create(const std::string & name);
 
 public:
+    virtual ~IBoard() = default;;
     bool operator ==(const IBoard & rhs) const;
     bool operator !=(const IBoard & rhs) const;
 
@@ -85,6 +86,7 @@ public:
     BoardT() noexcept;
     BoardT(const BoardT &) noexcept;
     BoardT(BoardT &&) noexcept;
+    virtual ~BoardT() noexcept;
 
     bool operator ==(const BoardT & rhs) const;
     bool operator !=(const BoardT & rhs) const;
