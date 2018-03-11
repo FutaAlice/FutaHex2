@@ -32,8 +32,6 @@ inline BoardT<Test, size>::BoardT() noexcept
             auto pt_center = pos(index);
             for (auto pt_adjacent : pt_center->adj())
             {
-                if (!pt_adjacent)
-                    continue;
                 link.insert(pt_adjacent->index);
             }
             if (pt_center->bAdjBegin[*color])
@@ -166,6 +164,63 @@ inline Color BoardT<Test, size>::winner() const
 }
 
 template<typename Test, coord_t size>
+inline bool BoardT<Test, size>::empty() const
+{
+    return _bit[*Color::Red].none() && _bit[*Color::Blue].none();
+}
+
+template<typename Test, coord_t size>
+inline bool BoardT<Test, size>::empty(coord_t index) const
+{
+    return _bit[*Color::Red][index] == 0 && _bit[*Color::Blue][index] == 0;
+}
+
+template<typename Test, coord_t size>
+inline bool BoardT<Test, size>::empty(coord_t row, coord_t col) const
+{
+    coord_t index = _pos(row, col)->index;
+    return empty(index);
+}
+
+template<typename Test, coord_t size>
+inline coord_t BoardT<Test, size>::nBegin() const
+{
+    return Position::nBegin;
+}
+
+template<typename Test, coord_t size>
+inline coord_t BoardT<Test, size>::nEnd() const
+{
+    return Position::nEnd;
+}
+
+template<typename Test, coord_t size>
+inline bool BoardT<Test, size>::equal_to(const IBoard & rhs) const
+{
+    using namespace logger;
+    const BoardT & ref = *dynamic_cast<const BoardT *>(&rhs);
+
+    if (_bit[*Color::Red] != ref._bit[*Color::Red] ||
+        _bit[*Color::Blue] != ref._bit[*Color::Blue])
+        return false;
+
+#if defined(DEBUG) || defined(_DEBUG)
+    bool flag_r = _link[*Color::Red] != ref._link[*Color::Red];
+    bool flag_b = _link[*Color::Blue] != ref._link[*Color::Blue];
+    if (flag_r || flag_b)
+    {
+        // do something
+        debug(Level::Info) << debug_link_str();
+        debug(Level::Info) << ref.debug_link_str();
+
+        return false;
+    }
+#endif // DEBUG
+
+    return true;
+}
+
+template<typename Test, coord_t size>
 inline std::set<coord_t>::iterator
 BoardT<Test, size>::begin(const Color color, coord_t index) const
 {
@@ -275,9 +330,95 @@ inline std::string BoardT<Test, size>::debug_link_str() const
 }
 
 template<typename Test, coord_t size>
+inline bool BoardT<Test, size>::operator==(const BoardT & rhs) const
+{
+    return equal_to(rhs);
+}
+
+template<typename Test, coord_t size>
+inline bool BoardT<Test, size>::operator!=(const BoardT & rhs) const
+{
+    return !equal_to(rhs);
+}
+
+template<typename Test, coord_t size>
 inline coord_t BoardT<Test, size>::buf_index() const
 {
     return _pos(_rowBuf, _colBuf)->index;
+}
+
+template<typename Test, coord_t size>
+inline void
+BoardT<Test, size>::get_direct_capture_union(std::set<coord_t> & out,
+                                             coord_t center, Color color,
+                                             bool first_time/* = true*/) const
+{
+    out.insert(center);
+    for (auto pos_adj : _pos(center)->adj())
+    {
+        const coord_t adj_index = pos_adj->index;
+        // if own color captured
+        if (_bit[*color][adj_index] &&
+            out.end() == out.find(adj_index))
+        {
+            get_direct_capture_union(out, adj_index, color, false);
+        }
+    }
+    //if (first_time)
+    //    out.erase(center);
+}
+
+template<typename Test, coord_t size>
+inline void
+BoardT<Test, size>::get_direct_link_union(std::set<coord_t> & out,
+                                          std::set<coord_t> & except,
+                                          coord_t center, Color color,
+                                          bool first_time/* = true*/) const
+{
+    using namespace std;
+    using namespace logger;
+
+    const pos_t *pos_center = _pos(center);
+    // mark center index as excpet
+    except.insert(center);
+
+    // handle each adjance block around center
+    for (auto pos_adj : pos_center->adj())
+    {
+        const coord_t adj_index = pos_adj->index;
+        // if oppsite color captured
+        if (_bit[*!color][adj_index])
+        {
+            // do nothing
+        }
+        // if own color captured
+        else if (_bit[*color][adj_index])
+        {
+            // check if adj_index already searched
+            if (except.end() == except.find(adj_index))
+            {
+                // if not, marked in except
+                except.insert(adj_index);
+                // recursion
+                get_direct_link_union(out, except, adj_index, color, false);
+            }
+        }
+        // empty block
+        else
+        {
+            out.insert(adj_index); // link to empty block
+        }
+    }
+
+    // link to begin/end point if own color captured
+    if (pos_center->bAdjBegin[*color])
+        out.insert(nBegin());
+    if (pos_center->bAdjEnd[*color])
+        out.insert(nEnd());
+
+    // make sure do not link itself
+    if (first_time)
+        out.erase(center);
 }
 
 template<typename Test, coord_t size>
@@ -315,57 +456,78 @@ inline void BoardT<Test, size>::set_piece(const Color color)
 template<typename Test, coord_t size>
 inline void BoardT<Test, size>::reset_piece()
 {
-    // previous color
+    using namespace std;
+    using namespace logger;
+    // color of previous owner
     Color previous = *this;
     if (Color::Empty == previous)
         return;
-    const auto center = buf_index();
-    // reset bitmap
+
+    const coord_t center = buf_index();
+
+    // reset bitmap for both color
     _bit[*Color::Red].reset(center);
     _bit[*Color::Blue].reset(center);
-    // link to adj(empty)
-    for (auto adj : _pos(center)->adj())
+
+    // ******************** color of previous owner ********************
+    set<coord_t> captured;
+    get_direct_capture_union(captured, center, previous);
+    // clear link state around captured block
+    for (auto cap_index : captured)
     {
-        if (!adj) continue;
-        if (_bit[*Color::Red][adj->index] == 0 &&
-            _bit[*Color::Blue][adj->index] == 0)
+        for (auto pos_adj : _pos(cap_index)->adj())
         {
-            _link[*Color::Red][center].insert(adj->index);
-            _link[*Color::Red][adj->index].insert(center);
-            _link[*Color::Blue][center].insert(adj->index);
-            _link[*Color::Blue][adj->index].insert(center);
+            const coord_t adj = pos_adj->index;
+            if (!empty(adj))
+                continue;
+
+            for (auto adj_adj : _link[*previous][adj])
+            {
+                _link[*previous][adj_adj].erase(adj);
+            }
+            _link[*previous][adj].clear();
         }
     }
-    // low speed, for test
-    std::set<coord_t> tmp;
-    for (auto adj : _pos(center)->adj())
+    // infer direct-link of each block around captured block, then relink it
+    set<coord_t> out, except;
+    for (auto cap_index : captured)
     {
-        if (!adj) continue;
-        tmp.insert(adj->index);
+        for (auto pos_adj : _pos(cap_index)->adj())
+        {
+            const coord_t adj = pos_adj->index;
+            if (!empty(adj))
+                continue;
+
+            get_direct_link_union(out, except, adj, previous);
+            for (auto link_index : out)
+            {
+                _link[*previous][adj].insert(link_index);
+                _link[*previous][link_index].insert(adj);
+            }
+            out.clear();
+            except.clear();
+        }
     }
-    for (auto adj : _pos(center)->adj())
+
+    // handle center block
+    get_direct_link_union(out, except, center, previous);
+    for (auto link_index : out)
     {
-        if (!adj) continue;
-        std::set<coord_t> cp(tmp);
-        for (auto adjadj : adj->adj())
-        {
-            if (!adjadj) continue;
-            cp.erase(adjadj->index);
-        }
-        for (auto i : cp)
-        {
-            _link[*previous][adj->index].erase(i);
-        }
+        _link[*previous][center].insert(link_index);
+        _link[*previous][link_index].insert(center);
     }
-    // link with begin or end point.
-    if (_pos(center)->bAdjBegin[*Color::Red])
-        _link[*Color::Red][center].insert(Position::nBegin);
-    if (_pos(center)->bAdjBegin[*Color::Blue])
-        _link[*Color::Blue][center].insert(Position::nBegin);
-    if (_pos(center)->bAdjEnd[*Color::Red])
-        _link[*Color::Red][center].insert(Position::nEnd);
-    if (_pos(center)->bAdjEnd[*Color::Blue])
-        _link[*Color::Blue][center].insert(Position::nEnd);
+    out.clear();
+    except.clear();
+
+    // ******************** color of opposite owner ********************
+    // handle center block
+    get_direct_link_union(out, except, center, !previous);
+    for (auto link_index : out)
+    {
+        _link[*!previous][center].insert(link_index);
+        _link[*!previous][link_index].insert(center);
+    }
+
 }
 
 template<typename Test, coord_t size>

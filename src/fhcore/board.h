@@ -40,6 +40,10 @@ public:
     static IBoard * create(const std::string & name);
 
 public:
+    bool operator ==(const IBoard & rhs) const;
+    bool operator !=(const IBoard & rhs) const;
+
+public:
     virtual IBoard & operator()(coord_t row, coord_t col) = 0;
     virtual IBoard & operator()(coord_t index) = 0;
 
@@ -52,6 +56,13 @@ public:
     virtual size_t terns() const = 0;
     virtual Color color() const = 0;
     virtual Color winner() const = 0;
+    virtual bool empty() const = 0;
+    virtual bool empty(coord_t index) const = 0;
+    virtual bool empty(coord_t row, coord_t col) const = 0;
+    virtual coord_t nBegin() const = 0;
+    virtual coord_t nEnd() const = 0;
+
+    virtual bool equal_to(const IBoard & rhs) const = 0;
 
     virtual std::set<coord_t>::iterator
         begin(const Color color, coord_t index) const = 0;
@@ -75,6 +86,9 @@ public:
     BoardT(const BoardT &) noexcept;
     BoardT(BoardT &&) noexcept;
 
+    bool operator ==(const BoardT & rhs) const;
+    bool operator !=(const BoardT & rhs) const;
+
 public:
     static IBoard * create();
 
@@ -91,6 +105,13 @@ public: // Interface
     virtual size_t terns() const;
     virtual Color color() const;
     virtual Color winner() const;
+    virtual bool empty() const;
+    virtual bool empty(coord_t index) const;
+    virtual bool empty(coord_t row, coord_t col) const;
+    virtual coord_t nBegin() const;
+    virtual coord_t nEnd() const;
+
+    virtual bool equal_to(const IBoard & rhs) const;
 
     virtual std::set<coord_t>::iterator
         begin(const Color color, coord_t index) const;
@@ -105,6 +126,16 @@ public: // Interface
 
 private:
     coord_t buf_index() const;
+
+    void get_direct_capture_union(std::set<coord_t> & out,
+                                  coord_t center, Color color,
+                                  bool first_time = true) const;
+
+    void get_direct_link_union(std::set<coord_t> & out,
+                               std::set<coord_t> & except,
+                               coord_t center, Color color,
+                               bool first_time = true) const;
+
     void set_piece(const Color color);
     void reset_piece();
 

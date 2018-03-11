@@ -17,9 +17,9 @@ pos_t::pos_t(coord_t row, coord_t col, coord_t size)
     bAdjEnd[*Color::Blue] = (size - 1 == col);
 }
 
-const std::array<pos_t*, 6>& pos_t::adj() const
+const std::set<pos_t *> & pos_t::adj() const
 {
-    return _adjacent;
+    return _adjacent_exist;
 }
 
 const pos_t *position::pos_t::adj(int dir) const
@@ -30,6 +30,8 @@ const pos_t *position::pos_t::adj(int dir) const
 void position::pos_t::setAdj(int dir, pos_t *adj)
 {
     _adjacent[dir] = adj;
+    if (adj)
+        _adjacent_exist.insert(adj);
 }
 
 ostream & operator<<(ostream & stream, const pos_t pt)

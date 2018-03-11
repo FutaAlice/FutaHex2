@@ -47,3 +47,15 @@ IBoard * board::IBoard::create(const std::string & name)
 {
     return nullptr;
 }
+
+bool board::IBoard::operator==(const IBoard & rhs) const
+{
+    assert(boardsize() == rhs.boardsize());
+    return equal_to(rhs);
+}
+
+bool board::IBoard::operator!=(const IBoard & rhs) const
+{
+    assert(boardsize() == rhs.boardsize());
+    return !equal_to(rhs);
+}
