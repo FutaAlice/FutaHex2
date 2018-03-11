@@ -197,6 +197,7 @@ inline coord_t BoardT<Test, size>::nEnd() const
 template<typename Test, coord_t size>
 inline bool BoardT<Test, size>::equal_to(const IBoard & rhs) const
 {
+    using namespace logger;
     const BoardT & ref = *dynamic_cast<const BoardT *>(&rhs);
 
     if (_bit[*Color::Red] != ref._bit[*Color::Red] ||
@@ -209,6 +210,8 @@ inline bool BoardT<Test, size>::equal_to(const IBoard & rhs) const
     if (flag_r || flag_b)
     {
         // do something
+        debug(Level::Info) << debug_link_str();
+        debug(Level::Info) << ref.debug_link_str();
 
         return false;
     }
@@ -345,39 +348,77 @@ inline coord_t BoardT<Test, size>::buf_index() const
 }
 
 template<typename Test, coord_t size>
-inline std::set<coord_t>
-BoardT<Test, size>::infer_direct_link(coord_t index, Color color,
-                                      std::set<coord_t> *except)
+inline void
+BoardT<Test, size>::get_direct_capture_union(std::set<coord_t> & out,
+                                             coord_t center, Color color,
+                                             bool first_time/* = true*/) const
+{
+    out.insert(center);
+    for (auto pos_adj : _pos(center)->adj())
+    {
+        const coord_t adj_index = pos_adj->index;
+        // if own color captured
+        if (_bit[*color][adj_index] &&
+            out.end() == out.find(adj_index))
+        {
+            get_direct_capture_union(out, adj_index, color, false);
+        }
+    }
+    //if (first_time)
+    //    out.erase(center);
+}
+
+template<typename Test, coord_t size>
+inline void
+BoardT<Test, size>::get_direct_link_union(std::set<coord_t> & out,
+                                          std::set<coord_t> & except,
+                                          coord_t center, Color color,
+                                          bool first_time/* = true*/) const
 {
     using namespace std;
-    set<coord_t> link;
-    Color opposite = !color;
-    bool need_to_delete = except ? 0 : 1;
-    if (!except)
-        except = new set<coord_t>;
-    except->insert(index);
+    using namespace logger;
 
-    for (auto adj : _pos(index)->adj())
+    const pos_t *pos_center = _pos(center);
+    // mark center index as excpet
+    except.insert(center);
+
+    // handle each adjance block around center
+    for (auto pos_adj : pos_center->adj())
     {
-        coord_t iAdj = adj->index;
-        if (except->end() != except->find(iAdj)) // already in except
-            continue;
-
-        if (_bit[*opposite][iAdj])
-            continue;
-        else if (_bit[*color][iAdj])
+        const coord_t adj_index = pos_adj->index;
+        // if oppsite color captured
+        if (_bit[*!color][adj_index])
         {
-            set<coord_t> adj_link = infer_direct_link(iAdj, color, except);
-            link.insert(adj_link.begin(), adj_link.end());
+            // do nothing
         }
-        else // empty
-            link.insert(iAdj);
+        // if own color captured
+        else if (_bit[*color][adj_index])
+        {
+            // check if adj_index already searched
+            if (except.end() == except.find(adj_index))
+            {
+                // if not, marked in except
+                except.insert(adj_index);
+                // recursion
+                get_direct_link_union(out, except, adj_index, color, false);
+            }
+        }
+        // empty block
+        else
+        {
+            out.insert(adj_index); // link to empty block
+        }
     }
 
-    if (need_to_delete)
-        delete except;
+    // link to begin/end point if own color captured
+    if (pos_center->bAdjBegin[*color])
+        out.insert(nBegin());
+    if (pos_center->bAdjEnd[*color])
+        out.insert(nEnd());
 
-    return link;
+    // make sure do not link itself
+    if (first_time)
+        out.erase(center);
 }
 
 template<typename Test, coord_t size>
@@ -415,74 +456,78 @@ inline void BoardT<Test, size>::set_piece(const Color color)
 template<typename Test, coord_t size>
 inline void BoardT<Test, size>::reset_piece()
 {
-    // previous color
+    using namespace std;
+    using namespace logger;
+    // color of previous owner
     Color previous = *this;
     if (Color::Empty == previous)
         return;
-    const auto center = buf_index();
-    // reset bitmap
+
+    const coord_t center = buf_index();
+
+    // reset bitmap for both color
     _bit[*Color::Red].reset(center);
     _bit[*Color::Blue].reset(center);
-    // both color link to adjacent empty block
-    for (auto adj : _pos(center)->adj())
+
+    // ******************** color of previous owner ********************
+    set<coord_t> captured;
+    get_direct_capture_union(captured, center, previous);
+    // clear link state around captured block
+    for (auto cap_index : captured)
     {
-        if (empty(adj->index))
+        for (auto pos_adj : _pos(cap_index)->adj())
         {
-            _link[*Color::Red][center].insert(adj->index);
-            _link[*Color::Red][adj->index].insert(center);
-            _link[*Color::Blue][center].insert(adj->index);
-            _link[*Color::Blue][adj->index].insert(center);
+            const coord_t adj = pos_adj->index;
+            if (!empty(adj))
+                continue;
+
+            for (auto adj_adj : _link[*previous][adj])
+            {
+                _link[*previous][adj_adj].erase(adj);
+            }
+            _link[*previous][adj].clear();
         }
     }
-    //
-    for (auto adj : _pos(center)->adj())
+    // infer direct-link of each block around captured block, then relink it
+    set<coord_t> out, except;
+    for (auto cap_index : captured)
     {
-        for (auto adj_adj_index : _link[*previous][adj->index])
+        for (auto pos_adj : _pos(cap_index)->adj())
         {
-            _link[*previous][adj_adj_index].erase(adj->index);
-        }
-        _link[*previous][adj->index].clear();
-    }
-    //
-    for (auto adj : _pos(center)->adj())
-    {
-        std::set<coord_t> link = infer_direct_link(adj->index, previous);
-        for (auto i : link)
-        {
-            _link[*previous][adj->index].insert(i);
-            _link[*previous][i].insert(adj->index);
+            const coord_t adj = pos_adj->index;
+            if (!empty(adj))
+                continue;
+
+            get_direct_link_union(out, except, adj, previous);
+            for (auto link_index : out)
+            {
+                _link[*previous][adj].insert(link_index);
+                _link[*previous][link_index].insert(adj);
+            }
+            out.clear();
+            except.clear();
         }
     }
 
-    // in link of previous color, handle each adjacent position of buf_index.
-    /*
-    std::set<coord_t> tmp;
-    for (auto adj : _pos(center)->adj())
+    // handle center block
+    get_direct_link_union(out, except, center, previous);
+    for (auto link_index : out)
     {
-        tmp.insert(adj->index);
+        _link[*previous][center].insert(link_index);
+        _link[*previous][link_index].insert(center);
     }
-    for (auto adj : _pos(center)->adj())
+    out.clear();
+    except.clear();
+
+    // ******************** color of opposite owner ********************
+    // handle center block
+    get_direct_link_union(out, except, center, !previous);
+    for (auto link_index : out)
     {
-        std::set<coord_t> cp(tmp);
-        for (auto adjadj : adj->adj())
-        {
-            cp.erase(adjadj->index);
-        }
-        for (auto i : cp)
-        {
-            _link[*previous][adj->index].erase(i);
-        }
+        _link[*!previous][center].insert(link_index);
+        _link[*!previous][link_index].insert(center);
     }
-    */
-    // link with begin or end point.
-    if (_pos(center)->bAdjBegin[*Color::Red])
-        _link[*Color::Red][center].insert(nBegin());
-    if (_pos(center)->bAdjBegin[*Color::Blue])
-        _link[*Color::Blue][center].insert(nBegin());
-    if (_pos(center)->bAdjEnd[*Color::Red])
-        _link[*Color::Red][center].insert(nEnd());
-    if (_pos(center)->bAdjEnd[*Color::Blue])
-        _link[*Color::Blue][center].insert(nEnd());
+
 }
 
 template<typename Test, coord_t size>

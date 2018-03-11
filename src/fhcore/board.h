@@ -126,8 +126,16 @@ public: // Interface
 
 private:
     coord_t buf_index() const;
-    std::set<coord_t> infer_direct_link(coord_t index, Color color,
-                                        std::set<coord_t> *except = nullptr);
+
+    void get_direct_capture_union(std::set<coord_t> & out,
+                                  coord_t center, Color color,
+                                  bool first_time = true) const;
+
+    void get_direct_link_union(std::set<coord_t> & out,
+                               std::set<coord_t> & except,
+                               coord_t center, Color color,
+                               bool first_time = true) const;
+
     void set_piece(const Color color);
     void reset_piece();
 

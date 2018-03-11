@@ -4,9 +4,21 @@
 #include <logger.h>
 #include <board.h>
 #include "fhcore_test.h"
+using namespace std;
+using namespace logger;
+using namespace board;
+
+#define TEST_CASE_PASS do { \
+    debug(Level::Info) << __func__ << " done."; \
+} while (0)
+
+#define TEST_CASE_FAIL do { \
+    debug(Level::Info) << __func__ << " fail."; \
+} while (0)
 
 int test_fhcore_all()
 {
+
     if (0 != test_fhcore_logger())
         return -1;
 
@@ -33,19 +45,16 @@ int test_fhcore_all()
 
 int test_fhcore_logger()
 {
-    using namespace logger;
     debug(Level::Info) << __func__;
     record(Level::Info) << __func__;
 
+    TEST_CASE_PASS;
     return 0;
 }
 
 #include <color.h>
 int test_fhcore_color()
 {
-    using namespace color;
-    using namespace logger;
-
     Color r = Color::Red, b = Color::Blue;
     auto not_r = !r;
     auto not_b = !b;
@@ -75,14 +84,12 @@ int test_fhcore_color()
     const char *arr[2] = { "Red", "Blue" };
     auto a_r = arr[*r];
 
+    TEST_CASE_PASS;
     return 0;
 }
 
 int test_fhcore_position()
 {
-    using namespace position;
-    using namespace logger;
-
     auto& pt_11 = PositionT<11>::instance();
     auto* p_11 = pt_11(4, 4);
 
@@ -93,15 +100,12 @@ int test_fhcore_position()
 
     debug() << *p_5;
     
+    TEST_CASE_PASS;
     return 0;
 }
 
 int test_fhcore_boardt()
 {
-    using namespace std;
-    using namespace board;
-    using namespace logger;
-
     shared_ptr<Board<11>> pb = make_shared<Board<11>>();
     auto & b = *pb;
 
@@ -110,15 +114,12 @@ int test_fhcore_boardt()
 
     debug() << b.debug_bit_str();
 
+    TEST_CASE_PASS;
     return 0;
 }
 
 int test_fhcore_iboard()
 {
-    using namespace std;
-    using namespace board;
-    using namespace logger;
-
     IBoard &b_5 = *IBoard::create(5);
     b_5(2, 2) = Color::Red;
 
@@ -128,33 +129,85 @@ int test_fhcore_iboard()
     delete &b_5;
     delete &copy_b_5;
 
+    TEST_CASE_PASS;
     return 0;
 }
 
 int test_fhcore_iboard_equal_to()
 {
-    using namespace std;
-    using namespace board;
-    IBoard & b1 = *IBoard::create(5);
-    IBoard & b2 = *IBoard::create(5);
+    auto print_link = [](auto & b1, auto & b2) {
+        debug(Level::Info) << b1.debug_link_str();
+        debug(Level::Info) << b2.debug_link_str();
+    };
 
-    b1(0, 2) = Color::Red;
-    //b1(1, 2) = Color::Red;
-    //b1(1, 2) = Color::Empty;
-    b1(0, 2) = Color::Empty;
+    // test case 1: 
+    {
+        IBoard & b1 = *IBoard::create(5);
+        IBoard & b2 = *IBoard::create(5);
 
-    if (b1 != b2)
-        return -1;
+        b1(0, 2) = Color::Red;
+        b1(0, 2) = Color::Empty;
 
+        if (b1 != b2)
+            return -1;
+    }
+
+    // test case 2: 
+    {
+        IBoard & b1 = *IBoard::create(5);
+        IBoard & b2 = *IBoard::create(5);
+
+        b1(0, 2) = Color::Red;
+        b1(2, 2) = Color::Red;
+        b1(0, 2) = Color::Empty;
+
+        b2(2, 2) = Color::Red;
+
+        if (b1 != b2)
+            return -1;
+    }
+
+    // test case 3: 
+    {
+        IBoard & b1 = *IBoard::create(5);
+        IBoard & b2 = *IBoard::create(5);
+
+        b1(0, 2) = Color::Red;
+        b1(1, 2) = Color::Red;
+        b1(1, 2) = Color::Empty;
+
+        b2(0, 2) = Color::Red;
+
+        if (b1 != b2)
+            return -1;
+    }
+
+    // test case 4: 
+    {
+        IBoard & b1 = *IBoard::create(5);
+        IBoard & b2 = *IBoard::create(5);
+
+        b1(0, 2) = Color::Red;
+        b1(2, 2) = Color::Red;
+        b1(1, 2) = Color::Red;
+        b1(1, 2) = Color::Empty;
+
+        b2(0, 2) = Color::Red;
+        b2(2, 2) = Color::Red;
+
+        if (b1 != b2)
+        {
+            TEST_CASE_FAIL;
+            return -1;
+        }
+    }
+
+    TEST_CASE_PASS;
     return 0;
 }
 
 int test_fhcore_board()
 {
-    using namespace std;
-    using namespace board;
-    using namespace logger;
-
     Board<5> b_5;
     IBoard &refb = b_5;
 
@@ -176,5 +229,7 @@ int test_fhcore_board()
     });
 
     debug() << b_5.debug_bit_str();
+
+    TEST_CASE_PASS;
     return 0;
 }
