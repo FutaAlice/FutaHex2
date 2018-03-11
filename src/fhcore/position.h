@@ -14,6 +14,7 @@ class PositionT;
 class pos_t
 {
 public:
+    pos_t() = default;
     pos_t(coord_t row, coord_t col, coord_t size);
     const std::set<pos_t *> & adj() const;
     const pos_t *adj(int dir) const;
@@ -27,7 +28,8 @@ public:
     bool bAdjBegin[2];
     bool bAdjEnd[2];
 private:
-    std::array<pos_t *, 6> _adjacent;
+    std::array<pos_t *, 6> _adjacent { 
+        nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
     std::set<pos_t *> _adjacent_exist;
 };
 
