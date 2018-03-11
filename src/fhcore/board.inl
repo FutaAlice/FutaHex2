@@ -80,31 +80,6 @@ inline IBoard * BoardT<Test, size>::create()
 }
 
 template<typename Test, coord_t size>
-inline bool BoardT<Test, size>::operator==(const IBoard & rhs) const
-{
-    assert(size == rhs.boardsize());
-
-    const BoardT & ref = *dynamic_cast<const BoardT *>(&rhs);
-
-    if (_bit[*Color::Red] != ref._bit[*Color::Red] ||
-        _bit[*Color::Blue] != ref._bit[*Color::Blue])
-        return false;
-
-#if defined(DEBUG) || defined(_DEBUG)
-    bool flag_r = _link[*Color::Red] != ref._link[*Color::Red];
-    bool flag_b = _link[*Color::Blue] != ref._link[*Color::Blue];
-    if (flag_r || flag_b)
-    {
-        // do something
-        assert(false);
-        return false;
-    }
-#endif // DEBUG
-
-    return true;
-}
-
-template<typename Test, coord_t size>
 inline IBoard & BoardT<Test, size>::operator()(coord_t row, coord_t col)
 {
     assert(size > row && size > col);
@@ -220,6 +195,29 @@ inline coord_t BoardT<Test, size>::nEnd() const
 }
 
 template<typename Test, coord_t size>
+inline bool BoardT<Test, size>::equal_to(const IBoard & rhs) const
+{
+    const BoardT & ref = *dynamic_cast<const BoardT *>(&rhs);
+
+    if (_bit[*Color::Red] != ref._bit[*Color::Red] ||
+        _bit[*Color::Blue] != ref._bit[*Color::Blue])
+        return false;
+
+#if defined(DEBUG) || defined(_DEBUG)
+    bool flag_r = _link[*Color::Red] != ref._link[*Color::Red];
+    bool flag_b = _link[*Color::Blue] != ref._link[*Color::Blue];
+    if (flag_r || flag_b)
+    {
+        // do something
+
+        return false;
+    }
+#endif // DEBUG
+
+    return true;
+}
+
+template<typename Test, coord_t size>
 inline std::set<coord_t>::iterator
 BoardT<Test, size>::begin(const Color color, coord_t index) const
 {
@@ -326,6 +324,18 @@ inline std::string BoardT<Test, size>::debug_link_str() const
         oss << endl;
     }
     return oss.str();
+}
+
+template<typename Test, coord_t size>
+inline bool BoardT<Test, size>::operator==(const BoardT & rhs) const
+{
+    return equal_to(rhs);
+}
+
+template<typename Test, coord_t size>
+inline bool BoardT<Test, size>::operator!=(const BoardT & rhs) const
+{
+    return !equal_to(rhs);
 }
 
 template<typename Test, coord_t size>
