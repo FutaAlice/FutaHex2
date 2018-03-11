@@ -23,6 +23,9 @@
     <ClCompile Include="..\..\src\fhcore\board.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\fhcore\iengine.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\fhcore\logger.h">
@@ -35,6 +38,9 @@
       <Filter>header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\fhcore\position.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\fhcore\iengine.h">
       <Filter>header</Filter>
     </ClInclude>
   </ItemGroup>
