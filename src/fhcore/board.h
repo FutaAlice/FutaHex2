@@ -40,6 +40,9 @@ public:
     static IBoard * create(const std::string & name);
 
 public:
+    bool operator !=(const IBoard & rhs) const;
+
+public:
     virtual bool operator ==(const IBoard & rhs) const = 0;
 
     virtual IBoard & operator()(coord_t row, coord_t col) = 0;

@@ -47,3 +47,8 @@ IBoard * board::IBoard::create(const std::string & name)
 {
     return nullptr;
 }
+
+bool board::IBoard::operator!=(const IBoard & rhs) const
+{
+    return !this->operator==(rhs);
+}

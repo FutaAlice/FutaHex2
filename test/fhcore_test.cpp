@@ -143,10 +143,10 @@ int test_fhcore_iboard_equal_to()
     //b1(1, 2) = Color::Empty;
     b1(0, 2) = Color::Empty;
 
-    if (b1 == b2)
-        return 0;
+    if (b1 != b2)
+        return -1;
 
-    return -1;
+    return 0;
 }
 
 int test_fhcore_board()
