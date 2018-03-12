@@ -53,8 +53,12 @@ public:
     virtual void operator=(const Color color) = 0;
     virtual operator Color() const = 0;
 
+    virtual const std::set<pos_t *> & adj() const = 0;
+    virtual const pos_t *adj(int dir) const = 0;
+    virtual const pos_t *pos() const = 0;
+
     virtual size_t boardsize() const = 0;
-    virtual size_t terns() const = 0;
+    virtual size_t rounds() const = 0;
     virtual Color color() const = 0;
     virtual Color winner() const = 0;
     virtual bool empty() const = 0;
@@ -103,8 +107,12 @@ public: // Interface
     virtual void operator=(const Color color);
     virtual operator Color() const;
 
+    virtual const std::set<pos_t *> & adj() const;
+    virtual const pos_t *adj(int dir) const;
+    virtual const pos_t *pos() const;
+
     virtual size_t boardsize() const;
-    virtual size_t terns() const;
+    virtual size_t rounds() const;
     virtual Color color() const;
     virtual Color winner() const;
     virtual bool empty() const;

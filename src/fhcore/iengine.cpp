@@ -1,8 +1,12 @@
 #include <cassert>
+#include <chrono>
+#include "logger.h"
 #include "iengine.h"
 
 using namespace std;
+using namespace chrono;
 using namespace board;
+using namespace logger;
 
 namespace engine
 {
@@ -29,7 +33,7 @@ void IEngine::compute(FUNC_CB_AIMOVE cb, void *opaque) noexcept
 
     _future = async(launch::async, [this, cb, opaque] {
         lock();
-        auto result = calc_ai_move_sync();
+        pos_t result = timer(&IEngine::calc_ai_move_sync, this);
         unlock();
         cb(result, opaque);
     });
@@ -38,7 +42,7 @@ void IEngine::compute(FUNC_CB_AIMOVE cb, void *opaque) noexcept
 void IEngine::compute_sync(position::pos_t & result) noexcept
 {
     lock();
-    result = calc_ai_move_sync();
+    result = timer(&IEngine::calc_ai_move_sync, this);
     unlock();
 }
 

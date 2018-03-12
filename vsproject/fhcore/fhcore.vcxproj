@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\fhcore\board.cpp" />
     <ClCompile Include="..\..\src\fhcore\color.cpp" />
+    <ClCompile Include="..\..\src\fhcore\disjointset.cpp" />
     <ClCompile Include="..\..\src\fhcore\iengine.cpp" />
     <ClCompile Include="..\..\src\fhcore\logger.cpp" />
     <ClCompile Include="..\..\src\fhcore\mcts.cpp" />
@@ -149,6 +150,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\fhcore\board.h" />
     <ClInclude Include="..\..\src\fhcore\color.h" />
+    <ClInclude Include="..\..\src\fhcore\disjointset.h" />
     <ClInclude Include="..\..\src\fhcore\logger.h" />
     <ClInclude Include="..\..\src\fhcore\iengine.h" />
     <ClInclude Include="..\..\src\fhcore\mcts.h" />
@@ -156,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\fhcore\board.inl" />
+    <None Include="..\..\src\fhcore\disjointset.inl" />
     <None Include="..\..\src\fhcore\position.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

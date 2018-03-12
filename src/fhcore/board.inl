@@ -21,7 +21,7 @@ inline BoardT<Test, size>::BoardT() noexcept
     debug(Level::Debug) << __func__
         << "<" << typeid(Test).name() << "," << size << ">" << " "
         << "constructor...";
-    
+
     auto func = [this](auto & link_rb, const Position & pos, Color color) {
         auto & link_array = link_rb[*color];
         int index = 0;
@@ -53,13 +53,13 @@ inline BoardT<Test, size>::BoardT() noexcept
 
 template<typename Test, coord_t size>
 inline BoardT<Test, size>::BoardT(const BoardT & b) noexcept
-    : _bit{ b._bit[0], b._bit[1] }
-    , _link{ b._link[0], b._link[1] }
+    : _bit { b._bit[0], b._bit[1] }
+    , _link { b._link[0], b._link[1] }
 {
     using namespace logger;
-    debug(Level::Debug) << __func__ 
+    debug(Level::Debug) << __func__
         << "<" << typeid(Test).name() << "," << size << ">" << " "
-        <<"copy constructor...";
+        << "copy constructor...";
 }
 
 template<typename Test, coord_t size>
@@ -139,13 +139,31 @@ inline BoardT<Test, size>::operator Color() const
 }
 
 template<typename Test, coord_t size>
+inline const std::set<pos_t*>& BoardT<Test, size>::adj() const
+{
+    return _pos(_rowBuf, _colBuf)->adj();
+}
+
+template<typename Test, coord_t size>
+inline const pos_t * BoardT<Test, size>::adj(int dir) const
+{
+    return _pos(_rowBuf, _colBuf)->adj(dir);
+}
+
+template<typename Test, coord_t size>
+inline const pos_t * BoardT<Test, size>::pos() const
+{
+    return _pos(_rowBuf, _colBuf);
+}
+
+template<typename Test, coord_t size>
 inline size_t BoardT<Test, size>::boardsize() const
 {
     return size;
 }
 
 template<typename Test, coord_t size>
-inline size_t BoardT<Test, size>::terns() const
+inline size_t BoardT<Test, size>::rounds() const
 {
     return _bit[*Color::Red].count() + _bit[*Color::Blue].count();
 }
@@ -153,16 +171,16 @@ inline size_t BoardT<Test, size>::terns() const
 template<typename Test, coord_t size>
 inline Color BoardT<Test, size>::color() const
 {
-    return terns() % 2 ? Color::Blue : Color::Red;
+    return rounds() % 2 ? Color::Blue : Color::Red;
 }
 
 template<typename Test, coord_t size>
 inline Color BoardT<Test, size>::winner() const
 {
     bool r_win = (_link[*Color::Red][Position::nBegin].end() !=
-                    _link[*Color::Red][Position::nBegin].find(Position::nEnd));
+                  _link[*Color::Red][Position::nBegin].find(Position::nEnd));
     bool b_win = (_link[*Color::Blue][Position::nBegin].end() !=
-                    _link[*Color::Blue][Position::nBegin].find(Position::nEnd));
+                  _link[*Color::Blue][Position::nBegin].find(Position::nEnd));
     assert(!(r_win && b_win));
     if (r_win)
         return Color::Red;
@@ -255,7 +273,7 @@ inline std::string BoardT<Test, size>::debug_state_str() const
     using namespace std;
     ostringstream oss;
     oss << endl;
-    oss << "current turns: " << terns() << endl;
+    oss << "current turns: " << rounds() << endl;
     oss << "current color: " << color() << endl;
     return oss.str();
 }

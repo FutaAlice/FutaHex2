@@ -1,7 +1,9 @@
 #pragma once
+#include <chrono>
 #include <future>
 #include <mutex>
 #include "board.h"
+#include "logger.h"
 
 namespace engine
 {
@@ -27,6 +29,8 @@ protected:
     void wait();
 
 private:
+    template<typename T, typename E, typename... Args>
+    auto timer(T calc, E engine, Args... args)->decltype((E->*T)(Args));
     void lock();
     void unlock();
 
@@ -38,5 +42,21 @@ private:
     std::mutex _lock;
     std::future<void> _future;
 };
+
+template<typename T, typename E, typename ...Args>
+inline auto
+IEngine::timer(T calc, E engine, Args ...args) ->
+decltype((engine->*calc)(args ...))
+{
+    using namespace std::chrono;
+    using namespace logger;
+
+    auto begin = system_clock::now();
+    auto result = (engine->*calc)(args...);
+    auto end = system_clock::now();
+    auto duration = duration_cast<seconds>(end - begin);
+    debug(Level::Info) << "cost " << duration.count() << " sec";
+    return result;
+}
 
 }

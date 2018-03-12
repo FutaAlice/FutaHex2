@@ -29,6 +29,9 @@
     <ClCompile Include="..\..\src\fhcore\mcts.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\fhcore\disjointset.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\fhcore\logger.h">
@@ -49,12 +52,18 @@
     <ClInclude Include="..\..\src\fhcore\mcts.h">
       <Filter>header</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\fhcore\disjointset.h">
+      <Filter>header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\fhcore\board.inl">
       <Filter>source</Filter>
     </None>
     <None Include="..\..\src\fhcore\position.inl">
+      <Filter>source</Filter>
+    </None>
+    <None Include="..\..\src\fhcore\disjointset.inl">
       <Filter>source</Filter>
     </None>
   </ItemGroup>

@@ -2,17 +2,17 @@
 #include <list>
 #include "logger.h"
 #include "board.h"
-
 using namespace std;
-using namespace board;
 using namespace logger;
+namespace board
+{
 
 #define REGISTER_CREATE_BY_SIZE(container, size) do { \
     container[size] = Board<size>::create; \
 } while (0)
 
 typedef IBoard *(*PF_CREATE)(void);
-static std::map<coord_t, PF_CREATE> s2t;
+static map<coord_t, PF_CREATE> s2t;
 
 static struct initializer
 {
@@ -32,7 +32,7 @@ initializer::initializer()
     REGISTER_CREATE_BY_SIZE(s2t, 19);
 }
 
-IBoard * board::IBoard::create(const coord_t size)
+IBoard * IBoard::create(const coord_t size)
 {
     auto iter = s2t.find(size);
     if (s2t.end() != iter)
@@ -43,19 +43,21 @@ IBoard * board::IBoard::create(const coord_t size)
     return nullptr;
 }
 
-IBoard * board::IBoard::create(const std::string & name)
+IBoard * IBoard::create(const string & name)
 {
     return nullptr;
 }
 
-bool board::IBoard::operator==(const IBoard & rhs) const
+bool IBoard::operator==(const IBoard & rhs) const
 {
     assert(boardsize() == rhs.boardsize());
     return equal_to(rhs);
 }
 
-bool board::IBoard::operator!=(const IBoard & rhs) const
+bool IBoard::operator!=(const IBoard & rhs) const
 {
     assert(boardsize() == rhs.boardsize());
     return !equal_to(rhs);
+}
+
 }

@@ -16,6 +16,7 @@ class pos_t
 public:
     pos_t() = default;
     pos_t(coord_t row, coord_t col, coord_t size);
+    pos_t(const pos_t &) = default;
     const std::set<pos_t *> & adj() const;
     const pos_t *adj(int dir) const;
     void setAdj(int dir, pos_t *adj);
