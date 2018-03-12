@@ -3,12 +3,17 @@
 #include <QPainterPath>
 #include <QPainter>
 #include <board.h>
+#include <mcts.h>
 using namespace std;
 using namespace board;
+using namespace engine;
 
 app::app(QWidget *parent)
     : QMainWindow(parent)
 {
+    qRegisterMetaType<QTextCharFormat>("QTextCharFormat");
+    qRegisterMetaType<QTextCursor>("QTextCursor");
+    
     ui.setupUi(this);
     ui.centralWidget->setLayout(ui.mainLayout);
     ui.link_red->setDisplayMethod(Canvas::DisplayMethod::LinkR);
@@ -67,12 +72,22 @@ void app::setPiece(int row, int col)
     if (!_pBoard)
         return;
 
-    Color color = getPlayerColor();
-    (*_pBoard)(row, col) = color;
+    IBoard &refBoard = *_pBoard;
+    ostringstream oss;
+    if (Color::Empty != refBoard(row, col))
+    {
+        oss << "warning, ignore this move." << endl
+            << "location(" << row << ", " << col << ") "
+            << "already been captured!";
+        appendText(oss.str());
+        return;
+    }
+
+    Color color = refBoard.color();
+    refBoard(row, col) = color;
 
     _rec.push_back(pos_t(row, col, _pBoard->boardsize()));
 
-    ostringstream oss;
     oss << "move: " << "(row " << row << ", col " << col << ")";
     appendText(oss.str(), color);
 
@@ -233,6 +248,39 @@ void app::onRestart()
 
 void app::onAIMove()
 {
+    if (!_pBoard)
+        return;
+    Color color = _pBoard->color();
+
+    EngineCfg cfg;
+    cfg.colorAI = color;
+    cfg.pBoard = _pBoard;
+
+    IEngine *pEngine = new MCTSEngine();
+    pEngine->configure(cfg);
+
+    struct CallbackParams
+    {
+        CallbackParams(IEngine *pEngine, app *pApp)
+            : pEngine(pEngine)
+            , pApp(pApp)
+        {
+        }
+        ~CallbackParams()
+        {
+            delete pEngine;
+        }
+        IEngine *pEngine { nullptr };
+        app *pApp { nullptr };
+    };
+
+    pEngine->compute([](pos_t result, void *opaque)->void * {
+        cout << result << endl;
+        auto *data = static_cast<CallbackParams *>(opaque);
+        data->pApp->setPiece(result.row, result.col);
+        delete data;
+        return NULL;
+    }, static_cast<void *>(new CallbackParams(pEngine, this)));
 }
 
 void app::onTakeBack()

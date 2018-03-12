@@ -2,24 +2,26 @@
 #include <random>
 #include "board.h"
 #include "logger.h"
-#include "mcts_st.h"
+#include "mcts.h"
 
 using namespace std;
 using namespace board;
+using namespace logger;
 
 namespace engine
 {
 
-MCTS_ST::MCTS_ST()
+MCTSEngine::MCTSEngine()
 {
 }
 
-MCTS_ST::~MCTS_ST()
+MCTSEngine::~MCTSEngine()
 {
+    debug(Level::Info) << "release engine <" << __func__ << ">";
     wait();
 }
 
-pos_t MCTS_ST::calc_ai_move_sync()
+pos_t MCTSEngine::calc_ai_move_sync()
 {
     this_thread::sleep_for(chrono::seconds(1));
     return pos_t(1, 1, 1);

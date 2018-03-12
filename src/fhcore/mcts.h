@@ -5,11 +5,11 @@ namespace engine
 {
 
 // Single-Thread MCTS search engine
-class MCTS_ST : public IEngine
+class MCTSEngine : public IEngine
 {
 public:
-    MCTS_ST();
-    virtual ~MCTS_ST();
+    MCTSEngine();
+    virtual ~MCTSEngine();
 protected:
     virtual position::pos_t calc_ai_move_sync();
 private:

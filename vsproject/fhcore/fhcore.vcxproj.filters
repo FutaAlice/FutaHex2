@@ -26,7 +26,7 @@
     <ClCompile Include="..\..\src\fhcore\iengine.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\fhcore\mcts_st.cpp">
+    <ClCompile Include="..\..\src\fhcore\mcts.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -46,7 +46,7 @@
     <ClInclude Include="..\..\src\fhcore\iengine.h">
       <Filter>header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\fhcore\mcts_st.h">
+    <ClInclude Include="..\..\src\fhcore\mcts.h">
       <Filter>header</Filter>
     </ClInclude>
   </ItemGroup>
