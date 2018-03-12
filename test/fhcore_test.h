@@ -9,3 +9,5 @@ int test_fhcore_boardt();
 int test_fhcore_iboard();
 int test_fhcore_iboard_equal_to();
 int test_fhcore_board();
+
+int test_fhcore_efficiency();

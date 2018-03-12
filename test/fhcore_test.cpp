@@ -40,6 +40,9 @@ int test_fhcore_all()
     if (0 != test_fhcore_board())
         return -1;
 
+    if (0 != test_fhcore_efficiency())
+        return -1;
+    
     return 0;
 }
 
@@ -231,5 +234,28 @@ int test_fhcore_board()
     debug() << b_5.debug_bit_str();
 
     TEST_CASE_PASS;
+    return 0;
+}
+
+int test_fhcore_efficiency()
+{
+    using namespace board;
+    using namespace logger;
+
+    IBoard & origin = *IBoard::create(11);
+
+    origin(6, 6) = origin.color();
+    origin(6, 7) = origin.color();
+    origin(5, 6) = origin.color();
+
+    IBoard *copy = nullptr;
+    for (size_t i = 0; i < 2000; ++i)
+    {
+        if (i % 100 == 0)
+            debug(Level::Info) << i;
+        copy = origin.create(11);
+        delete copy;
+    }
+
     return 0;
 }

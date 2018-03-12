@@ -74,6 +74,15 @@ inline BoardT<Test, size>::BoardT(BoardT &&) noexcept
 }
 
 template<typename Test, coord_t size>
+inline BoardT<Test, size>::~BoardT() noexcept
+{
+    using namespace logger;
+    debug(Level::Debug) << __func__
+        << "<" << typeid(Test).name() << "," << size << ">" << " "
+        << "destructor...";
+}
+
+template<typename Test, coord_t size>
 inline IBoard * BoardT<Test, size>::create()
 {
     return new BoardT();
