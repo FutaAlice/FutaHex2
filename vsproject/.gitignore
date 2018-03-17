@@ -8,3 +8,5 @@
 *.VC.opendb
 
 *.log
+*.gam
+*.fh
