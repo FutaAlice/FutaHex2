@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include "board.h"
 #include "disjointset.h"
 #include "iengine.h"
@@ -28,13 +29,13 @@ private:
         unsigned int cntWin { 0 };
         unsigned int cntTotal { 0 };
         Node *parent;
-        Node *children[122] { nullptr };
-        Node(Node *parent);
+        std::vector<Node *> children;
+        Node(Node *parent, size_t nChildren);
         ~Node();
     } Node;
 public:
     int _size { 0 };
-    int _limit { 0 };
+    size_t _limit { 0 };
     Node *current;
     disjointset::IDisjointSet *uf;
 };

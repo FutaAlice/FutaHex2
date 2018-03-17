@@ -41,8 +41,8 @@ pos_t MCTSEngine::calc_ai_move_sync()
 
     uf = IDisjointSet::create(pBoard);
 
-    auto root = make_shared<Node>(nullptr);
-    root->nChildren = _limit - (int)pBoard->rounds();
+    auto nChildren = _limit - pBoard->rounds();
+    auto root = make_shared<Node>(nullptr, nChildren);
 
     const size_t times { 3000000 };
     const size_t parts = times / 100;
@@ -127,18 +127,17 @@ void MCTSEngine::selection()
 void MCTSEngine::expansion()
 {
     auto expanded = current->nExpanded;
-    int buffer[BUFFER_SIZE] = { 0 };
+    bool buffer[BUFFER_SIZE] = { false };
     for (int i = 0; i < expanded; ++i)
     {
-        buffer[current->children[i]->index] = 1;
+        buffer[current->children[i]->index] = true;
     }
     for (int i = 0; i < _limit; ++i)
     {
-        if (!buffer[i] && uf->get(i) == Color::Empty)
+        if (!buffer[i] && Color::Empty == uf->get(i))
         {
-            current->children[expanded] = new Node(current);
+            current->children[expanded] = new Node(current, current->nChildren - 1);
             current->children[expanded]->index = i;
-            current->children[expanded]->nChildren = current->nChildren - 1;
             current->nExpanded++;
             break;
         }
@@ -196,10 +195,11 @@ void MCTSEngine::backpropagation(const Color winner)
     }
 }
 
-MCTSEngine::Node::Node(Node * parent)
+MCTSEngine::Node::Node(Node * parent, size_t nChildren)
     : parent(parent)
+    , nChildren((unsigned short)nChildren)
 {
-    //for (auto node : children) node = NULL;
+    children.resize(nChildren, nullptr);
 }
 
 MCTSEngine::Node::~Node()
