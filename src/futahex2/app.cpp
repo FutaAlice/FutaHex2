@@ -1,6 +1,11 @@
 #include "app.h"
 #include <ostream>
 #include <sstream>
+#include <QByteArray>
+#include <QDataStream>
+#include <QFile>
+#include <QFileDialog>
+#include <QMessageBox>
 #include <QPainterPath>
 #include <QPainter>
 #include <board.h>
@@ -8,6 +13,7 @@
 #include <hexutils.h>
 using namespace std;
 using namespace board;
+using namespace logger;
 using namespace engine;
 using namespace hexutils;
 
@@ -234,10 +240,81 @@ void app::onActionPlayerAuto() { setPlayerColor(PlayerColorSetting::Auto); }
 
 void app::onOpen()
 {
+    const char *filters = "Hexy Files (*.gam);; FutaHex Files (*.fh)";
+    QString filename = QFileDialog::getOpenFileName(
+        this, tr("Open File"), ".", filters);
+    if (!filename.isNull())
+    {
+        QFile file(filename);
+        if (!file.open(QIODevice::ReadOnly))
+        {
+            debug(Level::Error) << "Can't open the file!";
+            return;
+        }
+        QByteArray bytes = file.readAll();
+        bool valid = false;
+        decltype(_rec) rec;
+        size_t boardsize;
+        if (filename.endsWith(".gam", Qt::CaseInsensitive))
+        {
+            valid = get_rec_from_gam((unsigned char *)bytes.data(), bytes.length(),
+                                     rec, boardsize);
+        }
+        else if (filename.endsWith(".fh", Qt::CaseInsensitive))
+        {
+        }
+        if (!valid)
+        {
+            QMessageBox message(QMessageBox::Warning, "FutaHex 2.0",
+                                "It's not a game file", QMessageBox::Ok);
+            message.exec();
+        }
+        else
+        {
+            changeBoardsize(boardsize);
+            for (auto pos : rec)
+            {
+                setPiece(pos.row, pos.col);
+            }
+            _rec = rec;
+        }
+        file.close();
+    }
 }
 
 void app::onSave()
 {
+    if (!_pBoard)
+        return;
+    size_t boardsize = _pBoard->boardsize();
+    const char *filters = (boardsize <= 11) ?
+            "Hexy Files (*.gam);; FutaHex Files (*.fh)" :
+            "FutaHex Files (*.fh)";
+    QString filename = QFileDialog::getSaveFileName(
+        this, tr("Save File"), "", filters);
+    if (!filename.isNull())
+    {
+        QFile file(filename);
+        if (!file.open(QIODevice::WriteOnly))
+        {
+            debug(Level::Error) << "Can't open the file!";
+            return;
+        }
+        QDataStream out(&file);
+        unsigned char *buffer = nullptr;
+        size_t buffer_size = 0;
+        if (filename.endsWith(".gam", Qt::CaseInsensitive))
+        {
+            new_gam_from_rec(_rec.begin(), _rec.end(),
+                             boardsize, false, &buffer, &buffer_size);
+        }
+        else if (filename.endsWith(".fh", Qt::CaseInsensitive))
+        {
+        }
+        out.writeRawData((const char *)buffer, buffer_size);
+        delete buffer;
+        file.close();
+    }
 }
 
 void app::onSaveAs()
