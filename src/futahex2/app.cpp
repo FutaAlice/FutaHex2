@@ -30,6 +30,9 @@ app::app(QWidget *parent)
     resize(w * 16 / 9, w);
 
     QObject::connect(ui.canvas, SIGNAL(clickEmptyPoint(int, int)), this, SLOT(setPiece(int, int)));
+    QObject::connect(ui.actionNew, SIGNAL(triggered()), this, SLOT(onNew()));
+    QObject::connect(ui.actionOpen, SIGNAL(triggered()), this, SLOT(onOpen()));
+    QObject::connect(ui.actionSave, SIGNAL(triggered()), this, SLOT(onSave()));
     QObject::connect(ui.action5, SIGNAL(triggered()), this, SLOT(onAction5()));
     QObject::connect(ui.action7, SIGNAL(triggered()), this, SLOT(onAction7()));
     QObject::connect(ui.action9, SIGNAL(triggered()), this, SLOT(onAction9()));
@@ -112,6 +115,11 @@ void app::resetPiece(int row, int col)
     (*_pBoard)(row, col) = Color::Empty;
     
     updateBoard();
+}
+
+void app::onNew()
+{
+    changeBoardsize(_pBoard ? 0 : 11);
 }
 
 Color app::getAIColor()
@@ -315,10 +323,6 @@ void app::onSave()
         delete buffer;
         file.close();
     }
-}
-
-void app::onSaveAs()
-{
 }
 
 void app::onRestart()

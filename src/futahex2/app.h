@@ -22,9 +22,9 @@ public:
 public slots:
     void setPiece(int row, int col);
     void resetPiece(int row, int col);
+    void onNew();
     void onOpen();
     void onSave();
-    void onSaveAs();
     void onRestart();
     void onAIMove();
     void onTakeBack();
