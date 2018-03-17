@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <memory>
 #include <random>
+#include <sstream>
 #include <typeinfo>
 #include "logger.h"
 #include "mcts.h"

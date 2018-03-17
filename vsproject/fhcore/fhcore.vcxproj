@@ -142,6 +142,7 @@
     <ClCompile Include="..\..\src\fhcore\board.cpp" />
     <ClCompile Include="..\..\src\fhcore\color.cpp" />
     <ClCompile Include="..\..\src\fhcore\disjointset.cpp" />
+    <ClCompile Include="..\..\src\fhcore\hexutils.cpp" />
     <ClCompile Include="..\..\src\fhcore\iengine.cpp" />
     <ClCompile Include="..\..\src\fhcore\logger.cpp" />
     <ClCompile Include="..\..\src\fhcore\mcts.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="..\..\src\fhcore\iengine.h" />
     <ClInclude Include="..\..\src\fhcore\mcts.h" />
     <ClInclude Include="..\..\src\fhcore\position.h" />
+    <ClInclude Include="..\..\src\fhcore\hexutils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\fhcore\board.inl" />

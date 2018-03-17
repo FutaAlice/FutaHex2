@@ -1,12 +1,15 @@
 #include "app.h"
 #include <ostream>
+#include <sstream>
 #include <QPainterPath>
 #include <QPainter>
 #include <board.h>
 #include <mcts.h>
+#include <hexutils.h>
 using namespace std;
 using namespace board;
 using namespace engine;
+using namespace hexutils;
 
 app::app(QWidget *parent)
     : QMainWindow(parent)
@@ -88,7 +91,8 @@ void app::setPiece(int row, int col)
 
     _rec.push_back(pos_t(row, col, _pBoard->boardsize()));
 
-    oss << "move: " << "(row " << row << ", col " << col << ")";
+    oss << "move: " << xy2symbol(row, col, _pBoard->boardsize())
+        << "(row " << row << ", col " << col << ")";
     appendText(oss.str(), color);
 
     updateBoard();
