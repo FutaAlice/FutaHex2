@@ -56,13 +56,13 @@ pos_t MCTSEngine::calc_ai_move_sync()
                 << setw((streamsize)log10(times) + 1) << i << "/" << times;
         }
 
-        current = root.get();
+        auto current = root.get();
         uf->revert();
-        selection();
+        selection(current);
         uf->ufinit();
-        expansion();
-        auto winner = simulation();
-        backpropagation(winner);
+        expansion(current);
+        auto winner = simulation(current);
+        backpropagation(current, winner);
     }
 
     unsigned int max_cnt = 0;
@@ -87,7 +87,7 @@ pos_t MCTSEngine::calc_ai_move_sync()
     return pos_t(*pBoard->pos());
 }
 
-void MCTSEngine::selection()
+void MCTSEngine::selection(Node *current)
 {
     while (current->nExpanded == current->nChildren)
     {
@@ -113,7 +113,7 @@ void MCTSEngine::selection()
     }
 }
 
-void MCTSEngine::expansion()
+void MCTSEngine::expansion(Node *current)
 {
     if (0 == current->nChildren)
         return;
@@ -136,7 +136,7 @@ void MCTSEngine::expansion()
     current = current->children[expanded];
 }
 
-Color MCTSEngine::simulation()
+Color MCTSEngine::simulation(Node *current)
 {
     Color color = uf->color_to_move();
     uf->set(current->index);
@@ -175,7 +175,7 @@ Color MCTSEngine::simulation()
     }
 }
 
-void MCTSEngine::backpropagation(const Color winner)
+void MCTSEngine::backpropagation(Node *current, const Color winner)
 {
     while (current)
     {

@@ -10,16 +10,17 @@ namespace engine
 // Single-Thread MCTS search engine
 class MCTSEngine : public IEngine
 {
+    struct Node;
 public:
     MCTSEngine() = default;
     virtual ~MCTSEngine();
 protected:
     virtual position::pos_t calc_ai_move_sync();
 private:
-    void selection();
-    void expansion();
-    color::Color simulation();
-    void backpropagation(const color::Color winner);
+    void selection(Node *current);
+    void expansion(Node *current);
+    color::Color simulation(Node *current);
+    void backpropagation(Node *current, const color::Color winner);
 private:
     typedef struct Node
     {
@@ -36,7 +37,6 @@ private:
 public:
     int _size { 0 };
     size_t _limit { 0 };
-    Node *current;
     disjointset::IDisjointSet *uf;
 };
 
