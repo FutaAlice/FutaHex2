@@ -18,10 +18,6 @@ using namespace disjointset;
 namespace engine
 {
 
-MCTSEngine::MCTSEngine()
-{
-}
-
 MCTSEngine::~MCTSEngine()
 {
     debug(Level::Info) << "release engine <" << typeid(*this).name() << ">";
@@ -42,6 +38,7 @@ pos_t MCTSEngine::calc_ai_move_sync()
     if (0 == pBoard->rounds())
         return pos_t(_size / 2, _size / 2, _size);
 
+    delete uf;
     uf = IDisjointSet::create(pBoard);
 
     auto nChildren = _limit - pBoard->rounds();
