@@ -284,6 +284,8 @@ void app::onOpen()
             Record rec(_rec);
             _rec.clear();
             changeBoardsize(rec.boardsize());
+            setAIColor(AIColorSetting::None);
+            setPlayerColor(PlayerColorSetting::Auto);
             for (auto record_data : rec)
             {
                 auto pos = record_data.pos();
@@ -330,14 +332,25 @@ void app::onSave()
 
 void app::onRestart()
 {
-    auto size = _pBoard ? _pBoard->boardsize() : 11;
-    changeBoardsize(size);
+    changeBoardsize(_pBoard ? 0 : 11);
 }
 
 void app::onAIMove()
 {
     if (!_pBoard)
         return;
+
+    if (aiThinking)
+    {
+        const char *err = "AI is busy. This operation will be ignored";
+        debug(Level::Warning) << err;
+        QMessageBox message(QMessageBox::NoIcon, "Warning",
+                            err, QMessageBox::Ok);
+        message.exec();
+        return;
+    }
+    aiThinking = true;
+
     Color color = _pBoard->color();
 
     EngineCfg cfg;
@@ -366,6 +379,7 @@ void app::onAIMove()
         cout << result << endl;
         auto *data = static_cast<CallbackParams *>(opaque);
         data->pApp->setPiece(result.row, result.col);
+        data->pApp->aiThinking = false;
         delete data;
         return NULL;
     }, static_cast<void *>(new CallbackParams(pEngine, this)));
@@ -375,6 +389,10 @@ void app::onTakeBack()
 {
     if (_rec.empty())
         return;
+
+    setAIColor(AIColorSetting::None);
+    setPlayerColor(PlayerColorSetting::Auto);
+
     pos_t pos = _rec.back().pos();
     resetPiece(pos.row, pos.col);
     _rec.pop_back();
