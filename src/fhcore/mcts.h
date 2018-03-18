@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <mutex>
 #include "board.h"
 #include "disjointset.h"
 #include "iengine.h"
@@ -22,8 +23,13 @@ private:
     color::Color simulation(Node *current);
     void backpropagation(Node *current, const color::Color winner);
 private:
-    typedef struct Node
+    class Node
     {
+    public:
+        Node(Node *parent, size_t nChildren);
+        ~Node();
+        void lock() { _mutex.lock(); }
+        void unlock() { _mutex.unlock(); }
         unsigned short nChildren { 0 };
         unsigned short nExpanded { 0 };
         unsigned short index { 0 };
@@ -31,9 +37,9 @@ private:
         unsigned int cntTotal { 0 };
         Node *parent;
         std::vector<Node *> children;
-        Node(Node *parent, size_t nChildren);
-        ~Node();
-    } Node;
+    private:
+        std::mutex _mutex;
+    };
 public:
     int _size { 0 };
     size_t _limit { 0 };
