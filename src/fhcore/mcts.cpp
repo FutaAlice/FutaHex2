@@ -39,6 +39,8 @@ pos_t MCTSEngine::calc_ai_move_sync()
 
     _size = (int)pBoard->boardsize();
     _limit = (int)pow(_size, 2);
+    if (0 == pBoard->rounds())
+        return pos_t(_size / 2, _size / 2, _size);
 
     uf = IDisjointSet::create(pBoard);
 
@@ -146,33 +148,33 @@ Color MCTSEngine::simulation()
         return color;
     }
 
-    int j = 0, k;
+    int upper_limit = 0;
     static int alternative[BUFFER_SIZE];
     for (int i = 0; i < _limit; ++i)
     {
         if (uf->get(i) == Color::Empty)
         {
-            alternative[j++] = i;
+            alternative[upper_limit++] = i;
         }
     }
 
     static auto random = [](double end) {
         return (int)(end * rand() / (RAND_MAX + 1.0));
     };
-    int rand_num;
+    int pos, random_num;
     for (;;)
     {
-        k = random(j);
-        rand_num = alternative[k];
-        alternative[k] = alternative[--j];
+        random_num = random(upper_limit);
+        pos = alternative[random_num];
+        alternative[random_num] = alternative[--upper_limit];
 
         color = uf->color_to_move();
-        uf->set(rand_num);
-        if (uf->check_after_set(rand_num, color))
+        uf->set(pos);
+        if (uf->check_after_set(pos, color))
         {
             return color;
         }
-        assert(j >= 0);
+        assert(upper_limit >= 0);
     }
 }
 
