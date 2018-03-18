@@ -57,27 +57,13 @@ pos_t MCTSEngine::calc_ai_move_sync()
                 << setw((streamsize)log10(times) + 1) << i << "/" << times;
         }
 
-        uf->revert();
         current = root.get();
+        uf->revert();
         selection();
         uf->ufinit();
         expansion();
-        if (current == root.get())
-        {
-            for (int j = 0; j <= 1000; j++)
-            {
-                uf->revert();
-                uf->ufinit();
-                auto winner = simulation();
-                backpropagation(winner);
-                current = root.get();
-            }
-        }
-        else
-        {
-            auto winner = simulation();
-            backpropagation(winner);
-        }
+        auto winner = simulation();
+        backpropagation(winner);
     }
 
     unsigned int max_cnt = 0;
@@ -121,12 +107,17 @@ void MCTSEngine::selection()
             }
         }
         current = current->children[select_index];
+
+        if (0 == current->nChildren)
+            break;
         uf->set(current->index);
     }
 }
 
 void MCTSEngine::expansion()
 {
+    if (0 == current->nChildren)
+        return;
     auto expanded = current->nExpanded;
     bool buffer[BUFFER_SIZE] = { false };
     for (int i = 0; i < expanded; ++i)
