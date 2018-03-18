@@ -19,6 +19,7 @@ public:
 public:
     app(QWidget *parent = Q_NULLPTR);
     static const int w { 720 };
+    bool aiThinking { false };
 
 public slots:
     void setPiece(int row, int col);
