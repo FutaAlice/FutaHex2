@@ -13,6 +13,7 @@
 #include <hexutils.h>
 using namespace std;
 using namespace board;
+using namespace record;
 using namespace logger;
 using namespace engine;
 using namespace hexutils;
@@ -100,7 +101,7 @@ void app::setPiece(int row, int col)
     Color color = refBoard.color();
     refBoard(row, col) = color;
 
-    _rec.push_back(pos_t(row, col, _pBoard->boardsize()));
+    _rec.push_back(RecordData(row, col, _pBoard->boardsize(), color));
 
     oss << "move: " << xy2symbol(row, col, _pBoard->boardsize())
         << "(row " << row << ", col " << col << ")";
@@ -184,6 +185,8 @@ void app::changeBoardsize(int boardsize)
         boardsize = _pBoard->boardsize();
     }
 
+    _rec.clear();
+    _rec.boardsize(boardsize);
     auto & actions = ui.menuBoardsize->actions();
     for (auto action : actions)
     {
@@ -263,12 +266,9 @@ void app::onOpen()
         }
         QByteArray bytes = file.readAll();
         bool valid = false;
-        decltype(_rec) rec;
-        size_t boardsize;
         if (filename.endsWith(".gam", Qt::CaseInsensitive))
         {
-            valid = get_rec_from_gam((unsigned char *)bytes.data(), bytes.length(),
-                                     rec, boardsize);
+            valid = _rec.from_gam((unsigned char *)bytes.data(), bytes.length());
         }
         else if (filename.endsWith(".fh", Qt::CaseInsensitive))
         {
@@ -281,12 +281,14 @@ void app::onOpen()
         }
         else
         {
-            changeBoardsize(boardsize);
-            for (auto pos : rec)
+            Record rec(_rec);
+            _rec.clear();
+            changeBoardsize(rec.boardsize());
+            for (auto record_data : rec)
             {
+                auto pos = record_data.pos();
                 setPiece(pos.row, pos.col);
             }
-            _rec = rec;
         }
         file.close();
     }
@@ -315,8 +317,7 @@ void app::onSave()
         size_t buffer_size = 0;
         if (filename.endsWith(".gam", Qt::CaseInsensitive))
         {
-            new_gam_from_rec(_rec.begin(), _rec.end(),
-                             boardsize, false, &buffer, &buffer_size);
+            _rec.to_gam(&buffer, &buffer_size);
         }
         else if (filename.endsWith(".fh", Qt::CaseInsensitive))
         {
@@ -374,7 +375,7 @@ void app::onTakeBack()
 {
     if (_rec.empty())
         return;
-    pos_t pos = _rec.back();
+    pos_t pos = _rec.back().pos();
     resetPiece(pos.row, pos.col);
     _rec.pop_back();
 }

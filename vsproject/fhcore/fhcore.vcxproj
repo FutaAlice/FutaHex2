@@ -147,6 +147,7 @@
     <ClCompile Include="..\..\src\fhcore\logger.cpp" />
     <ClCompile Include="..\..\src\fhcore\mcts.cpp" />
     <ClCompile Include="..\..\src\fhcore\position.cpp" />
+    <ClCompile Include="..\..\src\fhcore\record.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\fhcore\board.h" />
@@ -157,6 +158,7 @@
     <ClInclude Include="..\..\src\fhcore\mcts.h" />
     <ClInclude Include="..\..\src\fhcore\position.h" />
     <ClInclude Include="..\..\src\fhcore\hexutils.h" />
+    <ClInclude Include="..\..\src\fhcore\record.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\fhcore\board.inl" />
