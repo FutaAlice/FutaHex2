@@ -1,4 +1,5 @@
 <RCC>
-    <qresource prefix="app">
+    <qresource prefix="/">
+        <file>resource/futahex2.ico</file>
     </qresource>
 </RCC>

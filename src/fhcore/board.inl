@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cmath>
 #include <iomanip>
+#include <sstream>
 #include <typeinfo>
 #include "logger.h"
 #include "board.h"

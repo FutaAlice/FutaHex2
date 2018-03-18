@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <memory>
 #include <random>
+#include <sstream>
 #include <typeinfo>
 #include "logger.h"
 #include "mcts.h"
@@ -38,11 +39,13 @@ pos_t MCTSEngine::calc_ai_move_sync()
 
     _size = (int)pBoard->boardsize();
     _limit = (int)pow(_size, 2);
+    if (0 == pBoard->rounds())
+        return pos_t(_size / 2, _size / 2, _size);
 
     uf = IDisjointSet::create(pBoard);
 
-    auto root = make_shared<Node>(nullptr);
-    root->nChildren = _limit - (int)pBoard->rounds();
+    auto nChildren = _limit - pBoard->rounds();
+    auto root = make_shared<Node>(nullptr, nChildren);
 
     const size_t times { 3000000 };
     const size_t parts = times / 100;
@@ -56,27 +59,13 @@ pos_t MCTSEngine::calc_ai_move_sync()
                 << setw((streamsize)log10(times) + 1) << i << "/" << times;
         }
 
-        uf->revert();
         current = root.get();
+        uf->revert();
         selection();
         uf->ufinit();
         expansion();
-        if (current == root.get())
-        {
-            for (int j = 0; j <= 1000; j++)
-            {
-                uf->revert();
-                uf->ufinit();
-                auto winner = simulation();
-                backpropagation(winner);
-                current = root.get();
-            }
-        }
-        else
-        {
-            auto winner = simulation();
-            backpropagation(winner);
-        }
+        auto winner = simulation();
+        backpropagation(winner);
     }
 
     unsigned int max_cnt = 0;
@@ -120,25 +109,29 @@ void MCTSEngine::selection()
             }
         }
         current = current->children[select_index];
+
+        if (0 == current->nChildren)
+            break;
         uf->set(current->index);
     }
 }
 
 void MCTSEngine::expansion()
 {
+    if (0 == current->nChildren)
+        return;
     auto expanded = current->nExpanded;
-    int buffer[BUFFER_SIZE] = { 0 };
+    bool buffer[BUFFER_SIZE] = { false };
     for (int i = 0; i < expanded; ++i)
     {
-        buffer[current->children[i]->index] = 1;
+        buffer[current->children[i]->index] = true;
     }
     for (int i = 0; i < _limit; ++i)
     {
-        if (!buffer[i] && uf->get(i) == Color::Empty)
+        if (!buffer[i] && Color::Empty == uf->get(i))
         {
-            current->children[expanded] = new Node(current);
+            current->children[expanded] = new Node(current, current->nChildren - 1);
             current->children[expanded]->index = i;
-            current->children[expanded]->nChildren = current->nChildren - 1;
             current->nExpanded++;
             break;
         }
@@ -155,33 +148,33 @@ Color MCTSEngine::simulation()
         return color;
     }
 
-    int j = 0, k;
+    int upper_limit = 0;
     static int alternative[BUFFER_SIZE];
     for (int i = 0; i < _limit; ++i)
     {
         if (uf->get(i) == Color::Empty)
         {
-            alternative[j++] = i;
+            alternative[upper_limit++] = i;
         }
     }
 
     static auto random = [](double end) {
         return (int)(end * rand() / (RAND_MAX + 1.0));
     };
-    int rand_num;
+    int pos, random_num;
     for (;;)
     {
-        k = random(j);
-        rand_num = alternative[k];
-        alternative[k] = alternative[--j];
+        random_num = random(upper_limit);
+        pos = alternative[random_num];
+        alternative[random_num] = alternative[--upper_limit];
 
         color = uf->color_to_move();
-        uf->set(rand_num);
-        if (uf->check_after_set(rand_num, color))
+        uf->set(pos);
+        if (uf->check_after_set(pos, color))
         {
             return color;
         }
-        assert(j >= 0);
+        assert(upper_limit >= 0);
     }
 }
 
@@ -196,10 +189,11 @@ void MCTSEngine::backpropagation(const Color winner)
     }
 }
 
-MCTSEngine::Node::Node(Node * parent)
+MCTSEngine::Node::Node(Node * parent, size_t nChildren)
     : parent(parent)
+    , nChildren((unsigned short)nChildren)
 {
-    //for (auto node : children) node = NULL;
+    children.resize(nChildren, nullptr);
 }
 
 MCTSEngine::Node::~Node()

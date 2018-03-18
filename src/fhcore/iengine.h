@@ -30,7 +30,8 @@ protected:
 
 private:
     template<typename T, typename E, typename... Args>
-    auto timer(T calc, E engine, Args... args)->decltype((E->*T)(Args));
+    auto timer(T calc, E engine, Args... args) ->
+        decltype((engine->*calc)(args ...));
     void lock();
     void unlock();
 

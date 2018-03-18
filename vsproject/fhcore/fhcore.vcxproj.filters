@@ -32,6 +32,9 @@
     <ClCompile Include="..\..\src\fhcore\disjointset.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\fhcore\hexutils.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\fhcore\logger.h">
@@ -53,6 +56,9 @@
       <Filter>header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\fhcore\disjointset.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\fhcore\hexutils.h">
       <Filter>header</Filter>
     </ClInclude>
   </ItemGroup>

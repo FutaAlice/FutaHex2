@@ -1,5 +1,6 @@
 #include <string>
 #include <list>
+#include <sstream>
 #include <thread>
 #include <logger.h>
 #include <board.h>

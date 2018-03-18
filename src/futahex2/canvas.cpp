@@ -10,6 +10,8 @@
 using namespace std;
 using namespace board;
 
+#define MINIMUM_SIZE 20
+
 IBoard *Canvas::_pBoard = nullptr;
 
 template<typename T>
@@ -101,7 +103,7 @@ void Canvas::resizeEvent(QResizeEvent * event)
         _w = width();
         _h = _w * _ratio;
     }
-    if (_h < 20 || _w < 20)
+    if (_h < MINIMUM_SIZE || _w < MINIMUM_SIZE)
         return;
     int mid = size / 2;
     int row_block_cnt = (1 + size) + (size + 1) / 2;
@@ -123,7 +125,7 @@ void Canvas::resizeEvent(QResizeEvent * event)
 
 void Canvas::paintEvent(QPaintEvent * event)
 {
-    if (_h < 200 || _w < 200 || !_pBoard)
+    if (_h < MINIMUM_SIZE || _w < MINIMUM_SIZE || !_pBoard)
         return;
     if (DisplayMethod::Normal == _dm)
     {

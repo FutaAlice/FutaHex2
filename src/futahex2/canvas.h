@@ -36,7 +36,7 @@ private:
     static board::IBoard *_pBoard;
 
     DisplayMethod _dm { DisplayMethod::Normal };
-    bool _arrow { true };
+    bool _arrow { false };
 
     QPointF _ct[19][19];
     const double _ratio { 2.0 / 3.0 };

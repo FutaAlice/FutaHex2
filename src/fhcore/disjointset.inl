@@ -78,8 +78,8 @@ inline int DisjointSetT<Test, size>::find(int i, const Color color)
 template<typename Test, coord_t size>
 inline void DisjointSetT<Test, size>::merge(int center_index, Color color)
 {
-    board::IBoard &refBoard = *pBoard;
-    for (auto adj_pos : refBoard(center_index).adj())
+    const pos_t &center_pos = *_pos(center_index);
+    for (auto adj_pos : center_pos.adj())
     {
         const auto adj_index = adj_pos->index;
         if (color == status[adj_index])
@@ -92,14 +92,13 @@ inline void DisjointSetT<Test, size>::merge(int center_index, Color color)
             }
         }
     }
-    const pos_t *pos = refBoard(center_index).pos();
-    if (pos->bAdjBegin[*color])
+    if (center_pos.bAdjBegin[*color])
     {
-        fa[*color][find(refBoard.nBegin(), color)] = find(center_index, color);
+        fa[*color][find(_pos.nBegin, color)] = find(center_index, color);
     }
-    if (pos->bAdjEnd[*color])
+    if (center_pos.bAdjEnd[*color])
     {
-        fa[*color][find(refBoard.nEnd(), color)] = find(center_index, color);
+        fa[*color][find(_pos.nEnd, color)] = find(center_index, color);
     }
 }
 
