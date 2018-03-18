@@ -22,7 +22,9 @@ app::app(QWidget *parent)
 {
     qRegisterMetaType<QTextCharFormat>("QTextCharFormat");
     qRegisterMetaType<QTextCursor>("QTextCursor");
-    
+
+    setWindowIcon(QIcon(":/resource/futahex2.ico"));
+
     ui.setupUi(this);
     ui.centralWidget->setLayout(ui.mainLayout);
     ui.link_red->setDisplayMethod(Canvas::DisplayMethod::LinkR);
