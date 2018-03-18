@@ -38,6 +38,9 @@
     <ClCompile Include="..\..\src\fhcore\record.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\fhcore\eval.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\fhcore\logger.h">
@@ -65,6 +68,9 @@
       <Filter>header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\fhcore\record.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\fhcore\eval.h">
       <Filter>header</Filter>
     </ClInclude>
   </ItemGroup>
