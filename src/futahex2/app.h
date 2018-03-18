@@ -5,6 +5,7 @@
 #include <string>
 #include <position.h>
 #include <color.h>
+#include <record.h>
 #include "ui_app.h"
 
 namespace board { class IBoard; }
@@ -61,7 +62,7 @@ private:
 
 private:
     board::IBoard *_pBoard { nullptr };
-    std::list<position::pos_t> _rec;
+    record::Record _rec;
 
     AIColorSetting _acs { AIColorSetting::None };
     PlayerColorSetting _pcs { PlayerColorSetting::Auto };
