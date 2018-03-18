@@ -4,7 +4,9 @@
 #include <memory>
 #include <random>
 #include <sstream>
+#include <thread>
 #include <typeinfo>
+#include <vector>
 #include "logger.h"
 #include "mcts.h"
 
@@ -51,34 +53,44 @@ pos_t MCTSEngine::calc_ai_move_sync()
 
     auto nChildren = _arraysize - pBoard->rounds();
     auto root = make_shared<Node>(nullptr, nChildren);
+    auto nThread = thread::hardware_concurrency();
 
-    const auto begin = system_clock::now();
-    int percent = 0;
-    size_t times = 0;
-    for (;;)
-    {
-        if (0 == ++times % 1000)
+    auto mcts = [this](auto root) {
+        const auto begin = system_clock::now();
+        int percent = 0;
+        size_t times = 0;
+        for (;;)
         {
-            auto cost = duration_cast<milliseconds>(system_clock::now() - begin);
-            auto rate_of_progress = (int)(cost.count() * 100.0 / _limit.count());
-            if (rate_of_progress > percent)
+            if (0 == ++times % 1000)
             {
-                percent = rate_of_progress;
-                debug(Level::Info) << setw(3) << percent << "% complate, "
-                    << setw((streamsize)log10(9999999) + 1) << times << " / " << "¡Þ";
-                if (percent == 100)
-                    break;
+                auto cost = duration_cast<milliseconds>(system_clock::now() - begin);
+                auto rate_of_progress = (int)(cost.count() * 100.0 / _limit.count());
+                if (rate_of_progress > percent)
+                {
+                    percent = rate_of_progress;
+                    debug(Level::Info) << setw(3) << percent << "% complate, "
+                        << setw((streamsize)log10(9999999) + 1) << times << " / " << "¡Þ";
+                    if (percent == 100)
+                        break;
+                }
             }
-        }
 
-        auto current = root.get();
-        _uf->revert();
-        selection(current);
-        _uf->ufinit();
-        expansion(current);
-        auto winner = simulation(current);
-        backpropagation(current, winner);
+            auto current = root;
+            _uf->revert();
+            selection(current);
+            _uf->ufinit();
+            expansion(current);
+            auto winner = simulation(current);
+            backpropagation(current, winner);
+        }
+    };
+    vector<future<void>> pool;
+    for (int i = 0; i < 1; ++i)
+    {
+        pool.push_back(async(mcts, root.get()));
     }
+    for (auto & f : pool)
+        f.wait();
 
     unsigned int max_cnt = 0;
     int child_index = 0;
