@@ -9,6 +9,7 @@
 #include "mcts.h"
 
 using namespace std;
+using namespace chrono;
 using namespace board;
 using namespace logger;
 using namespace disjointset;
@@ -17,6 +18,13 @@ using namespace disjointset;
 
 namespace engine
 {
+
+MCTSEngine::MCTSEngine(std::chrono::seconds timelimit)
+{
+    _limit = duration_cast<milliseconds>(timelimit);
+    debug(Level::Info) << "set engine search time: "
+        << timelimit.count() << " sec.";
+}
 
 MCTSEngine::~MCTSEngine()
 {
@@ -33,33 +41,40 @@ pos_t MCTSEngine::calc_ai_move_sync()
 {
     this_thread::sleep_for(chrono::seconds(1));
 
-    _size = (int)pBoard->boardsize();
-    _limit = (int)pow(_size, 2);
+    int size = (int)pBoard->boardsize();
+    _arraysize = (int)pow(size, 2);
     if (0 == pBoard->rounds())
-        return pos_t(_size / 2, _size / 2, _size);
+        return pos_t(size / 2, size / 2, size);
 
-    delete uf;
-    uf = IDisjointSet::create(pBoard);
+    delete _uf;
+    _uf = IDisjointSet::create(pBoard);
 
-    auto nChildren = _limit - pBoard->rounds();
+    auto nChildren = _arraysize - pBoard->rounds();
     auto root = make_shared<Node>(nullptr, nChildren);
 
-    const size_t times { 3000000 };
-    const size_t parts = times / 100;
+    const auto begin = system_clock::now();
     int percent = 0;
-    for (int i = 0; i < times; ++i)
+    size_t times = 0;
+    for (;;)
     {
-        if (percent < i / parts)
+        if (0 == ++times % 1000)
         {
-            percent = i / parts;
-            debug(Level::Info) << setw(3) << percent << "% complate, "
-                << setw((streamsize)log10(times) + 1) << i << "/" << times;
+            auto cost = duration_cast<milliseconds>(system_clock::now() - begin);
+            auto rate_of_progress = (int)(cost.count() * 100.0 / _limit.count());
+            if (rate_of_progress > percent)
+            {
+                percent = rate_of_progress;
+                debug(Level::Info) << setw(3) << percent << "% complate, "
+                    << setw((streamsize)log10(9999999) + 1) << times << " / " << "¡Þ";
+                if (percent == 100)
+                    break;
+            }
         }
 
         auto current = root.get();
-        uf->revert();
+        _uf->revert();
         selection(current);
-        uf->ufinit();
+        _uf->ufinit();
         expansion(current);
         auto winner = simulation(current);
         backpropagation(current, winner);
@@ -87,7 +102,7 @@ pos_t MCTSEngine::calc_ai_move_sync()
     return pos_t(*pBoard->pos());
 }
 
-void MCTSEngine::selection(Node *current)
+void MCTSEngine::selection(Node *& current)
 {
     while (current->nExpanded == current->nChildren)
     {
@@ -95,7 +110,7 @@ void MCTSEngine::selection(Node *current)
         double max_score = 0;
         for (int i = 0; i < current->nChildren; i++)
         {
-            auto winrate = (uf->color_to_move() == colorAI) ?
+            auto winrate = (_uf->color_to_move() == colorAI) ?
                 (double)current->children[i]->cntWin / current->children[i]->cntTotal :
                 1 - (double)current->children[i]->cntWin / current->children[i]->cntTotal;
             auto new_score = ucb(winrate, current->cntTotal, current->children[i]->cntTotal);
@@ -109,11 +124,11 @@ void MCTSEngine::selection(Node *current)
 
         if (0 == current->nChildren)
             break;
-        uf->set(current->index);
+        _uf->set(current->index);
     }
 }
 
-void MCTSEngine::expansion(Node *current)
+void MCTSEngine::expansion(Node *& current)
 {
     if (0 == current->nChildren)
         return;
@@ -123,9 +138,9 @@ void MCTSEngine::expansion(Node *current)
     {
         buffer[current->children[i]->index] = true;
     }
-    for (int i = 0; i < _limit; ++i)
+    for (int i = 0; i < _arraysize; ++i)
     {
-        if (!buffer[i] && Color::Empty == uf->get(i))
+        if (!buffer[i] && Color::Empty == _uf->get(i))
         {
             current->children[expanded] = new Node(current, current->nChildren - 1);
             current->children[expanded]->index = i;
@@ -136,20 +151,20 @@ void MCTSEngine::expansion(Node *current)
     current = current->children[expanded];
 }
 
-Color MCTSEngine::simulation(Node *current)
+Color MCTSEngine::simulation(Node *& current)
 {
-    Color color = uf->color_to_move();
-    uf->set(current->index);
-    if (uf->check_after_set(current->index, color))
+    Color color = _uf->color_to_move();
+    _uf->set(current->index);
+    if (_uf->check_after_set(current->index, color))
     {
         return color;
     }
 
     int upper_limit = 0;
     static int alternative[BUFFER_SIZE];
-    for (int i = 0; i < _limit; ++i)
+    for (int i = 0; i < _arraysize; ++i)
     {
-        if (uf->get(i) == Color::Empty)
+        if (_uf->get(i) == Color::Empty)
         {
             alternative[upper_limit++] = i;
         }
@@ -165,9 +180,9 @@ Color MCTSEngine::simulation(Node *current)
         pos = alternative[random_num];
         alternative[random_num] = alternative[--upper_limit];
 
-        color = uf->color_to_move();
-        uf->set(pos);
-        if (uf->check_after_set(pos, color))
+        color = _uf->color_to_move();
+        _uf->set(pos);
+        if (_uf->check_after_set(pos, color))
         {
             return color;
         }
@@ -175,7 +190,7 @@ Color MCTSEngine::simulation(Node *current)
     }
 }
 
-void MCTSEngine::backpropagation(Node *current, const Color winner)
+void MCTSEngine::backpropagation(Node *& current, const Color winner)
 {
     while (current)
     {
