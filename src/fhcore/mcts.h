@@ -11,7 +11,7 @@ namespace engine
 class MCTSEngine : public IEngine
 {
 public:
-    MCTSEngine();
+    MCTSEngine() = default;
     virtual ~MCTSEngine();
 protected:
     virtual position::pos_t calc_ai_move_sync();
