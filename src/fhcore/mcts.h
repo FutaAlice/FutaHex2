@@ -18,6 +18,7 @@ public:
     virtual ~MCTSEngine();
 protected:
     virtual position::pos_t calc_ai_move_sync();
+    virtual position::pos_t stop_calc_and_return();
 private:
     void selection(Node *& current);
     void expansion(Node *& current);

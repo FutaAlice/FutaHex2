@@ -70,7 +70,7 @@ pos_t MCTSEngine::calc_ai_move_sync()
                     percent = rate_of_progress;
                     debug(Level::Info) << setw(3) << percent << "% complate, "
                         << setw((streamsize)log10(9999999) + 1) << times << " / " << "¡Þ";
-                    if (percent == 100)
+                    if (percent >= 100)
                         break;
                 }
             }
@@ -112,6 +112,12 @@ pos_t MCTSEngine::calc_ai_move_sync()
 
     (*pBoard)(root->children[child_index]->index);
     return pos_t(*pBoard->pos());
+}
+
+position::pos_t MCTSEngine::stop_calc_and_return()
+{
+    debug(Level::Warning) << "TODO";
+    return position::pos_t();
 }
 
 void MCTSEngine::selection(Node *& current)
