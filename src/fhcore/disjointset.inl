@@ -11,6 +11,11 @@ inline DisjointSetT<Test, size>::DisjointSetT(board::IBoard * pBoard)
 }
 
 template<typename Test, coord_t size>
+inline DisjointSetT<Test, size>::~DisjointSetT()
+{
+}
+
+template<typename Test, coord_t size>
 inline IDisjointSet * DisjointSetT<Test, size>::create(board::IBoard *pBoard)
 {
     return new DisjointSetT(pBoard);
