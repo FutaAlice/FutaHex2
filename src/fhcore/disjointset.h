@@ -39,6 +39,7 @@ class DisjointSetT : public IDisjointSet
 public:
     DisjointSetT() = default;
     DisjointSetT(board::IBoard *pBoard);
+    virtual ~DisjointSetT();
 public:
     static IDisjointSet * create(board::IBoard *pBoard);
 public:

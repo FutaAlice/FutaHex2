@@ -20,10 +20,10 @@ protected:
     virtual position::pos_t calc_ai_move_sync();
     virtual position::pos_t stop_calc_and_return();
 private:
-    void selection(Node *& current);
-    void expansion(Node *& current);
-    color::Color simulation(Node *& current);
-    void backpropagation(Node *& current, const color::Color winner);
+    void selection(Node *& current, disjointset::IDisjointSet *uf);
+    void expansion(Node *& current, disjointset::IDisjointSet *uf);
+    color::Color simulation(Node *& current, disjointset::IDisjointSet *uf);
+    void backpropagation(Node *& current, disjointset::IDisjointSet *uf, const color::Color winner);
 private:
     class Node
     {
@@ -43,7 +43,6 @@ private:
         std::mutex _mutex;
     };
 private:
-    disjointset::IDisjointSet *_uf { nullptr };
     std::chrono::milliseconds _limit;
     size_t _arraysize { 0 };
 };
