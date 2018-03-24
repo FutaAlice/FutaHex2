@@ -52,7 +52,7 @@ pos_t MCTSEngine::calc_ai_move_sync()
     auto root = make_shared<Node>(nullptr, nChildren);
     auto nThread = thread::hardware_concurrency();
 
-    auto mcts = [this](auto root) {
+    auto mcts = [this](auto root, int thread_id) {
         auto union_find_set = IDisjointSet::create(pBoard);
         const auto begin = system_clock::now();
         int percent = 0;
@@ -66,7 +66,8 @@ pos_t MCTSEngine::calc_ai_move_sync()
                 if (rate_of_progress > percent)
                 {
                     percent = rate_of_progress;
-                    debug(Level::Info) << setw(3) << percent << "% complate, "
+                    debug(Level::Info) << "thread<" << thread_id << ">"
+                        << setw(3) << percent << "% complate, "
                         << setw((streamsize)log10(9999999) + 1) << times << " / " << "¡Þ";
                     if (percent >= 100)
                     {
@@ -88,7 +89,7 @@ pos_t MCTSEngine::calc_ai_move_sync()
     vector<future<void>> pool;
     for (int i = 0; i < 1; ++i)
     {
-        pool.push_back(async(mcts, root.get()));
+        pool.push_back(async(mcts, root.get(), i));
     }
     for (auto & f : pool)
         f.wait();
@@ -180,7 +181,7 @@ Color MCTSEngine::simulation(Node *& current, disjointset::IDisjointSet *uf)
     }
 
     int upper_limit = 0;
-    static int alternative[BUFFER_SIZE];
+    int alternative[BUFFER_SIZE];
     for (int i = 0; i < _arraysize; ++i)
     {
         if (uf->get(i) == Color::Empty)
