@@ -32,10 +32,15 @@ app::app(QWidget *parent)
     ui.link_blue->setDisplayMethod(Canvas::DisplayMethod::LinkB);
     resize(w * 16 / 9, w);
 
-    QObject::connect(ui.canvas, SIGNAL(clickEmptyPoint(int, int)), this, SLOT(onCanvasValidClick(int, int)));
+    QObject::connect(ui.canvas, SIGNAL(clickEmptyPoint(int, int)),
+                     this, SLOT(onCanvasValidClick(int, int)));
     QObject::connect(ui.actionNew, SIGNAL(triggered()), this, SLOT(onNew()));
     QObject::connect(ui.actionOpen, SIGNAL(triggered()), this, SLOT(onOpen()));
     QObject::connect(ui.actionSave, SIGNAL(triggered()), this, SLOT(onSave()));
+    QObject::connect(ui.actionenable_costomize_player_color, SIGNAL(toggled(bool)),
+                     this, SLOT(onEnableCostomizePlayerColor(bool)));
+    QObject::connect(ui.actionenable_beep, SIGNAL(toggled(bool)),
+                     this, SLOT(onEnableBeep(bool)));
     QObject::connect(ui.action5, SIGNAL(triggered()), this, SLOT(onAction5()));
     QObject::connect(ui.action7, SIGNAL(triggered()), this, SLOT(onAction7()));
     QObject::connect(ui.action9, SIGNAL(triggered()), this, SLOT(onAction9()));
@@ -44,11 +49,9 @@ app::app(QWidget *parent)
     QObject::connect(ui.action15, SIGNAL(triggered()), this, SLOT(onAction15()));
     QObject::connect(ui.action17, SIGNAL(triggered()), this, SLOT(onAction17()));
     QObject::connect(ui.action19, SIGNAL(triggered()), this, SLOT(onAction19()));
-
     QObject::connect(ui.actionAIRed, SIGNAL(triggered()), this, SLOT(onActionAIRed()));
     QObject::connect(ui.actionAIBlue, SIGNAL(triggered()), this, SLOT(onActionAIBlue()));
     QObject::connect(ui.actionAINone, SIGNAL(triggered()), this, SLOT(onActionAINone()));
-
     QObject::connect(ui.actionPlayerRed, SIGNAL(triggered()), this, SLOT(onActionPlayerRed()));
     QObject::connect(ui.actionPlayerBlue, SIGNAL(triggered()), this, SLOT(onActionPlayerBlue()));
     QObject::connect(ui.actionPlayerAuto, SIGNAL(triggered()), this, SLOT(onActionPlayerAuto()));
@@ -84,6 +87,8 @@ void app::PlayerSetPiece(int row, int col)
 {
     Color color = getPlayerColor();
     setPiece(row, col, color);
+    if (_bEnableBeep)
+        QApplication::beep();
     if (_acs != AIColorSetting::None &&
         getAIColor() == _pBoard->color())
         AIMove();
@@ -93,6 +98,8 @@ void app::AISetPiece(int row, int col)
 {
     Color color = getAIColor();
     setPiece(row, col, color);
+    if (_bEnableBeep)
+        QApplication::beep();
 }
 
 void app::RecSetPiece(int row, int col)
@@ -328,6 +335,18 @@ void app::onActionAINone() { setAIColor(AIColorSetting::None); }
 void app::onActionPlayerRed() { setPlayerColor(PlayerColorSetting::Red); }
 void app::onActionPlayerBlue() { setPlayerColor(PlayerColorSetting::Blue); }
 void app::onActionPlayerAuto() { setPlayerColor(PlayerColorSetting::Auto); }
+
+void app::onEnableCostomizePlayerColor(bool checked)
+{
+    ui.actionPlayerRed->setEnabled(checked);
+    ui.actionPlayerBlue->setEnabled(checked);
+    setPlayerColor(PlayerColorSetting::Auto);
+}
+
+void app::onEnableBeep(bool checked)
+{
+    _bEnableBeep = checked;
+}
 
 void app::onOpen()
 {

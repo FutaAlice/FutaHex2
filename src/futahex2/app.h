@@ -47,6 +47,8 @@ public slots:
     void onActionPlayerRed();
     void onActionPlayerBlue();
     void onActionPlayerAuto();
+    void onEnableCostomizePlayerColor(bool checked);
+    void onEnableBeep(bool checked);
     
 protected:
     void paintEvent(QPaintEvent *event);
@@ -79,5 +81,6 @@ private:
     AIColorSetting _acs { AIColorSetting::None };
     PlayerColorSetting _pcs { PlayerColorSetting::Auto };
 
+    bool _bEnableBeep { false };
     Ui::appClass ui;
 };
