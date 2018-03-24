@@ -32,10 +32,15 @@ app::app(QWidget *parent)
     ui.link_blue->setDisplayMethod(Canvas::DisplayMethod::LinkB);
     resize(w * 16 / 9, w);
 
-    QObject::connect(ui.canvas, SIGNAL(clickEmptyPoint(int, int)), this, SLOT(setPiece(int, int)));
+    QObject::connect(ui.canvas, SIGNAL(clickEmptyPoint(int, int)),
+                     this, SLOT(onCanvasValidClick(int, int)));
     QObject::connect(ui.actionNew, SIGNAL(triggered()), this, SLOT(onNew()));
     QObject::connect(ui.actionOpen, SIGNAL(triggered()), this, SLOT(onOpen()));
     QObject::connect(ui.actionSave, SIGNAL(triggered()), this, SLOT(onSave()));
+    QObject::connect(ui.actionenable_costomize_player_color, SIGNAL(toggled(bool)),
+                     this, SLOT(onEnableCostomizePlayerColor(bool)));
+    QObject::connect(ui.actionenable_beep, SIGNAL(toggled(bool)),
+                     this, SLOT(onEnableBeep(bool)));
     QObject::connect(ui.action5, SIGNAL(triggered()), this, SLOT(onAction5()));
     QObject::connect(ui.action7, SIGNAL(triggered()), this, SLOT(onAction7()));
     QObject::connect(ui.action9, SIGNAL(triggered()), this, SLOT(onAction9()));
@@ -44,11 +49,9 @@ app::app(QWidget *parent)
     QObject::connect(ui.action15, SIGNAL(triggered()), this, SLOT(onAction15()));
     QObject::connect(ui.action17, SIGNAL(triggered()), this, SLOT(onAction17()));
     QObject::connect(ui.action19, SIGNAL(triggered()), this, SLOT(onAction19()));
-
     QObject::connect(ui.actionAIRed, SIGNAL(triggered()), this, SLOT(onActionAIRed()));
     QObject::connect(ui.actionAIBlue, SIGNAL(triggered()), this, SLOT(onActionAIBlue()));
     QObject::connect(ui.actionAINone, SIGNAL(triggered()), this, SLOT(onActionAINone()));
-
     QObject::connect(ui.actionPlayerRed, SIGNAL(triggered()), this, SLOT(onActionPlayerRed()));
     QObject::connect(ui.actionPlayerBlue, SIGNAL(triggered()), this, SLOT(onActionPlayerBlue()));
     QObject::connect(ui.actionPlayerAuto, SIGNAL(triggered()), this, SLOT(onActionPlayerAuto()));
@@ -70,6 +73,8 @@ app::app(QWidget *parent)
 
     QObject::connect(add_default_icon(QStyle::SP_MediaPlay, "AI move"),
                      SIGNAL(triggered()), this, SLOT(onAIMove()));
+    QObject::connect(add_default_icon(QStyle::SP_MediaStop, "AI stop"),
+                     SIGNAL(triggered()), this, SLOT(onAIStop()));
     QObject::connect(add_default_icon(QStyle::SP_MediaSeekBackward, "take back"),
                      SIGNAL(triggered()), this, SLOT(onTakeBack()));
     ui.mainToolBar->addSeparator();
@@ -78,11 +83,82 @@ app::app(QWidget *parent)
                      SIGNAL(triggered()), this, SLOT(onView()));
 }
 
-void app::paintEvent(QPaintEvent * event)
+void app::PlayerSetPiece(int row, int col)
 {
+    Color color = getPlayerColor();
+    setPiece(row, col, color);
+    if (_bEnableBeep)
+        QApplication::beep();
+    if (_acs != AIColorSetting::None &&
+        getAIColor() == _pBoard->color())
+        AIMove();
 }
 
-void app::setPiece(int row, int col)
+void app::AISetPiece(int row, int col)
+{
+    Color color = getAIColor();
+    setPiece(row, col, color);
+    if (_bEnableBeep)
+        QApplication::beep();
+}
+
+void app::RecSetPiece(int row, int col)
+{
+    Color color = _pBoard->color();
+    setPiece(row, col, color);
+}
+
+void app::AIMove()
+{
+    if (!_pBoard)
+        return;
+
+    if (pEngine)
+    {
+        const char *err = "AI is busy. This operation will be ignored";
+        debug(Level::Warning) << err;
+        QMessageBox message(QMessageBox::NoIcon, "Warning",
+                            err, QMessageBox::Ok);
+        message.exec();
+        return;
+    }
+
+    Color color = _pBoard->color();
+
+    EngineCfg cfg;
+    cfg.colorAI = color;
+    cfg.pBoard = _pBoard;
+
+    pEngine = new MCTSEngine(chrono::seconds(20));
+    pEngine->configure(cfg);
+    pEngine->compute([](pos_t result, void *opaque)->void * {
+        cout << result << endl;
+        auto *pApp = static_cast<app *>(opaque);
+        pApp->AISetPiece(result.row, result.col);
+        auto grabage = pApp->pEngine;
+        pApp->pEngine = nullptr;
+        delete grabage;
+        return NULL;
+    }, static_cast<void *>(this));
+}
+
+void app::AIStop()
+{
+    if (!pEngine)
+        return;
+    pEngine->terminate();
+}
+
+void app::paintEvent(QPaintEvent * event)
+{
+    if (!_pBoard)
+    {
+        QPainter painter(this);
+        painter.drawText(200, 200, QStringLiteral("plz select boardsize!"));
+    }
+}
+
+void app::setPiece(int row, int col, color::Color color)
 {
     if (!_pBoard)
         return;
@@ -98,7 +174,6 @@ void app::setPiece(int row, int col)
         return;
     }
 
-    Color color = refBoard.color();
     refBoard(row, col) = color;
 
     _rec.push_back(RecordData(row, col, _pBoard->boardsize(), color));
@@ -120,6 +195,11 @@ void app::resetPiece(int row, int col)
     updateBoard();
 }
 
+void app::onCanvasValidClick(int row, int col)
+{
+    PlayerSetPiece(row, col);
+}
+
 void app::onNew()
 {
     changeBoardsize(_pBoard ? 0 : 11);
@@ -133,8 +213,10 @@ Color app::getAIColor()
         return Color::Red;
     case AIColorSetting::Blue:
         return Color::Blue;
+    case AIColorSetting::None:
     default:
-        return Color::Empty;
+        assert(_pBoard);
+        return _pBoard->color();
     }
 }
 
@@ -146,11 +228,10 @@ Color app::getPlayerColor()
         return Color::Red;
     case PlayerColorSetting::Blue:
         return Color::Blue;
+    case PlayerColorSetting::Auto:
     default:
-        if (_pBoard)
-            return _pBoard->color();
-        else
-            return Color::Empty;
+        assert(_pBoard);
+        return _pBoard->color();
     }
 }
 
@@ -163,6 +244,10 @@ void app::setAIColor(AIColorSetting acs)
         action->setChecked(index++ == static_cast<int>(acs));
     }
     _acs = acs;
+    if (_pBoard &&
+        _acs != AIColorSetting::None &&
+        getAIColor() == _pBoard->color())
+        AIMove();
 }
 
 void app::setPlayerColor(PlayerColorSetting pcs)
@@ -251,6 +336,18 @@ void app::onActionPlayerRed() { setPlayerColor(PlayerColorSetting::Red); }
 void app::onActionPlayerBlue() { setPlayerColor(PlayerColorSetting::Blue); }
 void app::onActionPlayerAuto() { setPlayerColor(PlayerColorSetting::Auto); }
 
+void app::onEnableCostomizePlayerColor(bool checked)
+{
+    ui.actionPlayerRed->setEnabled(checked);
+    ui.actionPlayerBlue->setEnabled(checked);
+    setPlayerColor(PlayerColorSetting::Auto);
+}
+
+void app::onEnableBeep(bool checked)
+{
+    _bEnableBeep = checked;
+}
+
 void app::onOpen()
 {
     const char *filters = "Hexy Files (*.gam);; FutaHex Files (*.fh)";
@@ -289,7 +386,7 @@ void app::onOpen()
             for (auto record_data : rec)
             {
                 auto pos = record_data.pos();
-                setPiece(pos.row, pos.col);
+                RecSetPiece(pos.row, pos.col);
             }
         }
         file.close();
@@ -330,60 +427,9 @@ void app::onSave()
     }
 }
 
-void app::onRestart()
-{
-    changeBoardsize(_pBoard ? 0 : 11);
-}
-
-void app::onAIMove()
-{
-    if (!_pBoard)
-        return;
-
-    if (aiThinking)
-    {
-        const char *err = "AI is busy. This operation will be ignored";
-        debug(Level::Warning) << err;
-        QMessageBox message(QMessageBox::NoIcon, "Warning",
-                            err, QMessageBox::Ok);
-        message.exec();
-        return;
-    }
-    aiThinking = true;
-
-    Color color = _pBoard->color();
-
-    EngineCfg cfg;
-    cfg.colorAI = color;
-    cfg.pBoard = _pBoard;
-
-    IEngine *pEngine = new MCTSEngine();
-    pEngine->configure(cfg);
-
-    struct CallbackParams
-    {
-        CallbackParams(IEngine *pEngine, app *pApp)
-            : pEngine(pEngine)
-            , pApp(pApp)
-        {
-        }
-        ~CallbackParams()
-        {
-            delete pEngine;
-        }
-        IEngine *pEngine { nullptr };
-        app *pApp { nullptr };
-    };
-
-    pEngine->compute([](pos_t result, void *opaque)->void * {
-        cout << result << endl;
-        auto *data = static_cast<CallbackParams *>(opaque);
-        data->pApp->setPiece(result.row, result.col);
-        data->pApp->aiThinking = false;
-        delete data;
-        return NULL;
-    }, static_cast<void *>(new CallbackParams(pEngine, this)));
-}
+void app::onRestart() { changeBoardsize(_pBoard ? 0 : 11); }
+void app::onAIMove() { AIMove(); }
+void app::onAIStop() { AIStop(); }
 
 void app::onTakeBack()
 {

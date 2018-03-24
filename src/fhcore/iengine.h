@@ -23,9 +23,11 @@ public:
     void configure(EngineCfg cfg) noexcept;
     void compute(FUNC_CB_AIMOVE cb, void *opaque = nullptr) noexcept;
     void compute_sync(position::pos_t & result) noexcept;
+    void terminate() noexcept;
 
 protected:
     virtual position::pos_t calc_ai_move_sync() = 0;
+    virtual position::pos_t stop_calc_and_return() = 0;
     void wait();
 
 private:

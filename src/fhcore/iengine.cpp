@@ -46,6 +46,11 @@ void IEngine::compute_sync(position::pos_t & result) noexcept
     unlock();
 }
 
+void IEngine::terminate() noexcept
+{
+    stop_calc_and_return();
+}
+
 void IEngine::wait()
 {
     _future.wait();
