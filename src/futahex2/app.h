@@ -9,6 +9,7 @@
 #include "ui_app.h"
 
 namespace board { class IBoard; }
+namespace engine { class IEngine; }
 
 class app : public QMainWindow
 {
@@ -19,16 +20,17 @@ public:
 public:
     app(QWidget *parent = Q_NULLPTR);
     static const int w { 720 };
-    bool aiThinking { false };
+    engine::IEngine *pEngine { nullptr };
+
 
 public slots:
-    void setPiece(int row, int col);
-    void resetPiece(int row, int col);
+    void onCanvasValidClick(int row, int col);
     void onNew();
     void onOpen();
     void onSave();
     void onRestart();
     void onAIMove();
+    void onAIStop();
     void onTakeBack();
     void onView();
     void onAction5();
@@ -50,6 +52,13 @@ protected:
     void paintEvent(QPaintEvent *event);
 
 private:
+    void PlayerSetPiece(int row, int col);
+    void AISetPiece(int row, int col);
+    void RecSetPiece(int row, int col);
+
+    void AIMove();
+    void AIStop();
+
     color::Color getAIColor();
     color::Color getPlayerColor();
     void setAIColor(AIColorSetting);
@@ -60,6 +69,8 @@ private:
     void appendText(const char *text, color::Color color);
     void appendText(std::string &str, QColor color = Qt::black);
     void appendText(std::string &str, color::Color color);
+    void setPiece(int row, int col, color::Color color);
+    void resetPiece(int row, int col);
 
 private:
     board::IBoard *_pBoard { nullptr };
