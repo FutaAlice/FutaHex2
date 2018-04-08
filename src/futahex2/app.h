@@ -22,7 +22,6 @@ public:
     static const int w { 720 };
     engine::IEngine *pEngine { nullptr };
 
-
 public slots:
     void onCanvasValidClick(int row, int col);
     void onNew();
@@ -33,13 +32,21 @@ public slots:
     void onAIStop();
     void onTakeBack();
     void onView();
+    void onAction4();
     void onAction5();
+    void onAction6();
     void onAction7();
+    void onAction8();
     void onAction9();
+    void onAction10();
     void onAction11();
+    void onAction12();
     void onAction13();
+    void onAction14();
     void onAction15();
+    void onAction16();
     void onAction17();
+    void onAction18();
     void onAction19();
     void onActionAIRed();
     void onActionAIBlue();

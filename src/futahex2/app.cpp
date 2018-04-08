@@ -41,13 +41,21 @@ app::app(QWidget *parent)
                      this, SLOT(onEnableCostomizePlayerColor(bool)));
     QObject::connect(ui.actionenable_beep, SIGNAL(toggled(bool)),
                      this, SLOT(onEnableBeep(bool)));
+    QObject::connect(ui.action4, SIGNAL(triggered()), this, SLOT(onAction4()));
     QObject::connect(ui.action5, SIGNAL(triggered()), this, SLOT(onAction5()));
+    QObject::connect(ui.action6, SIGNAL(triggered()), this, SLOT(onAction6()));
     QObject::connect(ui.action7, SIGNAL(triggered()), this, SLOT(onAction7()));
+    QObject::connect(ui.action8, SIGNAL(triggered()), this, SLOT(onAction8()));
     QObject::connect(ui.action9, SIGNAL(triggered()), this, SLOT(onAction9()));
+    QObject::connect(ui.action10, SIGNAL(triggered()), this, SLOT(onAction10()));
     QObject::connect(ui.action11, SIGNAL(triggered()), this, SLOT(onAction11()));
+    QObject::connect(ui.action12, SIGNAL(triggered()), this, SLOT(onAction12()));
     QObject::connect(ui.action13, SIGNAL(triggered()), this, SLOT(onAction13()));
+    QObject::connect(ui.action14, SIGNAL(triggered()), this, SLOT(onAction14()));
     QObject::connect(ui.action15, SIGNAL(triggered()), this, SLOT(onAction15()));
+    QObject::connect(ui.action16, SIGNAL(triggered()), this, SLOT(onAction16()));
     QObject::connect(ui.action17, SIGNAL(triggered()), this, SLOT(onAction17()));
+    QObject::connect(ui.action18, SIGNAL(triggered()), this, SLOT(onAction18()));
     QObject::connect(ui.action19, SIGNAL(triggered()), this, SLOT(onAction19()));
     QObject::connect(ui.actionAIRed, SIGNAL(triggered()), this, SLOT(onActionAIRed()));
     QObject::connect(ui.actionAIBlue, SIGNAL(triggered()), this, SLOT(onActionAIBlue()));
@@ -320,13 +328,21 @@ void app::appendText(string & str, color::Color color)
     appendText(str.c_str(), color);
 }
 
+void app::onAction4() { changeBoardsize(4); }
 void app::onAction5() { changeBoardsize(5); }
+void app::onAction6() { changeBoardsize(6); }
 void app::onAction7() { changeBoardsize(7); }
+void app::onAction8() { changeBoardsize(8); }
 void app::onAction9() { changeBoardsize(9); }
+void app::onAction10() { changeBoardsize(10); }
 void app::onAction11() { changeBoardsize(11); }
+void app::onAction12() { changeBoardsize(12); }
 void app::onAction13() { changeBoardsize(13); }
+void app::onAction14() { changeBoardsize(14); }
 void app::onAction15() { changeBoardsize(15); }
+void app::onAction16() { changeBoardsize(16); }
 void app::onAction17() { changeBoardsize(17); }
+void app::onAction18() { changeBoardsize(18); }
 void app::onAction19() { changeBoardsize(19); }
 
 void app::onActionAIRed() { setAIColor(AIColorSetting::Red); }

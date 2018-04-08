@@ -91,7 +91,7 @@ void Canvas::resizeEvent(QResizeEvent * event)
         return;
 
     auto size = _pBoard->boardsize();
-    assert(5 <= size && size <= 19);
+    assert(4 <= size && size <= 19);
 
     if (_ratio * width() > height())
     {
@@ -109,6 +109,13 @@ void Canvas::resizeEvent(QResizeEvent * event)
     int row_block_cnt = (1 + size) + (size + 1) / 2;
     _hex_w = (_w * 1.0f) / row_block_cnt;
     _hex_h = _hex_w * sqrt(3) * 2.0 / 3.0;
+
+    // magic, don't touch!
+    if (0 == size % 2)
+    {
+        _w += _hex_w * sqrt(3);
+        _h += _hex_h;
+    }
 
     _ct[mid][mid].setX(_w / 2.0);
     _ct[mid][mid].setY(_h / 2.0);
