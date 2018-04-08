@@ -84,13 +84,21 @@
     <property name="title">
      <string>Boardsize</string>
     </property>
+    <addaction name="action4"/>
     <addaction name="action5"/>
+    <addaction name="action6"/>
     <addaction name="action7"/>
+    <addaction name="action8"/>
     <addaction name="action9"/>
+    <addaction name="action10"/>
     <addaction name="action11"/>
+    <addaction name="action12"/>
     <addaction name="action13"/>
+    <addaction name="action14"/>
     <addaction name="action15"/>
+    <addaction name="action16"/>
     <addaction name="action17"/>
+    <addaction name="action18"/>
     <addaction name="action19"/>
    </widget>
    <widget class="QMenu" name="menuColorAI">
@@ -299,6 +307,70 @@
    </property>
    <property name="text">
     <string>enable beep</string>
+   </property>
+  </action>
+  <action name="action4">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>4</string>
+   </property>
+  </action>
+  <action name="action6">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>6</string>
+   </property>
+  </action>
+  <action name="action8">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>8</string>
+   </property>
+  </action>
+  <action name="action10">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>10</string>
+   </property>
+  </action>
+  <action name="action12">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>12</string>
+   </property>
+  </action>
+  <action name="action14">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>14</string>
+   </property>
+  </action>
+  <action name="action16">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>16</string>
+   </property>
+  </action>
+  <action name="action18">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>18</string>
    </property>
   </action>
  </widget>

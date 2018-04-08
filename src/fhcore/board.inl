@@ -13,7 +13,7 @@ namespace board
 template<typename Test, coord_t size>
 inline BoardT<Test, size>::BoardT() noexcept
 {
-    static_assert((0 != size % 2) && (5 <= size),
+    static_assert((4 <= size) && (size <= 19),
                   "board size supposed to an odd number greater than five.");
     using namespace std;
     using namespace logger;
