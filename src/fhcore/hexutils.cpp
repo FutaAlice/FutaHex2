@@ -29,7 +29,7 @@ uint8_t xy2gamlocate(int row, int col, int size)
 
 tuple<int, int> gamlocate2xy(int gamlocate, int size)
 {
-    if (size > 11 || size % 2 == 0)
+    if (size > 11)
         throw;
     for (int row = 0; row < size; ++row)
     {
