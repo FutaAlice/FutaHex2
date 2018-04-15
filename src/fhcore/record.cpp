@@ -86,8 +86,7 @@ bool Record::from_gam(unsigned char *gam_buffer, size_t gam_size)
     size_t i = 0;
     auto boardsize = gam_buffer[i++];
     auto swap = 0 != gam_buffer[i++];
-    if (gam_size != 128 || boardsize % 2 == 0 ||
-        (swap != 0 && swap != 1))
+    if (gam_size != 128 || (swap != 0 && swap != 1))
         return false;
 
     clear();
