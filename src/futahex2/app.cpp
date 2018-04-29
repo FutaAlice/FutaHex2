@@ -93,6 +93,16 @@ app::app(QWidget *parent)
 
 void app::PlayerSetPiece(int row, int col)
 {
+    if (pEngine)
+    {
+        const char *err = "AI is thinking. This operation will be ignored";
+        debug(Level::Warning) << err;
+        QMessageBox message(QMessageBox::NoIcon, "Warning",
+                            err, QMessageBox::Ok);
+        message.exec();
+        return;
+    }
+
     Color color = getPlayerColor();
     setPiece(row, col, color);
     if (_bEnableBeep)
