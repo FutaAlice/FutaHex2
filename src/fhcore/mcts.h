@@ -37,6 +37,7 @@ private:
         unsigned short index { 0 };
         unsigned int cntWin { 0 };
         unsigned int cntTotal { 0 };
+        color::Color winner { color::Color::Empty };
         Node *parent;
         std::vector<Node *> children;
     private:

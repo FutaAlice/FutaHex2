@@ -124,6 +124,8 @@ position::pos_t MCTSEngine::stop_calc_and_return()
 
 void MCTSEngine::selection(Node *& current, disjointset::IDisjointSet *uf)
 {
+    if (Color::Empty != current->winner)
+        return;
     while (current->nExpanded == current->nChildren)
     {
         int select_index = 0;
@@ -150,7 +152,7 @@ void MCTSEngine::selection(Node *& current, disjointset::IDisjointSet *uf)
 
 void MCTSEngine::expansion(Node *& current, disjointset::IDisjointSet *uf)
 {
-    if (0 == current->nChildren)
+    if (Color::Empty != current->winner || 0 == current->nChildren)
         return;
     auto expanded = current->nExpanded;
     bool buffer[BUFFER_SIZE] = { false };
@@ -173,10 +175,13 @@ void MCTSEngine::expansion(Node *& current, disjointset::IDisjointSet *uf)
 
 Color MCTSEngine::simulation(Node *& current, disjointset::IDisjointSet *uf)
 {
+    if (Color::Empty != current->winner || 0 == current->nChildren)
+        return current->winner;
     Color color = uf->color_to_move();
     uf->set(current->index);
     if (uf->check_after_set(current->index, color))
     {
+        current->winner = color;
         return color;
     }
 
