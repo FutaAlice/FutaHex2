@@ -1,6 +1,7 @@
 .vs
 Win32
 x64
+build
 Debug
 Release
 *.user

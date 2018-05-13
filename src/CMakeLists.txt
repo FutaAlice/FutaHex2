@@ -1,0 +1,2 @@
+ADD_SUBDIRECTORY(fhcore)
+ADD_SUBDIRECTORY(futahex2)
