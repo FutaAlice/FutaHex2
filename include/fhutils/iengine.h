@@ -5,19 +5,17 @@
 #include "board.h"
 #include "logger.h"
 
-namespace engine
-{
+namespace fhutils {
+namespace iengine {
 
 typedef void *(*FUNC_CB_AIMOVE)(position::pos_t result, void *opaque);
 
-typedef struct EngineCfg
-{
+typedef struct EngineCfg {
     board::IBoard *pBoard;
     color::Color colorAI;
 } EngineCfg;
 
-class IEngine
-{
+class IEngine {
 public:
     virtual ~IEngine();
     void configure(EngineCfg cfg) noexcept;
@@ -38,8 +36,8 @@ private:
     void unlock();
 
 protected:
-    board::IBoard *pBoard { nullptr };
-    color::Color colorAI { color::Color::Empty };
+    board::IBoard *pBoard{ nullptr };
+    color::Color colorAI{ color::Color::Empty };
 
 private:
     std::mutex _lock;
@@ -49,8 +47,7 @@ private:
 template<typename T, typename E, typename ...Args>
 inline auto
 IEngine::timer(T calc, E engine, Args ...args) ->
-decltype((engine->*calc)(args ...))
-{
+decltype((engine->*calc)(args ...)) {
     using namespace std::chrono;
     using namespace logger;
 
@@ -58,8 +55,9 @@ decltype((engine->*calc)(args ...))
     auto result = (engine->*calc)(args...);
     auto end = system_clock::now();
     auto duration = duration_cast<seconds>(end - begin);
-    debug(Level::Info) << "cost " << duration.count() << " sec";
+    msg(Level::Info) << "cost " << duration.count() << " sec";
     return result;
 }
 
-}
+} // namespace iengine
+} // namespace fhutils

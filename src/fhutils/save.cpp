@@ -1,14 +1,16 @@
 #include <cmath>
 #include <iomanip>
 #include <sstream>
-#include "hexutils.h"
+#include "position.h"
+#include "record.h"
+#include "save.h"
 
 using namespace std;
-namespace hexutils
-{
 
-string xy2symbol(int row, int col, int size)
-{
+namespace fhutils {
+namespace save {
+
+string xy2symbol(int row, int col, int size) {
     if (row >= size || col >= size)
         throw;
 
@@ -20,21 +22,17 @@ string xy2symbol(int row, int col, int size)
 }
 
 // gam_locate = (3 + size) + col + row * (size + 2)
-uint8_t xy2gamlocate(int row, int col, int size)
-{
+uint8_t xy2gamlocate(int row, int col, int size) {
     if (row >= size || col >= size || size > 11)
         throw;
     return 3 + size + col + (size + 2) * row;
 }
 
-tuple<int, int> gamlocate2xy(int gamlocate, int size)
-{
+tuple<int, int> gamlocate2xy(int gamlocate, int size) {
     if (size > 11)
         throw;
-    for (int row = 0; row < size; ++row)
-    {
-        for (int col = 0; col < size; ++col)
-        {
+    for (int row = 0; row < size; ++row) {
+        for (int col = 0; col < size; ++col) {
             if (gamlocate == xy2gamlocate(row, col, size))
                 return make_tuple(row, col);
         }
@@ -42,6 +40,5 @@ tuple<int, int> gamlocate2xy(int gamlocate, int size)
     throw;
 }
 
-
-
-}
+} // namespace save
+} // namespace fhutils

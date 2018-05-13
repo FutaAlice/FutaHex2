@@ -1,18 +1,13 @@
-#include "app.h"
-#include <cassert>
-#include <QtWidgets/QApplication>
-#include <QDesktopWidget>
+#include <chrono>
+#include <fhgui/entry.h>
+#include <fhcore/mcts.h>
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
+using std::chrono::seconds;
+using fhgui::Entry;
+using fhcore::mcts::MCTSEngine;
 
-    auto desktop = a.desktop();
-    auto rect = desktop->screenGeometry();
-    assert(app::w < rect.height());
-
-    app w;
-    w.show();
-
-    return a.exec();
+int main(int argc, char *argv[]) {
+    auto pEngine = new MCTSEngine(seconds(20));
+    Entry &entry = Entry::instance(pEngine);
+    return entry.exec(argc, argv);
 }

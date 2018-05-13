@@ -3,16 +3,14 @@
 #include <ostream>
 #include <set>
 
-namespace position
-{
+namespace fhutils {
+namespace position {
 using coord_t = unsigned short;
 
-class pos_t;
 template<coord_t size>
 class PositionT;
 
-class pos_t
-{
+class pos_t {
 public:
     pos_t() = default;
     pos_t(coord_t row, coord_t col, coord_t size);
@@ -29,21 +27,20 @@ public:
     bool bAdjBegin[2];
     bool bAdjEnd[2];
 private:
-    std::array<pos_t *, 6> _adjacent { 
+    std::array<pos_t *, 6> _adjacent{
         nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
     std::set<pos_t *> _adjacent_exist;
 };
 
 template<coord_t size>
-class PositionT
-{
+class PositionT {
 public:
     static const PositionT<size> & instance();
     const pos_t *operator()(coord_t index) const;
     const pos_t *operator()(coord_t row, coord_t col) const;
 public:
-    static const coord_t nBegin { size * size };
-    static const coord_t nEnd { size * size + 1 };
+    static const coord_t nBegin{ size * size };
+    static const coord_t nEnd{ size * size + 1 };
 private:
     PositionT();
     ~PositionT();
@@ -54,6 +51,7 @@ private:
     std::array<pos_t *, size * size> _container;
 };
 
-}
+} // namespace position
+} // namespace fhutils
 
 #include "position.inl"

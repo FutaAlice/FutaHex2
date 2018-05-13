@@ -1,12 +1,14 @@
 PROJECT (TEST_ALL)
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
-# AUX_SOURCE_DIRECTORY(./ TEST_SRC)
-ADD_EXECUTABLE(test_all test_all.cpp)
+AUX_SOURCE_DIRECTORY(./ TEST_SRC)
+ADD_EXECUTABLE(test_all ${TEST_SRC})
 
 # gtest
 INCLUDE_DIRECTORIES(${gtest_SOURCE_DIR}/include)
 ADD_DEPENDENCIES(test_all gtest)
 TARGET_LINK_LIBRARIES(test_all gtest)
 
-
+# fhutils
+ADD_DEPENDENCIES(test_all fhutils)
+TARGET_LINK_LIBRARIES(test_all fhutils)

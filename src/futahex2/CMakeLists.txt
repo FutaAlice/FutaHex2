@@ -1,33 +1,23 @@
-PROJECT (FHGUI)
+PROJECT (FUTAHEX2)
 
-SET(CMAKE_INCLUDE_CURRENT_DIR ON)
-SET(CMAKE_AUTOMOC ON)
-SET(CMAKE_AUTOUIC ON)
-SET(CMAKE_AUTORCC ON)
 FIND_PACKAGE(Qt5 REQUIRED Core Gui Widgets)
 
 FILE(GLOB SOURCE_FILES "./*.cpp")
-FILE(GLOB HEADER_FILES "./*.h")
-FILE(GLOB FORM_FILES "./*.ui")
-FILE(GLOB RESOURCE_FILES "./*.qrc")
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 
-# F*CK
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/fhcore)
-
-ADD_EXECUTABLE(fhgui
-    ${SOURCE_FILES}
-    ${HEADER_FILES}
-    ${FORM_FILES}
-    ${RESOURCE_FILES})
+ADD_EXECUTABLE(futahex2 ${SOURCE_FILES})
     
-target_link_libraries(fhgui Qt5::Core Qt5::Gui Qt5::Widgets)
+target_link_libraries(futahex2 Qt5::Core Qt5::Gui Qt5::Widgets)
 
 # fhcore
-ADD_DEPENDENCIES(fhgui fhcore)
-TARGET_LINK_LIBRARIES(fhgui fhcore)
+ADD_DEPENDENCIES(futahex2 fhcore)
+TARGET_LINK_LIBRARIES(futahex2 fhcore)
+
+# fhgui
+ADD_DEPENDENCIES(futahex2 fhgui)
+TARGET_LINK_LIBRARIES(futahex2 fhgui)
 
 IF(UNIX)
-    TARGET_LINK_LIBRARIES(fhgui pthread)
+    TARGET_LINK_LIBRARIES(futahex2 pthread)
 ENDIF()

@@ -1,20 +1,21 @@
 #pragma once
 
-namespace board
-{
+namespace fhutils {
+namespace board {
 class IBoard;
 }
+}
 
-namespace eval
-{
+namespace fhcore {
+namespace eval {
 
-class Eval
-{
+class Eval {
 public:
-    Eval(board::IBoard *pBoard);
+    Eval(fhutils::board::IBoard *pBoard);
     operator long();
 private:
-    board::IBoard *_pBoard { nullptr };
+    fhutils::board::IBoard *_pBoard{ nullptr };
 };
 
-}
+} // namespace eval
+} // namespace fhcore

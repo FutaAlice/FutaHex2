@@ -1,88 +1,77 @@
+#include "save.h"
 #include "record.h"
-#include "hexutils.h"
+
 using namespace std;
-using namespace color;
+
+namespace fhutils {
+namespace record {
+
 using namespace position;
-using namespace hexutils;
-namespace record
-{
+using namespace color;
+using namespace save;
 
 RecordData::RecordData(pos_t pos, Color color)
     : _pos(pos)
-    , _color(color)
-{
+    , _color(color) {
 }
 
-RecordData::RecordData(coord_t index, coord_t board_size, Color color)
-{
+RecordData::RecordData(coord_t index, coord_t board_size, Color color) {
     coord_t row = index / board_size;
     coord_t col = index % board_size;
     new (this) RecordData(pos_t(row, col, board_size), color);
 }
 
-RecordData::RecordData(coord_t row, coord_t col, coord_t board_size, Color color)
-{
+RecordData::RecordData(coord_t row, coord_t col, coord_t board_size, Color color) {
     new (this) RecordData(pos_t(row, col, board_size), color);
 }
 
-auto RecordData::pos() -> position::pos_t const
-{
+auto RecordData::pos() -> position::pos_t const {
     return _pos;
 }
 
-auto RecordData::row() -> position::coord_t const
-{
+auto RecordData::row() -> position::coord_t const {
     return _pos.row;
 }
 
-auto RecordData::col() -> position::coord_t const
-{
+auto RecordData::col() -> position::coord_t const {
     return _pos.col;
 }
 
-auto RecordData::boardsize() -> position::coord_t const
-{
+auto RecordData::boardsize() -> position::coord_t const {
     return _pos.size;
 }
 
-auto RecordData::color() -> color::Color const
-{
+auto RecordData::color() -> color::Color const {
     return _color;
 }
 
-bool Record::swap() const
-{
+bool Record::swap() const {
     return _swap;
 }
 
-void Record::boardsize(position::coord_t boardsize)
-{
+void Record::boardsize(position::coord_t boardsize) {
     _boardsize = boardsize;
 }
 
-position::coord_t Record::boardsize() const
-{
+position::coord_t Record::boardsize() const {
     return _boardsize;
 }
 
-void Record::to_gam(unsigned char **gam_buffer, size_t *gam_size) const
-{
+void Record::to_gam(unsigned char **gam_buffer, size_t *gam_size) const {
     *gam_size = 128; // magic number :)
     *gam_buffer = new unsigned char[*gam_size]{ 0 };
     auto buffer = *gam_buffer;
     size_t i = 0;
     buffer[i++] = 0xff & _boardsize; // boardsize
     buffer[i++] = 0xff & (int)_swap; // swap rule
-    for (auto data : *this)
-    {
+    for (auto data : *this) {
         if (i >= *gam_size)
             throw;
         buffer[i++] = xy2gamlocate(data.row(), data.col(), _boardsize);
     }
 }
 
-bool Record::from_gam(unsigned char *gam_buffer, size_t gam_size)
-{
+bool Record::from_gam(unsigned char *gam_buffer, size_t gam_size) {
     size_t i = 0;
     auto boardsize = gam_buffer[i++];
     auto swap = 0 != gam_buffer[i++];
@@ -93,8 +82,7 @@ bool Record::from_gam(unsigned char *gam_buffer, size_t gam_size)
     _swap = swap;
     _boardsize = boardsize;
     Color color = swap ? Color::Blue : Color::Red;
-    for (;;)
-    {
+    for (;;) {
         auto gamlocate = gam_buffer[i++];
         if (!gamlocate)
             break;
@@ -106,4 +94,5 @@ bool Record::from_gam(unsigned char *gam_buffer, size_t gam_size)
     return true;
 }
 
-}
+} // namespace record
+} // namespace fhutils

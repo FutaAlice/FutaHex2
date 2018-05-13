@@ -14,7 +14,7 @@ Sample for 5x5 board:
                           20    21    22    23    24
 
                                     Red-End
-                     
+
 */
 
 #pragma once
@@ -28,13 +28,13 @@ Sample for 5x5 board:
 #include "color.h"
 #include "position.h"
 
-namespace board
-{
+namespace fhutils {
+namespace board {
+
 using namespace color;
 using namespace position;
 
-class IBoard
-{
+class IBoard {
 public:
     static IBoard * create(const coord_t size);
     static IBoard * create(const std::string & name);
@@ -82,8 +82,7 @@ public:
 };
 
 template<typename Test, coord_t size>
-class BoardT : public IBoard
-{
+class BoardT : public IBoard {
     friend Test;
     using Position = PositionT<size>;
 public:
@@ -138,21 +137,21 @@ private:
     coord_t buf_index() const;
 
     void get_direct_capture_union(std::set<coord_t> & out,
-                                  coord_t center, Color color,
-                                  bool first_time = true) const;
+        coord_t center, Color color,
+        bool first_time = true) const;
 
     void get_direct_link_union(std::set<coord_t> & out,
-                               std::set<coord_t> & except,
-                               coord_t center, Color color,
-                               bool first_time = true) const;
+        std::set<coord_t> & except,
+        coord_t center, Color color,
+        bool first_time = true) const;
 
     void set_piece(const Color color);
     void reset_piece();
 
 private:
-    coord_t _rowBuf { 0 };
-    coord_t _colBuf { 0 };
-    const Position & _pos { Position::instance() };
+    coord_t _rowBuf{ 0 };
+    coord_t _colBuf{ 0 };
+    const Position & _pos{ Position::instance() };
     std::bitset<size * size> _bit[2];
     std::array<std::set<coord_t>, size * size + 2> _link[2];
 };
@@ -160,6 +159,7 @@ private:
 template<coord_t size>
 using Board = BoardT<int, size>;
 
-}
+} // namespace board
+} // namespace fhutils
 
 #include "board.inl"

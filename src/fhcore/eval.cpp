@@ -1,19 +1,19 @@
 #include <memory>
-#include "board.h"
+#include <fhutils/board.h>
 #include "eval.h"
-using namespace std;
-using namespace board;
-namespace eval
-{
 
-Eval::Eval(board::IBoard * pBoard)
-    : _pBoard(pBoard)
-{
+using namespace fhutils::board;
+
+namespace fhcore {
+namespace eval {
+
+Eval::Eval(fhutils::board::IBoard * pBoard)
+    : _pBoard(pBoard) {
 }
 
-Eval::operator long()
-{
+Eval::operator long() {
     return 0;
 }
 
-}
+} // namespace eval
+} // namespace fhcore

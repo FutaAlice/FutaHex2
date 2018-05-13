@@ -1,36 +1,30 @@
 #include "position.h"
 
-namespace position
-{
-static_assert(coord_t(-1) > coord_t(0),
-              "type: coord_t, supposed to be unsigned.");
+namespace fhutils {
+namespace position {
+
+static_assert(coord_t(-1) > coord_t(0), "type: coord_t, supposed to be unsigned.");
 
 template<coord_t size>
-inline const PositionT<size>& PositionT<size>::instance()
-{
+inline const PositionT<size>& PositionT<size>::instance() {
     static PositionT<size> pos;
     return pos;
 }
 
 template<coord_t size>
-inline const pos_t * PositionT<size>::operator()(coord_t index) const
-{
+inline const pos_t * PositionT<size>::operator()(coord_t index) const {
     return _container[index];
 }
 
 template<coord_t size>
-inline const pos_t * PositionT<size>::operator()(coord_t row, coord_t col) const
-{
+inline const pos_t * PositionT<size>::operator()(coord_t row, coord_t col) const {
     return _container[row * size + col];
 }
 
 template<coord_t size>
-inline PositionT<size>::PositionT()
-{
-    for (auto row = 0; row < size; ++row)
-    {
-        for (auto col = 0; col < size; ++col)
-        {
+inline PositionT<size>::PositionT() {
+    for (auto row = 0; row < size; ++row) {
+        for (auto col = 0; col < size; ++col) {
             _container[row * size + col] = new pos_t(row, col, size);
         }
     }
@@ -41,8 +35,7 @@ inline PositionT<size>::PositionT()
             return container[row * s + col];
         return nullptr;
     };
-    for (auto pos : _container)
-    {
+    for (auto pos : _container) {
         auto a1 = get_index(pos->row, pos->col - 1);
         auto a2 = get_index(pos->row, pos->col + 1);
         auto a3 = get_index(pos->row - 1, pos->col);
@@ -59,13 +52,12 @@ inline PositionT<size>::PositionT()
 }
 
 template<coord_t size>
-inline PositionT<size>::~PositionT()
-{
-    for (auto pos : _container)
-    {
+inline PositionT<size>::~PositionT() {
+    for (auto pos : _container) {
         delete pos;
         pos = nullptr;
     }
 }
 
-}
+} // namespace position
+} // namespace fhutils

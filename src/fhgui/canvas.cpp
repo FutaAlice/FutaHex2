@@ -1,22 +1,21 @@
-#include "canvas.h"
 #include <cmath>
 #include <iostream>
 #include <map>
 #include <QPainter>
 #include <QPalette>
 #include <QMouseEvent>
-#include <board.h>
+#include <fhutils/board.h>
+#include "canvas.h"
 
 using namespace std;
-using namespace board;
+using namespace fhutils::board;
 
 #define MINIMUM_SIZE 20
 
 IBoard *Canvas::_pBoard = nullptr;
 
 template<typename T>
-static void get_hex_vertex(T points[], T pt, double w, double h)
-{
+static void get_hex_vertex(T points[], T pt, double w, double h) {
     points[0] = T(pt.x(), pt.y() - h / 2);
     points[1] = T(pt.x() + w / 2, pt.y() - h / 4);
     points[2] = T(pt.x() + w / 2, pt.y() + h / 4);
@@ -34,18 +33,14 @@ static void get_hex_vertex(T points[], T pt, double w, double h)
 //QColor c = cm.find(color)->second;
 
 Canvas::Canvas(QWidget *parent)
-    : QWidget(parent)
-{
+    : QWidget(parent) {
 }
 
-Canvas::~Canvas()
-{
+Canvas::~Canvas() {
 }
 
-void Canvas::updateBoard(IBoard *pb)
-{
-    if (pb)
-    {
+void Canvas::updateBoard(IBoard *pb) {
+    if (pb) {
         delete _pBoard;
         _pBoard = pb->copy();
     }
@@ -54,52 +49,41 @@ void Canvas::updateBoard(IBoard *pb)
     this->update();
 }
 
-void Canvas::setDisplayMethod(DisplayMethod dm)
-{
+void Canvas::setDisplayMethod(DisplayMethod dm) {
     _dm = dm;
 
     QPalette pal(palette());
-    if (dm != DisplayMethod::Normal)
-    {
+    if (dm != DisplayMethod::Normal) {
         pal.setColor(QPalette::Background, QColor(10, 10, 10));
-    }
-    else
-    {
+    } else {
     }
     setAutoFillBackground(true);
     setPalette(pal);
 }
 
-Canvas::DisplayMethod Canvas::getDisplayMethod()
-{
+Canvas::DisplayMethod Canvas::getDisplayMethod() {
     return _dm;
 }
 
-void Canvas::setLineWithArrow(bool arrow)
-{
+void Canvas::setLineWithArrow(bool arrow) {
     _arrow = arrow;
 }
 
-bool Canvas::getLineWithArrow()
-{
+bool Canvas::getLineWithArrow() {
     return _arrow;
 }
 
-void Canvas::resizeEvent(QResizeEvent * event)
-{
+void Canvas::resizeEvent(QResizeEvent * event) {
     if (!_pBoard)
         return;
 
     auto size = _pBoard->boardsize();
     assert(4 <= size && size <= 19);
 
-    if (_ratio * width() > height())
-    {
+    if (_ratio * width() > height()) {
         _h = height();
         _w = _h / _ratio;
-    }
-    else
-    {
+    } else {
         _w = width();
         _h = _w * _ratio;
     }
@@ -111,8 +95,7 @@ void Canvas::resizeEvent(QResizeEvent * event)
     _hex_h = _hex_w * sqrt(3) * 2.0 / 3.0;
 
     // magic, don't touch!
-    if (0 == size % 2)
-    {
+    if (0 == size % 2) {
         _w += _hex_w * sqrt(3);
         _h += _hex_h;
     }
@@ -120,45 +103,36 @@ void Canvas::resizeEvent(QResizeEvent * event)
     _ct[mid][mid].setX(_w / 2.0);
     _ct[mid][mid].setY(_h / 2.0);
 
-    for (int row = 0; row < size; ++row)
-    {
-        for (int col = 0; col < size; ++col)
-        {
+    for (int row = 0; row < size; ++row) {
+        for (int col = 0; col < size; ++col) {
             _ct[row][col].setX(_ct[mid][mid].x() + (col - mid) * _hex_w + (row - mid) * 0.5 * _hex_w);
             _ct[row][col].setY(_ct[mid][mid].y() + (row - mid) * (_hex_w * sqrt(3) / 2));
         }
     }
 }
 
-void Canvas::paintEvent(QPaintEvent * event)
-{
+void Canvas::paintEvent(QPaintEvent * event) {
     if (_h < MINIMUM_SIZE || _w < MINIMUM_SIZE || !_pBoard)
         return;
-    if (DisplayMethod::Normal == _dm)
-    {
+    if (DisplayMethod::Normal == _dm) {
         renderBorder();
         renderEmptyBoard();
         renderPieces();
         renderInfo();
-    }
-    else
-    {
+    } else {
         renderLink();
     }
 }
 
-void Canvas::mouseReleaseEvent(QMouseEvent *event)
-{
+void Canvas::mouseReleaseEvent(QMouseEvent *event) {
     if (!_pBoard)
         return;
     auto size = _pBoard->boardsize();
 
     QPointF vertex[6];
     QPolygonF hex;
-    for (int row = 0; row < size; ++row)
-    {
-        for (int col = 0; col < size; ++col)
-        {
+    for (int row = 0; row < size; ++row) {
+        for (int col = 0; col < size; ++col) {
             get_hex_vertex(vertex, _ct[row][col], _hex_w, _hex_h);
             hex.clear();
             for (auto & pt : vertex)
@@ -171,8 +145,7 @@ void Canvas::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
-void Canvas::renderEmptyBoard()
-{
+void Canvas::renderEmptyBoard() {
     QPainter painter(this);
     painter.setPen(QPen(Qt::black, 1));
     painter.setBrush(QBrush(_bk, Qt::SolidPattern));
@@ -183,17 +156,14 @@ void Canvas::renderEmptyBoard()
     };
 
     auto size = _pBoard->boardsize();
-    for (int row = 0; row < size; ++row)
-    {
-        for (int col = 0; col < size; ++col)
-        {
+    for (int row = 0; row < size; ++row) {
+        for (int col = 0; col < size; ++col) {
             drawHex(_ct[row][col], _hex_w, _hex_h, 1);
         }
     }
 }
 
-void Canvas::renderBorder()
-{
+void Canvas::renderBorder() {
     auto size = _pBoard->boardsize();
 
     QPainter painter(this);
@@ -212,13 +182,12 @@ void Canvas::renderBorder()
             path->lineTo(points[i3]);
         else
             path->lineTo((points[i2].x() + points[i3].x()) / 2,
-                         (points[i2].y() + points[i3].y()) / 2);
+            (points[i2].y() + points[i3].y()) / 2);
     };
 
     path = new QPainterPath;
     path->setFillRule(Qt::WindingFill);
-    for (int col = 0; col < size; ++col)
-    {
+    for (int col = 0; col < size; ++col) {
         get_hex_vertex(points, _ct[0][col], w, h);
         lineTo(5, 0, 1, col == size - 1);
         get_hex_vertex(points, _ct[size - 1][col], w, h);
@@ -229,8 +198,7 @@ void Canvas::renderBorder()
     delete path;
     path = new QPainterPath;
     path->setFillRule(Qt::WindingFill);
-    for (int row = 0; row < size; ++row)
-    {
+    for (int row = 0; row < size; ++row) {
         get_hex_vertex(points, _ct[row][0], w, h);
         lineTo(5, 4, 3, row == size - 1);
         get_hex_vertex(points, _ct[row][size - 1], w, h);
@@ -241,14 +209,13 @@ void Canvas::renderBorder()
     delete path;
 }
 
-void Canvas::renderLink()
-{
+void Canvas::renderLink() {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     auto drawArrowLine = [&painter](auto start, auto end, auto length, auto degree) {
         QPointF ptArrow[2];
-        auto calcVertexes = [=, &ptArrow]{
+        auto calcVertexes = [=, &ptArrow] {
             auto pi = asin(1) * 2;
             double angle = atan2(end.y() - start.y(), end.x() - start.x()) + pi;
             ptArrow[0].setX(end.x() + length * cos(angle - degree));
@@ -267,17 +234,13 @@ void Canvas::renderLink()
     painter.setPen(QPen(pen_color, 1, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
 
     auto size = _pBoard->boardsize();
-    for (int row = 0; row < size; ++row)
-    {
-        for (int col = 0; col < size; ++col)
-        {
+    for (int row = 0; row < size; ++row) {
+        for (int col = 0; col < size; ++col) {
             for (auto iter = _pBoard->begin(color, row * size + col);
-                 iter != _pBoard->end(color, row * size + col);
-                 ++iter)
-            {
+                iter != _pBoard->end(color, row * size + col);
+                ++iter) {
                 auto index = *iter;
-                if (index < size * size)
-                {
+                if (index < size * size) {
                     int r = index / size;
                     int c = index % size;
                     if (_arrow)
@@ -285,9 +248,7 @@ void Canvas::renderLink()
                     else
                         painter.drawLine(_ct[row][col], _ct[r][c]);
                     painter.drawEllipse(_ct[row][col], 1, 1);
-                }
-                else
-                {
+                } else {
                     painter.drawEllipse(_ct[row][col], 3, 3);
                 }
             }
@@ -295,8 +256,7 @@ void Canvas::renderLink()
     }
 }
 
-void Canvas::renderPieces()
-{
+void Canvas::renderPieces() {
     QPainter painter(this);
     auto drawEllipse = [&](auto pt, auto color, auto radius, auto ratio) {
         assert(Color::Empty != color);
@@ -307,10 +267,8 @@ void Canvas::renderPieces()
     };
 
     auto size = _pBoard->boardsize();
-    for (int row = 0; row < size; ++row)
-    {
-        for (int col = 0; col < size; ++col)
-        {
+    for (int row = 0; row < size; ++row) {
+        for (int col = 0; col < size; ++col) {
             Color color = (*_pBoard)(row, col);
             if (Color::Empty == color)
                 continue;
@@ -319,6 +277,5 @@ void Canvas::renderPieces()
     }
 }
 
-void Canvas::renderInfo()
-{
+void Canvas::renderInfo() {
 }

@@ -4,12 +4,11 @@
 #include "color.h"
 using namespace std;
 
-namespace position
-{
+namespace fhutils {
+namespace position {
 
 pos_t::pos_t(coord_t row, coord_t col, coord_t size)
-    :row(row), col(col), size(size), index(row * size + col)
-{
+    :row(row), col(col), size(size), index(row * size + col) {
     using namespace color;
     bAdjBegin[*Color::Red] = (0 == row);
     bAdjBegin[*Color::Blue] = (0 == col);
@@ -17,25 +16,21 @@ pos_t::pos_t(coord_t row, coord_t col, coord_t size)
     bAdjEnd[*Color::Blue] = (size - 1 == col);
 }
 
-const std::set<pos_t *> & pos_t::adj() const
-{
+const std::set<pos_t *> & pos_t::adj() const {
     return _adjacent_exist;
 }
 
-const pos_t *position::pos_t::adj(int dir) const
-{
+const pos_t *position::pos_t::adj(int dir) const {
     return _adjacent[dir];
 }
 
-void position::pos_t::setAdj(int dir, pos_t *adj)
-{
+void position::pos_t::setAdj(int dir, pos_t *adj) {
     _adjacent[dir] = adj;
     if (adj)
         _adjacent_exist.insert(adj);
 }
 
-ostream & operator<<(ostream & stream, const pos_t pt)
-{
+ostream & operator<<(ostream & stream, const pos_t pt) {
     stream << endl;
     auto func = [&stream](pos_t pt, const char *indent = "") {
         stream << indent << pt.index
@@ -43,18 +38,18 @@ ostream & operator<<(ostream & stream, const pos_t pt)
     };
     stream << typeid(pt).name() << ", ";
     func(pt);
-    
+
     if (!pt.adj().empty())
         stream << "adjacent pos: " << endl;
-    for (int i = 0; i < 6; ++i)
-    {
+    for (int i = 0; i < 6; ++i) {
         auto adj = pt.adj(i);
-        if (adj)
-        {
+        if (adj) {
             func(*adj, "\t");
         }
     }
     return stream;
 }
 
-}
+} // namespace position
+} // namespace fhutils
+

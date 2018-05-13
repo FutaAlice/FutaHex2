@@ -2,32 +2,31 @@
 #include <list>
 #include "color.h"
 #include "position.h"
-namespace record
-{
 
-class RecordData
-{
+namespace fhutils {
+namespace record {
+
+class RecordData {
 public:
     RecordData(position::pos_t pos, color::Color color);
     RecordData(position::coord_t index,
-            position::coord_t board_size,
-            color::Color color);
+        position::coord_t board_size,
+        color::Color color);
     RecordData(position::coord_t row, position::coord_t col,
-            position::coord_t board_size,
-            color::Color color);
+        position::coord_t board_size,
+        color::Color color);
     auto pos()->position::pos_t const;
     auto row()->position::coord_t const;
     auto col()->position::coord_t const;
     auto boardsize()->position::coord_t const;
     auto color()->color::Color const;
-    
+
 private:
     position::pos_t _pos;
     color::Color _color;
 };
 
-class Record : public std::list<RecordData>
-{
+class Record : public std::list<RecordData> {
     using Data = RecordData;
 public:
     void swap(bool swap) = delete;
@@ -42,8 +41,9 @@ public:
 private:
 
 private:
-    bool _swap { false };
+    bool _swap{ false };
     position::coord_t _boardsize;
 };
 
-}
+} // namespace record
+} // namespace fhutils

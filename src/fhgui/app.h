@@ -1,26 +1,21 @@
 #pragma once
-
-#include <QtWidgets/QMainWindow>
 #include <list>
 #include <string>
-#include <position.h>
-#include <color.h>
-#include <record.h>
+#include <QtWidgets/QMainWindow>
+#include <fhutils/board.h>
+#include <fhutils/iengine.h>
+#include <fhutils/record.h>
 #include "ui_app.h"
 
-namespace board { class IBoard; }
-namespace engine { class IEngine; }
-
-class app : public QMainWindow
-{
+class app : public QMainWindow {
     Q_OBJECT
 public:
     enum class AIColorSetting { Red, Blue, None };
     enum class PlayerColorSetting { Red, Blue, Auto };
 public:
     app(QWidget *parent = Q_NULLPTR);
-    static const int w { 720 };
-    engine::IEngine *pEngine { nullptr };
+    static const int w{ 720 };
+    fhutils::iengine::IEngine *pEngine{ nullptr };
 
 public slots:
     void onCanvasValidClick(int row, int col);
@@ -56,7 +51,7 @@ public slots:
     void onActionPlayerAuto();
     void onEnableCostomizePlayerColor(bool checked);
     void onEnableBeep(bool checked);
-    
+
 protected:
     void paintEvent(QPaintEvent *event);
 
@@ -68,26 +63,26 @@ private:
     void AIMove();
     void AIStop();
 
-    color::Color getAIColor();
-    color::Color getPlayerColor();
+    fhutils::board::Color getAIColor();
+    fhutils::board::Color getPlayerColor();
     void setAIColor(AIColorSetting);
     void setPlayerColor(PlayerColorSetting);
     void changeBoardsize(int boardsize = 0);
     void updateBoard();
     void appendText(const char *text, QColor color = Qt::black);
-    void appendText(const char *text, color::Color color);
+    void appendText(const char *text, fhutils::board::Color color);
     void appendText(std::string &str, QColor color = Qt::black);
-    void appendText(std::string &str, color::Color color);
-    void setPiece(int row, int col, color::Color color);
+    void appendText(std::string &str, fhutils::board::Color color);
+    void setPiece(int row, int col, fhutils::board::Color color);
     void resetPiece(int row, int col);
 
 private:
-    board::IBoard *_pBoard { nullptr };
-    record::Record _rec;
+    fhutils::board::IBoard *_pBoard{ nullptr };
+    fhutils::record::Record _rec;
 
-    AIColorSetting _acs { AIColorSetting::None };
-    PlayerColorSetting _pcs { PlayerColorSetting::Auto };
+    AIColorSetting _acs{ AIColorSetting::None };
+    PlayerColorSetting _pcs{ PlayerColorSetting::Auto };
 
-    bool _bEnableBeep { false };
+    bool _bEnableBeep{ false };
     Ui::appClass ui;
 };

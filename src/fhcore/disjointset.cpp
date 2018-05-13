@@ -1,9 +1,10 @@
 #include <map>
 #include "disjointset.h"
+
 using namespace std;
-using namespace board;
-namespace disjointset
-{
+
+namespace fhcore {
+namespace disjointset {
 
 #define REGISTER_CREATE_BY_SIZE(container, size) do { \
     container[size] = DisjointSet<size>::create; \
@@ -12,14 +13,12 @@ namespace disjointset
 typedef IDisjointSet *(*PF_CREATE)(IBoard *);
 static map<size_t, PF_CREATE> s2t;
 
-static struct initializer
-{
+static struct initializer {
     initializer();
     ~initializer() {};
 } dummy;
 
-initializer::initializer()
-{
+initializer::initializer() {
     REGISTER_CREATE_BY_SIZE(s2t, 4);
     REGISTER_CREATE_BY_SIZE(s2t, 5);
     REGISTER_CREATE_BY_SIZE(s2t, 6);
@@ -38,15 +37,14 @@ initializer::initializer()
     REGISTER_CREATE_BY_SIZE(s2t, 19);
 }
 
-IDisjointSet * IDisjointSet::create(IBoard *pBoard)
-{
+IDisjointSet * IDisjointSet::create(IBoard *pBoard) {
     auto iter = s2t.find(pBoard->boardsize());
-    if (s2t.end() != iter)
-    {
+    if (s2t.end() != iter) {
         auto func = iter->second;
         return func(pBoard);
     }
     return nullptr;
 }
 
-}
+} // namespace disjointset
+} // namespace fhcore

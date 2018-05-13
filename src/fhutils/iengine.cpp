@@ -5,19 +5,18 @@
 
 using namespace std;
 using namespace chrono;
-using namespace board;
-using namespace logger;
 
-namespace engine
-{
+namespace fhutils {
+namespace iengine {
 
-IEngine::~IEngine()
-{
+using namespace color;
+using namespace position;
+
+IEngine::~IEngine() {
     wait();
 }
 
-void IEngine::configure(EngineCfg cfg) noexcept
-{
+void IEngine::configure(EngineCfg cfg) noexcept {
     assert(cfg.pBoard && Color::Empty != cfg.colorAI);
 
     lock();
@@ -27,8 +26,7 @@ void IEngine::configure(EngineCfg cfg) noexcept
     unlock();
 }
 
-void IEngine::compute(FUNC_CB_AIMOVE cb, void *opaque) noexcept
-{
+void IEngine::compute(FUNC_CB_AIMOVE cb, void *opaque) noexcept {
     assert(cb);
 
     _future = async(launch::async, [this, cb, opaque] {
@@ -39,33 +37,29 @@ void IEngine::compute(FUNC_CB_AIMOVE cb, void *opaque) noexcept
     });
 }
 
-void IEngine::compute_sync(position::pos_t & result) noexcept
-{
+void IEngine::compute_sync(position::pos_t & result) noexcept {
     lock();
     result = timer(&IEngine::calc_ai_move_sync, this);
     unlock();
 }
 
-void IEngine::terminate() noexcept
-{
+void IEngine::terminate() noexcept {
     stop_calc_and_return();
 }
 
-void IEngine::wait()
-{
+void IEngine::wait() {
     _future.wait();
 }
 
-void IEngine::lock()
-{
+void IEngine::lock() {
     bool is_thinking = !_lock.try_lock();
     if (is_thinking)
         throw;
 }
 
-void IEngine::unlock()
-{
+void IEngine::unlock() {
     _lock.unlock();
 }
 
-}
+} // namespace iengine
+} // namespace fhutils

@@ -1,22 +1,15 @@
 #pragma once
-#include "position.h"
-#include "color.h"
+#include <fhutils/board.h>
 
-using namespace position;
-using namespace color;
-namespace board
-{
-class IBoard;
-}
+namespace fhcore {
+namespace disjointset {
 
-namespace disjointset
-{
+using namespace fhutils::board;
 
-class IDisjointSet
-{
+class IDisjointSet {
 public:
     virtual ~IDisjointSet() = default;
-    static IDisjointSet * create(board::IBoard *pBoard);
+    static IDisjointSet * create(IBoard *pBoard);
 
 public:
     virtual Color get(int index) = 0;
@@ -32,16 +25,15 @@ protected:
 };
 
 template<typename Test, coord_t size>
-class DisjointSetT : public IDisjointSet
-{
+class DisjointSetT : public IDisjointSet {
     friend Test;
     using Position = PositionT<size>;
 public:
     DisjointSetT() = default;
-    DisjointSetT(board::IBoard *pBoard);
+    DisjointSetT(IBoard *pBoard);
     virtual ~DisjointSetT();
 public:
-    static IDisjointSet * create(board::IBoard *pBoard);
+    static IDisjointSet * create(IBoard *pBoard);
 public:
     virtual Color get(int index);
     virtual void set(int index);
@@ -60,12 +52,13 @@ public:
 private:
     const Position & _pos{ Position::instance() };
     int fa[2][size * size + 2];
-    board::IBoard *pBoard;
+    IBoard *pBoard;
 };
 
 template<coord_t size>
 using DisjointSet = DisjointSetT<int, size>;
 
-}
+} // namespace disjointset
+} // namespace fhcore
 
 #include "disjointset.inl"

@@ -3,9 +3,10 @@
 #include "logger.h"
 #include "board.h"
 using namespace std;
-using namespace logger;
-namespace board
-{
+using namespace fhutils::logger;
+
+namespace fhutils {
+namespace board {
 
 #define REGISTER_CREATE_BY_SIZE(container, size) do { \
     container[size] = Board<size>::create; \
@@ -14,14 +15,12 @@ namespace board
 typedef IBoard *(*PF_CREATE)(void);
 static map<coord_t, PF_CREATE> s2t;
 
-static struct initializer
-{
+static struct initializer {
     initializer();
     ~initializer() {};
 } dummy;
 
-initializer::initializer()
-{
+initializer::initializer() {
     REGISTER_CREATE_BY_SIZE(s2t, 4);
     REGISTER_CREATE_BY_SIZE(s2t, 5);
     REGISTER_CREATE_BY_SIZE(s2t, 6);
@@ -40,32 +39,30 @@ initializer::initializer()
     REGISTER_CREATE_BY_SIZE(s2t, 19);
 }
 
-IBoard * IBoard::create(const coord_t size)
-{
+IBoard * IBoard::create(const coord_t size) {
     auto iter = s2t.find(size);
-    if (s2t.end() != iter)
-    {
+    if (s2t.end() != iter) {
         auto func = iter->second;
         return func();
     }
     return nullptr;
 }
 
-IBoard * IBoard::create(const string & name)
-{
+IBoard * IBoard::create(const string & name) {
     return nullptr;
 }
 
-bool IBoard::operator==(const IBoard & rhs) const
-{
-    assert(boardsize() == rhs.boardsize());
+bool IBoard::operator==(const IBoard & rhs) const {
+    if (boardsize() != rhs.boardsize())
+        return false;
     return equal_to(rhs);
 }
 
-bool IBoard::operator!=(const IBoard & rhs) const
-{
-    assert(boardsize() == rhs.boardsize());
+bool IBoard::operator!=(const IBoard & rhs) const {
+    if (boardsize() != rhs.boardsize())
+        return true;
     return !equal_to(rhs);
 }
 
-}
+} // namespace board
+} // namespace fhutils
